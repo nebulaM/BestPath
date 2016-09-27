@@ -1,16 +1,16 @@
 package com.nebulaM.android.bestpath;
 
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ViewFlipper;
+
 
 import com.nebulaM.android.bestpath.drawing.GameDrawing;
 
@@ -23,10 +23,19 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton mNextLevelButton;
     private ImageButton mPreviousLevelButton;
     private ImageButton mSettingsButton;
+    static String mBackgroundColorPref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mBackgroundColorPref = sharedPref.getString(SettingsFragment.KEY_PREF_BG_COLOR, "");
+        if(mBackgroundColorPref.equals("gradient_background_cyan")) {
+            this.findViewById(R.id.main_game_view).setBackgroundResource(R.drawable.gradient_background_cyan);
+        }
+        else if(mBackgroundColorPref.equals("gradient_background_pink")) {
+            this.findViewById(R.id.main_game_view).setBackgroundResource(R.drawable.gradient_background_pink);
+        }
 
         mGameDrawing=(GameDrawing)this.findViewById(R.id.GameDrawing);
 
@@ -94,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static class SettingsFragment extends PreferenceFragment {
-
+    public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+        public static final String KEY_PREF_BG_COLOR="pref_key_background_color";
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -107,8 +116,40 @@ public class MainActivity extends AppCompatActivity {
         public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
 
-            getView().setBackgroundResource(R.drawable.gradient_background_cyan);
+            setBackground();
+
             getView().setClickable(true);
+        }
+        //TODO:!!!!!shared preference is not correct
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+                                              String key) {
+            if (key.equals(KEY_PREF_BG_COLOR)){
+                Preference mPref = findPreference(key);
+                mPref.setDefaultValue(sharedPreferences.getString(key, ""));
+                mBackgroundColorPref=sharedPreferences.getString(key, "");
+                setBackground();
+            }
+        }
+        @Override
+        public void onResume() {
+            super.onResume();
+            getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+        }
+
+        @Override
+        public void onPause() {
+            getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+            super.onPause();
+        }
+
+        public void setBackground(){
+            if(mBackgroundColorPref.equals("gradient_background_cyan")) {
+                getView().setBackgroundResource(R.drawable.gradient_background_cyan);
+            }
+            else if(mBackgroundColorPref.equals("gradient_background_pink")) {
+                getView().setBackgroundResource(R.drawable.gradient_background_pink);
+            }
         }
 
     }
