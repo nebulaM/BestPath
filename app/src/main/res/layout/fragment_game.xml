@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    >
+
+    <com.nebulaM.android.bestpath.drawing.GameDrawing
+        android:id="@+id/GameDrawing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="80dp"
+        />
+    <ImageButton
+        android:id="@+id/ResetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/GameDrawing"
+        android:src="@drawable/reset_button"
+        android:background="@null"
+        />
+    <ImageButton
+        android:id="@+id/RestartButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/restart_button"
+        android:background="@null"
+        />
+
+    <ImageButton
+        android:id="@+id/SettingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/GameDrawing"
+        android:src="@drawable/settings_button"
+        android:background="@null"
+        />
+
+    <ImageButton
+        android:id="@+id/NextLevelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/RestartButton"
+        android:layout_marginLeft="15dp"
+        android:src="@drawable/next_level_button"
+        android:background="@null"
+        />
+    <ImageButton
+        android:id="@+id/PreviousLevelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/RestartButton"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/previous_level_button"
+        android:background="@null"
+        />
+
+
+
+</RelativeLayout>
