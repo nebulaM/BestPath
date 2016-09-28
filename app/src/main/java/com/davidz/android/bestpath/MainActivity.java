@@ -25,7 +25,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         setBackground();
-
+        if (savedInstanceState == null) {
+            GameFragment newFragment = new GameFragment();
+            getFragmentManager().beginTransaction().add(R.id.activty_main_empty, newFragment).commit();
+        }
 
     }
 
@@ -34,10 +37,10 @@ public class MainActivity extends AppCompatActivity {
 
         mBackgroundColorPref = sharedPref.getString(KEY_PREF_BG_COLOR, "");
         if(mBackgroundColorPref.equals("gradient_background_cyan")) {
-            this.findViewById(R.id.main_activty).setBackgroundResource(R.drawable.gradient_background_cyan);
+            this.findViewById(R.id.activty_main_empty).setBackgroundResource(R.drawable.gradient_background_cyan);
         }
         else if(mBackgroundColorPref.equals("gradient_background_pink")) {
-            this.findViewById(R.id.main_activty).setBackgroundResource(R.drawable.gradient_background_pink);
+            this.findViewById(R.id.activty_main_empty).setBackgroundResource(R.drawable.gradient_background_pink);
         }
     }
 
