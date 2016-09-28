@@ -4,6 +4,7 @@ import android.content.Context;
 //import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -34,6 +35,8 @@ public class GameDrawing extends View {
 
     private Drawable mNode;
 
+    private Path mPath;
+
     private float mLevel=10.0f;
 
     private final float mMaxLevel=20.0f;
@@ -57,8 +60,8 @@ public class GameDrawing extends View {
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setAntiAlias(true);
 
-        mNode =context.getResources().getDrawable(R.drawable.node2d);
-
+      //  mNode =context.getResources().getDrawable(R.drawable.node2d);
+        mPath=new Path();
 
 
     }
@@ -142,9 +145,16 @@ public class GameDrawing extends View {
 
             //draw nodes from a pre-defined picture
             for (int i = 0; i < mGame.getNodeNum(); ++i) {
-                int startX = (int) (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
+                /*int startX = (int) (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
                 int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
-                drawDrawable(canvas, mNode, startX,startY,(int)(startX + mNodeLength),(int)(startY + mNodeLength));
+                drawDrawable(canvas, mNode, startX,startY,(int)(startX + mNodeLength),(int)(startY + mNodeLength));*/
+                mPaint.setColor(0xffff7f27);
+                float startX = (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
+                float startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
+
+                drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
+
+
             }
             //draw edges(different cost has different color)
             for (int i = 0; i < mGame.getEdgeNum(); ++i) {
@@ -160,13 +170,14 @@ public class GameDrawing extends View {
                     float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEgdeLengthY + mNodeLength)) + mNodeLength/ 3.0f;
                     float endX = startX + mEgdeLengthX;
                     float endY = startY + mNodeLength/ 3.0f;
-                    canvas.drawRect(startX, startY, endX, endY, mPaint);
+                    canvas.drawRect(startX, startY, endX, endY,mPaint);
                 } else if (mGame.getEdgeStartXCord(i) == mGame.getEdgeEndXCord(i)) {
                     float startX = (mGame.getEdgeStartXCord(i)) * (mEgdeLengthX + mNodeLength) + mNodeLength/ 3.0f;
                     float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEgdeLengthY + mNodeLength)) + mNodeLength;
                     float endX = startX + mNodeLength/ 3.0f;
                     float endY = startY + mEgdeLengthY;
-                    canvas.drawRect(startX, startY, endX, endY, mPaint);
+
+                    canvas.drawRect(startX, startY, endX, endY,mPaint);
                 }
             }
 
@@ -176,8 +187,8 @@ public class GameDrawing extends View {
             mPaint.setColor(0xff3fff00);
             float startX = (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
             float startY = mGameRouteOffsetY +(mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
-            canvas.drawRect(startX,startY,(startX + mNodeLength),(startY + mNodeLength),mPaint);
-
+            //canvas.drawRect(startX,startY,(startX + mNodeLength),(startY + mNodeLength),mPaint);
+            drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
             //draw energy bar
             float energy=(float)mGame.getPlayerEnergy();
             //draw shadow first
@@ -194,6 +205,37 @@ public class GameDrawing extends View {
         draw.setBounds(startingX, startingY, endingX, endingY);
         draw.draw(canvas);
     }
+
+
+    private void drawRoundRect(Canvas canvas, Paint paint, Path path, float left, float top, float right, float bottom, float rx, float ry){
+        path.reset();
+        if (rx < 0) rx = 0;
+        if (ry < 0) ry = 0;
+        float width = right - left;
+        float height = bottom - top;
+        if (rx > width/2) rx = width/2;
+        if (ry > height/2) ry = height/2;
+        float widthMinusCorners = (width - (2 * rx));
+        float heightMinusCorners = (height - (2 * ry));
+
+        path.moveTo(right, top + ry);
+        path.rQuadTo(0, -ry, -rx, -ry);//top-right corner
+        path.rLineTo(-widthMinusCorners, 0);
+        path.rQuadTo(-rx, 0, -rx, ry); //top-left corner
+        path.rLineTo(0, heightMinusCorners);
+
+
+        path.rQuadTo(0, ry, rx, ry);//bottom-left corner
+        path.rLineTo(widthMinusCorners, 0);
+        path.rQuadTo(rx, 0, rx, -ry); //bottom-right corner
+
+
+        path.rLineTo(0, -heightMinusCorners);
+
+        path.close();
+        canvas.drawPath(path, paint);
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
