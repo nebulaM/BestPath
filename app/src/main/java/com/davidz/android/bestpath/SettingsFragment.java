@@ -1,24 +1,20 @@
 package com.nebulaM.android.bestpath;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
+
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+
 
 /**
  * Created by nebulaM on 9/27/2016.
  */
-public class SettingsFragment extends PreferenceFragment{
+public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO:better UI for settings
         addPreferencesFromResource(R.xml.preferences);
+        //Toast.makeText(getActivity(),"TextCreate!",Toast.LENGTH_SHORT).show();
     }
    /* @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,21 +32,30 @@ public class SettingsFragment extends PreferenceFragment{
     }*/
 
 
-
+    /*public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+                                          String key) {
+        if (key.equals(MainActivity.KEY_PREF_BG_COLOR)){
+            Preference mPref = findPreference(key);
+            mPref.setDefaultValue(sharedPreferences.getString(key, ""));
+            setBackground(sharedPreferences.getString(key, ""));
+        }
+    }
     @Override
     public void onResume() {
         super.onResume();
-
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        Toast.makeText(getActivity(),"TextResume!",Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
     public void onPause() {
-
         super.onPause();
-    }
-
-
+        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        Toast.makeText(getActivity(),"TextPasue!",Toast.LENGTH_SHORT).show();
+    }*/
 
 
 }
+
+
