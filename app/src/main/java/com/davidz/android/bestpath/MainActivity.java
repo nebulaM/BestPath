@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity{
         if (savedInstanceState == null) {
             GameFragment newFragment = new GameFragment();
             //TODO:addToBackStack NOT working
-            getFragmentManager().beginTransaction().replace(R.id.frag_container, newFragment).addToBackStack(null).commit();
+            getFragmentManager().beginTransaction().add(R.id.frag_container, newFragment).commit();
             mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                     //TODO:customize color for path in game
