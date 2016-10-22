@@ -2,8 +2,13 @@ package com.nebulaM.android.bestpath.backend;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+
 /**
  * Create a new 2D game
  *
@@ -35,7 +40,7 @@ public class Game {
      * @param edgeLevel options are S for Simple, M for Medium or H for Hard
      */
 
-    public Game(int routeSize, int edgeProbability, char edgeLevel, int playerEnergy){
+    public Game(int routeSize, int edgeProbability, char edgeLevel){
         if(routeSize>1) {
             this.routeSize = routeSize;
         }
@@ -44,14 +49,14 @@ public class Game {
 
         this.edgeProbability=edgeProbability;
         this.nodeList=new ArrayList() ;
-        this.edgeList=new ArrayList();
+        this.edgeList=new ArrayList() ;
 
         this.nodeNum=routeSize*routeSize;
 
-        this.adjacentArray=new int[this.nodeNum][this.nodeNum];
+        this.adjacentArray=new int[nodeNum][nodeNum];
 
-        //put all nodes in the nodeL ist
-        for (int i=0;i<this.nodeNum;++i){
+        //put all nodes in the nodeList
+        for (int i=0;i<nodeNum;++i){
             nodeList.add(new Node(i,this.routeSize));
         }
 
@@ -61,10 +66,10 @@ public class Game {
         else
             throw new IllegalArgumentException("choose edgeLevel from one of the following letters: S, M");
         createPath();
-        //TODO:Energy based on path
-        //TODO:dj algorithm for finding best path
-        mPlayerEnergy=playerEnergy;
-        mPlayer=new Player(0,this.nodeNum-1,mPlayerEnergy);
+        //TODO:list of bestPath
+        mPlayerEnergy=shortestPath(0,nodeNum-1);
+
+        mPlayer=new Player(0,nodeNum-1,mPlayerEnergy);
 
     }
 
@@ -73,7 +78,7 @@ public class Game {
      * in total there are 3*routeSize different small adjacent matrices
      * the small adjacent matrices in "createPath" have a size of m[routeSize][routeSize], they will be mapped to a this.adjacentArray in the end
      */
-    private synchronized void createPath(){
+    private void createPath(){
 
         randomConnectNodes(nodeList,edgeProbability, adjacentArray);
         if(debug)
@@ -89,7 +94,7 @@ public class Game {
      * @param m
      */
 
-    private synchronized void randomConnectNodes(List<Node> nodeList, int probability, int[][] m){
+    private void randomConnectNodes(List<Node> nodeList, int probability, int[][] m){
         int upperBound=nodeNum;
         int yPositionScale=routeSize;
         Random randEdge = new Random();
@@ -156,7 +161,8 @@ public class Game {
         for(int startIndex=0;startIndex<upperBound;++startIndex) {
             for (int endIndex=startIndex; endIndex<upperBound;++endIndex)
                 if(m[startIndex][endIndex]!=0){
-                    edgeList.add( new Edge( startIndex, endIndex,m[startIndex][endIndex] ) );
+                    Edge thisEdge=new Edge( startIndex, endIndex,m[startIndex][endIndex] );
+                    edgeList.add(thisEdge);
                 }
         }
 
@@ -210,10 +216,10 @@ public class Game {
     }
 
     public int getEdgeNum(){
-        if(edgeList==null)
-            throw new NullPointerException();
-        else
+        if(!edgeList.isEmpty())
             return edgeList.size();
+        else
+            return 0;
     }
 
 
@@ -269,6 +275,7 @@ public class Game {
 
     public void resetGame(){
         createPath();
+        mPlayerEnergy=shortestPath(0,nodeNum-1);
         mPlayer.setCurrentPosition(0);
         mPlayer.setEnergy(mPlayerEnergy);
 
@@ -295,5 +302,65 @@ public class Game {
 
     public int getNodeYCord(int nodeIndex){
         return nodeList.get(nodeIndex).getYCord();
+    }
+
+    public int getMaxEnergy(){
+        return mPlayerEnergy;
+    }
+    /**
+     *Dijkstra's Algorithm
+     *In this method, we DEFINE -1 as infinity
+     * Precondition:startNode and endNode >=0
+     *              startNode!=endNode
+     */
+    private int shortestPath(int startNode, int endNode){
+        //A list of node ID that shows shortest path from start to end
+        List<Integer> shortestPath=new ArrayList<>();
+        //map nodeID to cost
+        //Map<this,costToStartNode>
+        Map<Integer,Integer> nodeCost=new HashMap<>();
+        //track previous node of this node
+        //Map<this,previous>
+        Map<Integer,Integer> nodePrev=new HashMap<>();
+        //track all unvisited nodes by nodeID
+        Set<Integer> unvisitedNodes=new HashSet<>();
+        for(int i=0;i<nodeNum;++i){
+            nodeCost.put(i,-1);
+            nodePrev.put(i,-1);
+            unvisitedNodes.add(i);
+        }
+        nodeCost.put(startNode,0);
+        nodePrev.put(startNode,startNode);
+        unvisitedNodes.remove(startNode);
+        int currentNode=startNode;
+        while(!unvisitedNodes.isEmpty()){
+            if (nodeCost.get(currentNode) != -1) {
+                unvisitedNodes.remove(currentNode);
+                for(int i=0;i<nodeNum;++i) {
+                    if (unvisitedNodes.contains(i)) {
+                        int thisEdgeCost = adjacentArray[currentNode][i];
+                        //thisEdgeCost==0 means no edge
+                        if (thisEdgeCost != 0) {
+                            int newCost=thisEdgeCost;
+                            int checkNode = currentNode;
+                            do {
+                                //order does not matter, not a bi-direction array
+                                newCost += adjacentArray[nodePrev.get(checkNode)][checkNode];
+                                checkNode = nodePrev.get(checkNode);
+                            }while (checkNode != startNode);
+                            if (nodeCost.get(i) == -1 || newCost < nodeCost.get(i)) {
+                                nodeCost.put(i, newCost);
+                                nodePrev.put(i, currentNode);
+                            }
+                        }
+                    }
+                }
+            }
+            currentNode++;
+            if(currentNode>=nodeNum){
+                currentNode=0;
+            }
+        }
+        return nodeCost.get(endNode);
     }
 }

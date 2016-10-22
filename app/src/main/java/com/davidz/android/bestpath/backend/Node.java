@@ -10,7 +10,7 @@ public class Node {
 
     /**
      *
-     * @param nodeID
+     * @param nodeID starts from 0
      * @param mapSize
      *
      * Z=0

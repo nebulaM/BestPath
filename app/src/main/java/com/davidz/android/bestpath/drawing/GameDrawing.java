@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.nebulaM.android.bestpath.R;
 import com.nebulaM.android.bestpath.backend.Game;
@@ -30,7 +31,6 @@ public class GameDrawing extends View {
 
     private float mEnergyBarW;
     private float mEnergyBarH;
-    private final float mMaxEnergy=18.0f;
 
 
     private Drawable mNode;
@@ -51,7 +51,7 @@ public class GameDrawing extends View {
 
 
 
-        mGame =new Game((int)mLevel,mEdgeProb,'S',(int)mMaxEnergy);
+        mGame =new Game((int)mLevel,mEdgeProb,'S');
 
         mPaint = new Paint();
         mPaint.setDither(true);
@@ -59,6 +59,8 @@ public class GameDrawing extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setAntiAlias(true);
+
+        mPaint.setTextSize(50);
 
       //  mNode =context.getResources().getDrawable(R.drawable.node2d);
         mPath=new Path();
@@ -83,7 +85,7 @@ public class GameDrawing extends View {
         if(mLevel<mMaxLevel) {
             mLevel += 1.0f;
             mGame=null;
-            mGame = new Game((int) mLevel, mEdgeProb, 'S', (int) mMaxEnergy);
+            mGame = new Game((int) mLevel, mEdgeProb, 'S');
             invalidate();
 
         }
@@ -93,7 +95,7 @@ public class GameDrawing extends View {
         if(mLevel>mMinLevel) {
             mLevel -= 1.0f;
             mGame=null;
-            mGame = new Game((int) mLevel, mEdgeProb, 'S', (int) mMaxEnergy);
+            mGame = new Game((int) mLevel, mEdgeProb, 'S');
             invalidate();
         }
     }
@@ -143,7 +145,7 @@ public class GameDrawing extends View {
         mEgdeLengthX=(getWidth()-mLevel*mNodeLength)/(mLevel-1.0f);
         mEgdeLengthY=(getHeight()-mLevel*mNodeLength-mEnergyBarH*1.2f)/(mLevel-1.0f);
 
-            //draw nodes from a pre-defined picture
+            //draw nodes
             for (int i = 0; i < mGame.getNodeNum(); ++i) {
                 /*int startX = (int) (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
                 int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
@@ -189,14 +191,17 @@ public class GameDrawing extends View {
             float startY = mGameRouteOffsetY +(mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
             //canvas.drawRect(startX,startY,(startX + mNodeLength),(startY + mNodeLength),mPaint);
             drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
-            //draw energy bar
-            float energy=(float)mGame.getPlayerEnergy();
-            //draw shadow first
-            mPaint.setColor(0xffa2a2a2);
-            canvas.drawRect(mEnergyBarW*(energy/mMaxEnergy),0,mEnergyBarW,mEnergyBarH,mPaint);
-            mPaint.setColor(0xffffff00);
-            canvas.drawRect(0,0,mEnergyBarW*(energy/mMaxEnergy),mEnergyBarH,mPaint);
 
+            //draw energy bar
+            float currentEnergy=(float)mGame.getPlayerEnergy();
+            float maxEnergy=(float)mGame.getMaxEnergy();
+            //draw shadow for the energy bar first
+            mPaint.setColor(0xffa2a2a2);
+            canvas.drawRect(mEnergyBarW*(currentEnergy/maxEnergy),0,mEnergyBarW,mEnergyBarH,mPaint);
+            mPaint.setColor(0xffffff00);
+            canvas.drawRect(0,0,mEnergyBarW*(currentEnergy/maxEnergy),mEnergyBarH,mPaint);
+            mPaint.setColor(0xffffa448);
+            canvas.drawText("Energy "+mGame.getMaxEnergy(),mEnergyBarW,mEnergyBarH,mPaint);
 
     }
 
@@ -250,8 +255,7 @@ public class GameDrawing extends View {
                         float startX = (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
                         float startY = mGameRouteOffsetY +(mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
                         if (x > startX && x < startX + mNodeLength && y > startY && y < startY + mNodeLength) {
-                            boolean flag = mGame.setPlayerPosition(i);
-                            if (flag){
+                            if (mGame.setPlayerPosition(i)){
                                 invalidate();
                             }
                             break;
