@@ -9,10 +9,10 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
-import com.nebulaM.android.bestpath.R;
 import com.nebulaM.android.bestpath.backend.Game;
+
+import java.util.List;
 
 /**
  * Created by nebulaM on 9/19/2016.
@@ -20,9 +20,8 @@ import com.nebulaM.android.bestpath.backend.Game;
 public class GameDrawing extends View {
     private Game mGame;
 
-
-    private float mEgdeLengthX;
-    private float mEgdeLengthY;
+    private float mEdgeLengthX;
+    private float mEdgeLengthY;
 
     private Paint mPaint;
     private float mNodeLength;
@@ -32,17 +31,16 @@ public class GameDrawing extends View {
     private float mEnergyBarW;
     private float mEnergyBarH;
 
-
-    private Drawable mNode;
-
     private Path mPath;
 
-    private float mLevel=10.0f;
+    private float mLevel=5.0f;
 
     private final float mMaxLevel=20.0f;
     private final float mMinLevel=2.0f;
 
     private final int mEdgeProb=40;
+
+    private boolean mDrawShortestPathFlag;
     /**
      * @param context
      */
@@ -142,21 +140,18 @@ public class GameDrawing extends View {
         mEnergyBarW=getWidth()/2.0f;
         mEnergyBarH=getHeight()/20.0f;
         mGameRouteOffsetY=mEnergyBarH*1.2f;
-        mEgdeLengthX=(getWidth()-mLevel*mNodeLength)/(mLevel-1.0f);
-        mEgdeLengthY=(getHeight()-mLevel*mNodeLength-mEnergyBarH*1.2f)/(mLevel-1.0f);
+        mEdgeLengthX =(getWidth()-mLevel*mNodeLength)/(mLevel-1.0f);
+        mEdgeLengthY =(getHeight()-mLevel*mNodeLength-mEnergyBarH*1.2f)/(mLevel-1.0f);
 
             //draw nodes
             for (int i = 0; i < mGame.getNodeNum(); ++i) {
-                /*int startX = (int) (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
-                int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
+                /*int startX = (int) (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+                int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
                 drawDrawable(canvas, mNode, startX,startY,(int)(startX + mNodeLength),(int)(startY + mNodeLength));*/
                 mPaint.setColor(0xffff7f27);
-                float startX = (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
-                float startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
-
+                float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+                float startY = (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
                 drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
-
-
             }
             //draw edges(different cost has different color)
             for (int i = 0; i < mGame.getEdgeNum(); ++i) {
@@ -168,16 +163,16 @@ public class GameDrawing extends View {
                     mPaint.setColor(0xffb7161b);
                 }
                 if (mGame.getEdgeStartYCord(i) == mGame.getEdgeEndYCord(i)) {
-                    float startX = (mGame.getEdgeStartXCord(i)) * (mEgdeLengthX + mNodeLength) + mNodeLength;
-                    float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEgdeLengthY + mNodeLength)) + mNodeLength/ 3.0f;
-                    float endX = startX + mEgdeLengthX;
+                    float startX = (mGame.getEdgeStartXCord(i)) * (mEdgeLengthX + mNodeLength) + mNodeLength;
+                    float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEdgeLengthY + mNodeLength)) + mNodeLength/ 3.0f;
+                    float endX = startX + mEdgeLengthX;
                     float endY = startY + mNodeLength/ 3.0f;
                     canvas.drawRect(startX, startY, endX, endY,mPaint);
                 } else if (mGame.getEdgeStartXCord(i) == mGame.getEdgeEndXCord(i)) {
-                    float startX = (mGame.getEdgeStartXCord(i)) * (mEgdeLengthX + mNodeLength) + mNodeLength/ 3.0f;
-                    float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEgdeLengthY + mNodeLength)) + mNodeLength;
+                    float startX = (mGame.getEdgeStartXCord(i)) * (mEdgeLengthX + mNodeLength) + mNodeLength/ 3.0f;
+                    float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEdgeLengthY + mNodeLength)) + mNodeLength;
                     float endX = startX + mNodeLength/ 3.0f;
-                    float endY = startY + mEgdeLengthY;
+                    float endY = startY + mEdgeLengthY;
 
                     canvas.drawRect(startX, startY, endX, endY,mPaint);
                 }
@@ -187,11 +182,12 @@ public class GameDrawing extends View {
             // TODO:better shape and color
             int i=mGame.getPlayerPosition();
             mPaint.setColor(0xff3fff00);
-            float startX = (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
-            float startY = mGameRouteOffsetY +(mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
+            float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+            float startY = mGameRouteOffsetY +(mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
             //canvas.drawRect(startX,startY,(startX + mNodeLength),(startY + mNodeLength),mPaint);
             drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
 
+            // TODO:better shape and color
             //draw energy bar
             float currentEnergy=(float)mGame.getPlayerEnergy();
             float maxEnergy=(float)mGame.getMaxEnergy();
@@ -202,6 +198,21 @@ public class GameDrawing extends View {
             canvas.drawRect(0,0,mEnergyBarW*(currentEnergy/maxEnergy),mEnergyBarH,mPaint);
             mPaint.setColor(0xffffa448);
             canvas.drawText("Energy "+mGame.getMaxEnergy(),mEnergyBarW,mEnergyBarH,mPaint);
+
+            //draw shortestPath if player lose
+            if(mDrawShortestPathFlag){
+                List<Integer> shortestPath=mGame.getShortestList();
+                for(i=0;i<shortestPath.size();++i){
+                    mPaint.setColor(0xffff6c6c);
+                    startX = (mGame.getNodeXCord(shortestPath.get(i)) * (mEdgeLengthX + mNodeLength));
+                    startY = (mGameRouteOffsetY +mGame.getNodeYCord(shortestPath.get(i)) * (mEdgeLengthY + mNodeLength));
+                    drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
+                }
+
+
+                mDrawShortestPathFlag=false;
+
+            }
 
     }
 
@@ -241,6 +252,9 @@ public class GameDrawing extends View {
         canvas.drawPath(path, paint);
     }
 
+    private void setDrawShortestPath(){
+        mDrawShortestPathFlag=true;
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -249,19 +263,24 @@ public class GameDrawing extends View {
             case MotionEvent.ACTION_UP:
                 float x = event.getX();
                 float y = event.getY();
-                int isGameOver=mGame.gameOver();
-                if(isGameOver==0) {
+                if(mGame.gameOver()==0) {
                     for (int i = 0; i < mGame.getNodeNum(); ++i) {
-                        float startX = (mGame.getNodeXCord(i) * (mEgdeLengthX + mNodeLength));
-                        float startY = mGameRouteOffsetY +(mGame.getNodeYCord(i) * (mEgdeLengthY + mNodeLength));
+                        float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+                        float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
                         if (x > startX && x < startX + mNodeLength && y > startY && y < startY + mNodeLength) {
-                            if (mGame.setPlayerPosition(i)){
+                            if (mGame.setPlayerPosition(i)) {
                                 invalidate();
+                            } else {
+                                if (mGame.gameOver(i) == -1) {
+                                    setDrawShortestPath();
+                                    invalidate();
+                                }
                             }
                             break;
                         }
                     }
                 }
+
                 break;
         }
         return true;

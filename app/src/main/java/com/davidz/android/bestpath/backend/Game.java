@@ -29,6 +29,7 @@ public class Game {
     private Player mPlayer;
 
     private int mPlayerEnergy;
+    private List<Integer> mShortestList=new ArrayList<>();
 
     /**
      *
@@ -66,7 +67,6 @@ public class Game {
         else
             throw new IllegalArgumentException("choose edgeLevel from one of the following letters: S, M");
         createPath();
-        //TODO:list of bestPath
         mPlayerEnergy=shortestPath(0,nodeNum-1);
 
         mPlayer=new Player(0,nodeNum-1,mPlayerEnergy);
@@ -244,7 +244,8 @@ public class Game {
     }
 
     public boolean setPlayerPosition(int nodeIndex){
-        if(adjacentArray[nodeIndex][mPlayer.getCurrentPosition()]>0){
+        int cost=adjacentArray[nodeIndex][mPlayer.getCurrentPosition()];
+        if(cost>0 && mPlayer.getEnergy()>=cost && mPlayer.getCurrentPosition()!=nodeIndex){
             mPlayer.costEnergy(adjacentArray[nodeIndex][mPlayer.getCurrentPosition()]);
             mPlayer.setCurrentPosition(nodeIndex);
             return true;
@@ -258,13 +259,24 @@ public class Game {
      *
      * @return
      */
-    public int gameOver(){
-        //player lost
-        if(mPlayer.getEnergy()<=0){
+    public int gameOver(int nodeIndex){
+        //player win
+        if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
+            return 1;
+        }
+        //player lose
+        else if(mPlayer.getEnergy()<adjacentArray[nodeIndex][mPlayer.getCurrentPosition()]){
             return -1;
         }
+        //not end
+        else{
+            return 0;
+        }
+    }
+
+    public int gameOver(){
         //player win
-        else if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
+        if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
             return 1;
         }
         //not end
@@ -307,11 +319,17 @@ public class Game {
     public int getMaxEnergy(){
         return mPlayerEnergy;
     }
+
+    public List<Integer> getShortestList(){
+        return mShortestList;
+    }
     /**
      *Dijkstra's Algorithm
      *In this method, we DEFINE -1 as infinity
-     * Precondition:startNode and endNode >=0
+     * PreCondition:startNode and endNode >=0
      *              startNode!=endNode
+     * PostCondition:return the cost of best path
+     *               save one possible shortestPath in mShortestPath, from endNode to startNode.
      */
     private int shortestPath(int startNode, int endNode){
         //A list of node ID that shows shortest path from start to end
@@ -361,6 +379,16 @@ public class Game {
                 currentNode=0;
             }
         }
+        int thisNode=endNode;
+        while(thisNode!=startNode){
+            shortestPath.add(thisNode);
+            thisNode=nodePrev.get(thisNode);
+        }
+        shortestPath.add(startNode);
+        if(!mShortestList.isEmpty()) {
+            mShortestList.clear();
+        }
+        mShortestList=shortestPath;
         return nodeCost.get(endNode);
     }
 }
