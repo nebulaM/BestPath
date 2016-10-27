@@ -361,11 +361,11 @@ public class Game {
                         if (thisEdgeCost != 0) {
                             int newCost=thisEdgeCost;
                             int checkNode = currentNode;
-                            do {
+                            while (checkNode != startNode){
                                 //order does not matter, not a bi-direction array
                                 newCost += adjacentArray[nodePrev.get(checkNode)][checkNode];
                                 checkNode = nodePrev.get(checkNode);
-                            }while (checkNode != startNode);
+                            }
                             if (nodeCost.get(i) == -1 || newCost < nodeCost.get(i)) {
                                 nodeCost.put(i, newCost);
                                 nodePrev.put(i, currentNode);
