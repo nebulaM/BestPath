@@ -1,11 +1,10 @@
 package com.nebulaM.android.bestpath.drawing;
 
 import android.content.Context;
-//import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.drawable.Drawable;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,9 +27,6 @@ public class GameDrawing extends View {
 
     private float mGameRouteOffsetY;
 
-    private float mEnergyBarW;
-    private float mEnergyBarH;
-
     private Path mPath;
 
     private float mLevel=5.0f;
@@ -41,14 +37,18 @@ public class GameDrawing extends View {
     private final int mEdgeProb=40;
 
     private boolean mDrawShortestPathFlag;
+
+    private float mRadius;
+    private float mDiameter;
+    private boolean mClockwise=true;
+    RectF outerCircle;
+    RectF innerCircle;
+    RectF shadowRectF;
     /**
      * @param context
      */
     public GameDrawing(Context context, AttributeSet attr) {
         super(context, attr);
-
-
-
         mGame =new Game((int)mLevel,mEdgeProb,'S');
 
         mPaint = new Paint();
@@ -62,8 +62,6 @@ public class GameDrawing extends View {
 
       //  mNode =context.getResources().getDrawable(R.drawable.node2d);
         mPath=new Path();
-
-
     }
     public void reset(){
         if(mGame!=null) {
@@ -98,130 +96,134 @@ public class GameDrawing extends View {
         }
     }
 
-   /* @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        int desiredWidth = (int) mWidth;
-        int desiredHeight = (int) mHeight;
-
-        int widthMode = View.MeasureSpec.getMode(widthMeasureSpec);
-        int widthSize = View.MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = View.MeasureSpec.getMode(heightMeasureSpec);
-        int heightSize = View.MeasureSpec.getSize(heightMeasureSpec);
-
-        int width;
-        int height;
-
-        if (widthMode == View.MeasureSpec.EXACTLY) {
-            width = widthSize;
-        }else if (widthMode == View.MeasureSpec.AT_MOST) {
-            //wrap content
-            width = Math.min(desiredWidth, widthSize);
-        } else {
-            width = desiredWidth;
-        }
-
-        if (heightMode == View.MeasureSpec.EXACTLY) {
-            height = heightSize;
-        } else if (heightMode == View.MeasureSpec.AT_MOST) {
-            height = Math.min(desiredHeight, heightSize);
-        } else {
-            height = desiredHeight;
-        }
-
-        setMeasuredDimension(width, height);
-    }*/
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mNodeLength=Math.min(getWidth(),getHeight())/(mLevel+(mLevel-1.0f)*0.8f);
-        mEnergyBarW=getWidth()/2.0f;
-        mEnergyBarH=getHeight()/20.0f;
-        mGameRouteOffsetY=mEnergyBarH*1.2f;
-        mEdgeLengthX =(getWidth()-mLevel*mNodeLength)/(mLevel-1.0f);
-        mEdgeLengthY =(getHeight()-mLevel*mNodeLength-mEnergyBarH*1.2f)/(mLevel-1.0f);
+        mRadius=getHeight()/16.0f;
+        mDiameter=mRadius*2;
+        outerCircle = new RectF();
+        innerCircle = new RectF();
+        shadowRectF = new RectF();
+        float startCord;
+        float horizontalOffset=getWidth()/2-mRadius;
+        startCord = .03f * mRadius;
+        //left top right bottom
+        outerCircle.set(startCord+horizontalOffset, startCord, mDiameter-startCord+horizontalOffset, mDiameter-startCord);
+        startCord = .3f * mRadius;
+        innerCircle.set(startCord+horizontalOffset, startCord, mDiameter-startCord+horizontalOffset, mDiameter-startCord);
 
-            //draw nodes
-            for (int i = 0; i < mGame.getNodeNum(); ++i) {
-                /*int startX = (int) (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
-                int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
-                drawDrawable(canvas, mNode, startX,startY,(int)(startX + mNodeLength),(int)(startY + mNodeLength));*/
-                mPaint.setColor(0xffff7f27);
-                float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
-                float startY = (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+        mGameRouteOffsetY= mDiameter*1.2f;
+        mNodeLength=Math.min(getWidth(),getHeight())/(mLevel+(mLevel-1.0f)*0.8f);
+        mEdgeLengthX =(getWidth()-mLevel*mNodeLength)/(mLevel-1.0f);
+        mEdgeLengthY =(getHeight()-mLevel*mNodeLength-mDiameter*1.2f)/(mLevel-1.0f);
+        //draw energy view
+        float currentEnergyPercent=(float)(mGame.getPlayerEnergy()*100/mGame.getMaxEnergy());
+        if(currentEnergyPercent>30){
+            // green
+            mPaint.setColor(0xff38e100);//, 0xff38e100);
+        }
+        else if(currentEnergyPercent>15){
+            // yellow
+            mPaint.setColor(0xfff5c401);//,0xfff5c401);
+        }
+        else{
+            //red
+            mPaint.setColor(0xffb7161b);//,0xffb7161b);
+        }
+        if(mClockwise) {
+            if(currentEnergyPercent==100.0f){
+                drawDonut(canvas, mPaint,0.0f, 359.99f);
+            }
+            else if(currentEnergyPercent==0.0f){
+                mPaint.setColor(0xffa2a2a2);
+                drawDonut(canvas, mPaint,0.0f, 359.99f);
+            }
+            else {
+                drawDonut(canvas, mPaint, 270.0f - currentEnergyPercent * 3.60f, currentEnergyPercent * 3.60f);
+                mPaint.setColor(0xffa2a2a2);
+                drawDonut(canvas, mPaint, 270.0f, (100-currentEnergyPercent) * 3.60f);
+            }
+        }
+        else{
+            if(currentEnergyPercent==100.0f){
+                drawDonut(canvas, mPaint,0.0f, 359.9f);
+            }
+            else if(currentEnergyPercent==0.0f){
+                mPaint.setColor(0xffa2a2a2);
+                drawDonut(canvas, mPaint,0.0f, 359.99f);
+            }
+            else {
+                drawDonut(canvas, mPaint, 270.0f, currentEnergyPercent * 3.60f);
+                mPaint.setColor(0xffa2a2a2);
+                drawDonut(canvas, mPaint, 270.0f+currentEnergyPercent * 3.60f, (100.0f-currentEnergyPercent) * 3.60f);
+            }
+        }
+        mPaint.setColor(0xffa2a2a2);
+        if(mGame.getPlayerEnergy()>9) {
+            canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
+        }
+        else{
+            canvas.drawText(" "+mGame.getPlayerEnergy(), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
+        }
+
+        //draw nodes
+        for (int i = 0; i < mGame.getNodeNum(); ++i) {
+            /*int startX = (int) (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+            int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+            drawDrawable(canvas, mNode, startX,startY,(int)(startX + mNodeLength),(int)(startY + mNodeLength));*/
+            mPaint.setColor(0xffff7f27);
+            float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+            float startY = (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+            drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
+        }
+        //draw edges(different cost has different color)
+        for (int i = 0; i < mGame.getEdgeNum(); ++i) {
+            if (mGame.getEdgeCost(i) == 1) {
+                mPaint.setColor(0xff3fff00);
+            } else if (mGame.getEdgeCost(i) == 2) {
+                mPaint.setColor(0xfff0f000);
+            } else {
+                mPaint.setColor(0xffb7161b);
+            }
+            if (mGame.getEdgeStartYCord(i) == mGame.getEdgeEndYCord(i)) {
+                float startX = (mGame.getEdgeStartXCord(i)) * (mEdgeLengthX + mNodeLength) + mNodeLength;
+                float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEdgeLengthY + mNodeLength)) + mNodeLength/ 3.0f;
+                float endX = startX + mEdgeLengthX;
+                float endY = startY + mNodeLength/ 3.0f;
+                canvas.drawRect(startX, startY, endX, endY,mPaint);
+            } else if (mGame.getEdgeStartXCord(i) == mGame.getEdgeEndXCord(i)) {
+                float startX = (mGame.getEdgeStartXCord(i)) * (mEdgeLengthX + mNodeLength) + mNodeLength/ 3.0f;
+                float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEdgeLengthY + mNodeLength)) + mNodeLength;
+                float endX = startX + mNodeLength/ 3.0f;
+                float endY = startY + mEdgeLengthY;
+
+                canvas.drawRect(startX, startY, endX, endY,mPaint);
+            }
+        }
+
+        //draw player
+        // TODO:better shape and color
+        int i=mGame.getPlayerPosition();
+        mPaint.setColor(0xff3fff00);
+        float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+        float startY = mGameRouteOffsetY +(mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+        //canvas.drawRect(startX,startY,(startX + mNodeLength),(startY + mNodeLength),mPaint);
+        drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
+
+
+        //draw shortestPath if player lose
+        if(mDrawShortestPathFlag){
+            List<Integer> shortestPath=mGame.getShortestList();
+            for(i=0;i<shortestPath.size();++i){
+                mPaint.setColor(0xffff6c6c);
+                startX = (mGame.getNodeXCord(shortestPath.get(i)) * (mEdgeLengthX + mNodeLength));
+                startY = (mGameRouteOffsetY +mGame.getNodeYCord(shortestPath.get(i)) * (mEdgeLengthY + mNodeLength));
                 drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
             }
-            //draw edges(different cost has different color)
-            for (int i = 0; i < mGame.getEdgeNum(); ++i) {
-                if (mGame.getEdgeCost(i) == 1) {
-                    mPaint.setColor(0xff3fff00);
-                } else if (mGame.getEdgeCost(i) == 2) {
-                    mPaint.setColor(0xfff0f000);
-                } else {
-                    mPaint.setColor(0xffb7161b);
-                }
-                if (mGame.getEdgeStartYCord(i) == mGame.getEdgeEndYCord(i)) {
-                    float startX = (mGame.getEdgeStartXCord(i)) * (mEdgeLengthX + mNodeLength) + mNodeLength;
-                    float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEdgeLengthY + mNodeLength)) + mNodeLength/ 3.0f;
-                    float endX = startX + mEdgeLengthX;
-                    float endY = startY + mNodeLength/ 3.0f;
-                    canvas.drawRect(startX, startY, endX, endY,mPaint);
-                } else if (mGame.getEdgeStartXCord(i) == mGame.getEdgeEndXCord(i)) {
-                    float startX = (mGame.getEdgeStartXCord(i)) * (mEdgeLengthX + mNodeLength) + mNodeLength/ 3.0f;
-                    float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEdgeLengthY + mNodeLength)) + mNodeLength;
-                    float endX = startX + mNodeLength/ 3.0f;
-                    float endY = startY + mEdgeLengthY;
-
-                    canvas.drawRect(startX, startY, endX, endY,mPaint);
-                }
-            }
-
-            //draw player
-            // TODO:better shape and color
-            int i=mGame.getPlayerPosition();
-            mPaint.setColor(0xff3fff00);
-            float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
-            float startY = mGameRouteOffsetY +(mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
-            //canvas.drawRect(startX,startY,(startX + mNodeLength),(startY + mNodeLength),mPaint);
-            drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
-
-            // TODO:better shape and color
-            //draw energy bar
-            float currentEnergy=(float)mGame.getPlayerEnergy();
-            float maxEnergy=(float)mGame.getMaxEnergy();
-            //draw shadow for the energy bar first
-            mPaint.setColor(0xffa2a2a2);
-            canvas.drawRect(mEnergyBarW*(currentEnergy/maxEnergy),0,mEnergyBarW,mEnergyBarH,mPaint);
-            mPaint.setColor(0xffffff00);
-            canvas.drawRect(0,0,mEnergyBarW*(currentEnergy/maxEnergy),mEnergyBarH,mPaint);
-            mPaint.setColor(0xffffa448);
-            canvas.drawText("Energy "+mGame.getMaxEnergy(),mEnergyBarW,mEnergyBarH,mPaint);
-
-            //draw shortestPath if player lose
-            if(mDrawShortestPathFlag){
-                List<Integer> shortestPath=mGame.getShortestList();
-                for(i=0;i<shortestPath.size();++i){
-                    mPaint.setColor(0xffff6c6c);
-                    startX = (mGame.getNodeXCord(shortestPath.get(i)) * (mEdgeLengthX + mNodeLength));
-                    startY = (mGameRouteOffsetY +mGame.getNodeYCord(shortestPath.get(i)) * (mEdgeLengthY + mNodeLength));
-                    drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
-                }
-
-
-                mDrawShortestPathFlag=false;
-
-            }
+            mDrawShortestPathFlag=false;
+        }
 
     }
-
-    private void drawDrawable(Canvas canvas, Drawable draw, int startingX,
-                              int startingY, int endingX, int endingY) {
-        draw.setBounds(startingX, startingY, endingX, endingY);
-        draw.draw(canvas);
-    }
-
 
     private void drawRoundRect(Canvas canvas, Paint paint, Path path, float left, float top, float right, float bottom, float rx, float ry){
         path.reset();
@@ -250,6 +252,15 @@ public class GameDrawing extends View {
 
         path.close();
         canvas.drawPath(path, paint);
+    }
+
+
+    public void drawDonut(Canvas canvas, Paint paint, float start,float sweep){
+        mPath.reset();
+        mPath.arcTo(outerCircle, start, sweep, false);
+        mPath.arcTo(innerCircle, start+sweep, -sweep, false);
+        mPath.close();
+        canvas.drawPath(mPath, paint);
     }
 
     private void setDrawShortestPath(){
