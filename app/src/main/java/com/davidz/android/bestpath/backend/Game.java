@@ -72,7 +72,6 @@ public class Game {
         mPlayer=new Player(0,nodeNum-1,mPlayerEnergy);
 
     }
-
     /**
      * edge between node
      * in total there are 3*routeSize different small adjacent matrices
@@ -85,9 +84,6 @@ public class Game {
             printAdjacentMatrix("randomConnectNodes");
        
     }
-    
-
-
     /**
      * @param nodeList
      * @param probability
@@ -154,8 +150,6 @@ public class Game {
                     }
                 }
         }
-
-
         //Not bi-direction, so endIndex is always bigger than startIndex
         //startIndex always < endIndex
         for(int startIndex=0;startIndex<upperBound;++startIndex) {
@@ -168,7 +162,6 @@ public class Game {
 
 
     }
-
     private boolean nodeHasEdge(int startIndex, int[][] m){
         for(int endIndex=0; endIndex<nodeNum; ++endIndex){
             if(m[startIndex][endIndex]!=0){
@@ -177,8 +170,6 @@ public class Game {
         }
         return false;
     }
-
-
     /**
      * print out the usage and coordinate of node
      */
@@ -208,9 +199,6 @@ public class Game {
             }
         }
     }
-
-
-
     public int getNodeNum(){
         return nodeNum;
     }
@@ -222,11 +210,9 @@ public class Game {
             return 0;
     }
 
-
     public int getEdgeCost(int index){
         return edgeList.get(index).getEdgeCost();
     }
-
 
     public int getEdgeStartXCord(int edgeIndex){
 
@@ -236,9 +222,11 @@ public class Game {
     public int getEdgeStartYCord(int edgeIndex) {
         return nodeList.get(edgeList.get(edgeIndex).getStartNodeIndex()).getYCord();
     }
+
     public int getEdgeEndXCord(int edgeIndex) {
         return nodeList.get(edgeList.get(edgeIndex).getEndNodeIndex()).getXCord();
     }
+
     public int getEdgeEndYCord(int edgeIndex) {
        return nodeList.get(edgeList.get(edgeIndex).getEndNodeIndex()).getYCord();
     }
@@ -254,7 +242,6 @@ public class Game {
             return false;
         }
     }
-
     /**
      *
      * @return
@@ -306,7 +293,6 @@ public class Game {
     public int getPlayerEnergy(){
         return mPlayer.getEnergy();
     }
-
 
     public int getNodeXCord(int nodeIndex){
         return nodeList.get(nodeIndex).getXCord();

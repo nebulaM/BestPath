@@ -18,9 +18,11 @@ public class Edge {
     public int getStartNodeIndex(){
         return startNodeIndex;
     }
+
     public int getEndNodeIndex(){
         return endNodeIndex;
     }
+
     public  int getEdgeCost(){
         return edgeCost;
     }

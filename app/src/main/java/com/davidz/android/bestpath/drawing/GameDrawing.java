@@ -5,10 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.nebulaM.android.bestpath.R;
 import com.nebulaM.android.bestpath.backend.Game;
 
 import java.util.List;
@@ -31,7 +33,7 @@ public class GameDrawing extends View {
 
     private float mLevel=5.0f;
 
-    private final float mMaxLevel=20.0f;
+    private final float mMaxLevel=10.0f;
     private final float mMinLevel=2.0f;
 
     private final int mEdgeProb=40;
@@ -44,6 +46,8 @@ public class GameDrawing extends View {
     RectF outerCircle;
     RectF innerCircle;
     RectF shadowRectF;
+
+    private Drawable mNode;
     /**
      * @param context
      */
@@ -60,7 +64,7 @@ public class GameDrawing extends View {
 
         mPaint.setTextSize(50);
 
-      //  mNode =context.getResources().getDrawable(R.drawable.node2d);
+        //mNode =context.getResources().getDrawable(R.mipmap.ic_node);
         mPath=new Path();
     }
     public void reset(){
@@ -167,11 +171,11 @@ public class GameDrawing extends View {
         }
 
         //draw nodes
+        mPaint.setColor(0xff984c15);
         for (int i = 0; i < mGame.getNodeNum(); ++i) {
             /*int startX = (int) (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
             int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
             drawDrawable(canvas, mNode, startX,startY,(int)(startX + mNodeLength),(int)(startY + mNodeLength));*/
-            mPaint.setColor(0xffff7f27);
             float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
             float startY = (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
             drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
@@ -179,11 +183,11 @@ public class GameDrawing extends View {
         //draw edges(different cost has different color)
         for (int i = 0; i < mGame.getEdgeNum(); ++i) {
             if (mGame.getEdgeCost(i) == 1) {
-                mPaint.setColor(0xff3fff00);
+                mPaint.setColor(0xff98fb98);
             } else if (mGame.getEdgeCost(i) == 2) {
-                mPaint.setColor(0xfff0f000);
+                mPaint.setColor(0xffe1bc00);
             } else {
-                mPaint.setColor(0xffb7161b);
+                mPaint.setColor(0xffffa089);
             }
             if (mGame.getEdgeStartYCord(i) == mGame.getEdgeEndYCord(i)) {
                 float startX = (mGame.getEdgeStartXCord(i)) * (mEdgeLengthX + mNodeLength) + mNodeLength;
@@ -211,20 +215,33 @@ public class GameDrawing extends View {
         drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
 
 
-        //draw shortestPath if player lose
+        //show a shortestPath if player not win
+        //TODO:predict if player can win or not
         if(mDrawShortestPathFlag){
             List<Integer> shortestPath=mGame.getShortestList();
+            mPaint.setColor(0xff919191);
+            float circleCenterOffset=mNodeLength/2.0f;
             for(i=0;i<shortestPath.size();++i){
-                mPaint.setColor(0xffff6c6c);
                 startX = (mGame.getNodeXCord(shortestPath.get(i)) * (mEdgeLengthX + mNodeLength));
                 startY = (mGameRouteOffsetY +mGame.getNodeYCord(shortestPath.get(i)) * (mEdgeLengthY + mNodeLength));
-                drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
+                float centerX=startX+circleCenterOffset;
+                float centerY=startY+circleCenterOffset;
+                canvas.drawCircle(centerX,centerY,mNodeLength/4.0f,mPaint);
             }
             mDrawShortestPathFlag=false;
         }
 
     }
 
+    private void drawDrawable(Canvas canvas, Drawable draw, int startingX,
+                              int startingY, int endingX, int endingY) {
+        draw.setBounds(startingX, startingY, endingX, endingY);
+        draw.draw(canvas);
+    }
+
+    /*
+    * http://stackoverflow.com/questions/5896234/how-to-use-android-canvas-to-draw-a-rectangle-with-only-topleft-and-topright-cor
+    * */
     private void drawRoundRect(Canvas canvas, Paint paint, Path path, float left, float top, float right, float bottom, float rx, float ry){
         path.reset();
         if (rx < 0) rx = 0;
@@ -253,7 +270,6 @@ public class GameDrawing extends View {
         path.close();
         canvas.drawPath(path, paint);
     }
-
 
     public void drawDonut(Canvas canvas, Paint paint, float start,float sweep){
         mPath.reset();
@@ -291,7 +307,6 @@ public class GameDrawing extends View {
                         }
                     }
                 }
-
                 break;
         }
         return true;

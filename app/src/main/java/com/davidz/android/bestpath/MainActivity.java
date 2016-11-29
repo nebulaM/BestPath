@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity{
         }
 
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -59,13 +58,10 @@ public class MainActivity extends AppCompatActivity{
     public void setBackground(){
         mBackgroundColorPref = sharedPref.getString(KEY_PREF_BG_COLOR, "");
         if(mBackgroundColorPref.equals("gradient_background_cyan")) {
-            this.findViewById(R.id.frag_container).setBackgroundResource(R.drawable.gradient_background_cyan);
+            this.findViewById(R.id.frag_container).setBackgroundColor(0xff303030);
         }
         else if(mBackgroundColorPref.equals("gradient_background_pink")) {
             this.findViewById(R.id.frag_container).setBackgroundResource(R.drawable.gradient_background_pink);
         }
     }
-
-
-
 }

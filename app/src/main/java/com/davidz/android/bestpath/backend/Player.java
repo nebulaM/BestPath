@@ -37,6 +37,7 @@ public class Player {
         else
             throw new IllegalArgumentException("nodeIndex must >0");
     }
+
     public int getCurrentPosition(){
         return currentPosition;
     }
@@ -48,5 +49,4 @@ public class Player {
     public void setEnergy(int energy){
         this.energy=energy;
     }
-
 }

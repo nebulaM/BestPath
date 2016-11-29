@@ -40,7 +40,6 @@ public class Node {
 
     }
 
-
     public int getXCord(){
         return xCord;
     }
@@ -52,6 +51,5 @@ public class Node {
     public int getNodeID(){
         return nodeID;
     }
-
 
 }
