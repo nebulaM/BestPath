@@ -47,7 +47,11 @@ public class GameDrawing extends View {
     RectF innerCircle;
     RectF shadowRectF;
 
-    private Drawable mNode;
+    private Drawable mPlayerNormal;
+    private Drawable mPlayerTired;
+    private Drawable mPlayerDrooling;
+    private Drawable mPlayerWin;
+    private Drawable mPlayerNotWin;
     /**
      * @param context
      */
@@ -63,8 +67,14 @@ public class GameDrawing extends View {
         mPaint.setAntiAlias(true);
 
         mPaint.setTextSize(50);
-
-        //mNode =context.getResources().getDrawable(R.mipmap.ic_node);
+        /*
+        * Emoji provided free by http://emojione.com
+        * */
+        mPlayerNormal =context.getResources().getDrawable(R.drawable.neutral);
+        mPlayerTired =context.getResources().getDrawable(R.drawable.tired);
+        mPlayerDrooling=context.getResources().getDrawable(R.drawable.drooling);
+        mPlayerWin=context.getResources().getDrawable(R.drawable.smile_normal);
+        mPlayerNotWin=context.getResources().getDrawable(R.drawable.screming);
         mPath=new Path();
     }
     public void reset(){
@@ -205,32 +215,39 @@ public class GameDrawing extends View {
             }
         }
 
-        //draw player
-        // TODO:better shape and color
-        int i=mGame.getPlayerPosition();
-        mPaint.setColor(0xff3fff00);
-        float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
-        float startY = mGameRouteOffsetY +(mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
-        //canvas.drawRect(startX,startY,(startX + mNodeLength),(startY + mNodeLength),mPaint);
-        drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
-
-
-        //show a shortestPath if player not win
         //TODO:predict if player can win or not
+        //show a shortestPath if player not win
         if(mDrawShortestPathFlag){
             List<Integer> shortestPath=mGame.getShortestList();
             mPaint.setColor(0xff919191);
             float circleCenterOffset=mNodeLength/2.0f;
-            for(i=0;i<shortestPath.size();++i){
-                startX = (mGame.getNodeXCord(shortestPath.get(i)) * (mEdgeLengthX + mNodeLength));
-                startY = (mGameRouteOffsetY +mGame.getNodeYCord(shortestPath.get(i)) * (mEdgeLengthY + mNodeLength));
+            for(int i=0;i<shortestPath.size();++i){
+                float startX = (mGame.getNodeXCord(shortestPath.get(i)) * (mEdgeLengthX + mNodeLength));
+                float startY = (mGameRouteOffsetY +mGame.getNodeYCord(shortestPath.get(i)) * (mEdgeLengthY + mNodeLength));
                 float centerX=startX+circleCenterOffset;
                 float centerY=startY+circleCenterOffset;
                 canvas.drawCircle(centerX,centerY,mNodeLength/4.0f,mPaint);
             }
-            mDrawShortestPathFlag=false;
         }
-
+        //draw player
+        int i = mGame.getPlayerPosition();
+        mPaint.setColor(0xff3fff00);
+        float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+        float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+        //drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
+        if(mDrawShortestPathFlag){
+            drawDrawable(canvas, mPlayerNotWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+            mDrawShortestPathFlag=false;
+        }else if(mGame.gameOver()==1){
+            drawDrawable(canvas, mPlayerWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+        }
+        else if (currentEnergyPercent > 50) {
+            drawDrawable(canvas, mPlayerNormal, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+        } else if (currentEnergyPercent > 30) {
+            drawDrawable(canvas, mPlayerTired, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+        } else {
+            drawDrawable(canvas, mPlayerDrooling, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+        }
     }
 
     private void drawDrawable(Canvas canvas, Drawable draw, int startingX,
