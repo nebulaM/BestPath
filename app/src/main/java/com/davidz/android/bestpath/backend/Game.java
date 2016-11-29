@@ -214,22 +214,18 @@ public class Game {
         return edgeList.get(index).getEdgeCost();
     }
 
-    public int getEdgeStartXCord(int edgeIndex){
+    public int getEdgeStartNode(int edgeIndex){
 
-        return nodeList.get(edgeList.get(edgeIndex).getStartNodeIndex()).getXCord();
+        return edgeList.get(edgeIndex).getStartNodeIndex();
 
     }
-    public int getEdgeStartYCord(int edgeIndex) {
-        return nodeList.get(edgeList.get(edgeIndex).getStartNodeIndex()).getYCord();
+
+    public int getEdgeEndNode(int edgeIndex){
+
+        return edgeList.get(edgeIndex).getEndNodeIndex();
+
     }
 
-    public int getEdgeEndXCord(int edgeIndex) {
-        return nodeList.get(edgeList.get(edgeIndex).getEndNodeIndex()).getXCord();
-    }
-
-    public int getEdgeEndYCord(int edgeIndex) {
-       return nodeList.get(edgeList.get(edgeIndex).getEndNodeIndex()).getYCord();
-    }
 
     public boolean setPlayerPosition(int nodeIndex){
         int cost=adjacentArray[nodeIndex][mPlayer.getCurrentPosition()];

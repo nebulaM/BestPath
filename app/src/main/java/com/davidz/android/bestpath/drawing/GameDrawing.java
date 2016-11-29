@@ -57,7 +57,7 @@ public class GameDrawing extends View {
      */
     public GameDrawing(Context context, AttributeSet attr) {
         super(context, attr);
-        mGame =new Game((int)mLevel,mEdgeProb,'S');
+        mGame =new Game((int)mLevel,mEdgeProb,'M');
 
         mPaint = new Paint();
         mPaint.setDither(true);
@@ -95,7 +95,7 @@ public class GameDrawing extends View {
         if(mLevel<mMaxLevel) {
             mLevel += 1.0f;
             mGame=null;
-            mGame = new Game((int) mLevel, mEdgeProb, 'S');
+            mGame = new Game((int) mLevel, mEdgeProb, 'M');
             invalidate();
 
         }
@@ -105,7 +105,7 @@ public class GameDrawing extends View {
         if(mLevel>mMinLevel) {
             mLevel -= 1.0f;
             mGame=null;
-            mGame = new Game((int) mLevel, mEdgeProb, 'S');
+            mGame = new Game((int) mLevel, mEdgeProb, 'M');
             invalidate();
         }
     }
@@ -199,19 +199,36 @@ public class GameDrawing extends View {
             } else {
                 mPaint.setColor(0xffffa089);
             }
-            if (mGame.getEdgeStartYCord(i) == mGame.getEdgeEndYCord(i)) {
-                float startX = (mGame.getEdgeStartXCord(i)) * (mEdgeLengthX + mNodeLength) + mNodeLength;
-                float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEdgeLengthY + mNodeLength)) + mNodeLength/ 3.0f;
+            int startNodeID=mGame.getEdgeStartNode(i);
+            int endNodeID=mGame.getEdgeEndNode(i);
+            if ( mGame.getNodeYCord(startNodeID)==mGame.getNodeYCord(endNodeID)) {
+                float startX = (mGame.getNodeXCord(startNodeID)) * (mEdgeLengthX + mNodeLength) + mNodeLength;
+                float startY = mGameRouteOffsetY +(mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength)) + mNodeLength/ 3.0f;
                 float endX = startX + mEdgeLengthX;
                 float endY = startY + mNodeLength/ 3.0f;
                 canvas.drawRect(startX, startY, endX, endY,mPaint);
-            } else if (mGame.getEdgeStartXCord(i) == mGame.getEdgeEndXCord(i)) {
-                float startX = (mGame.getEdgeStartXCord(i)) * (mEdgeLengthX + mNodeLength) + mNodeLength/ 3.0f;
-                float startY = mGameRouteOffsetY +(mGame.getEdgeStartYCord(i) * (mEdgeLengthY + mNodeLength)) + mNodeLength;
+            } else if (mGame.getNodeXCord(startNodeID) == mGame.getNodeXCord(endNodeID)) {
+                float startX = (mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength)) + mNodeLength/ 3.0f;
+                float startY = mGameRouteOffsetY +(mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength)) + mNodeLength;
                 float endX = startX + mNodeLength/ 3.0f;
                 float endY = startY + mEdgeLengthY;
 
                 canvas.drawRect(startX, startY, endX, endY,mPaint);
+            } else{
+                if (mGame.getNodeXCord(startNodeID) < mGame.getNodeXCord(endNodeID)) {
+                    float startX = (mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength))+mNodeLength;
+                    float startY = (mGameRouteOffsetY +mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength))+mNodeLength;
+                    float endX = (mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength));
+                    float endY = (mGameRouteOffsetY +mGame.getNodeYCord(endNodeID) * (mEdgeLengthY + mNodeLength));
+                    drawDiagonal(canvas,mPaint,startX,startY,endX,endY,mEdgeLengthY,true);
+                }
+                else{
+                    float startX = (mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength));
+                    float startY = (mGameRouteOffsetY +mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength))+mNodeLength;
+                    float endX = (mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength))+mNodeLength;
+                    float endY = (mGameRouteOffsetY +mGame.getNodeYCord(endNodeID) * (mEdgeLengthY + mNodeLength));
+                    drawDiagonal(canvas,mPaint,startX,startY,endX,endY,mEdgeLengthY,false);
+                }
             }
         }
 
@@ -288,10 +305,33 @@ public class GameDrawing extends View {
         canvas.drawPath(path, paint);
     }
 
-    public void drawDonut(Canvas canvas, Paint paint, float start,float sweep){
+    private void drawDonut(Canvas canvas, Paint paint, float start,float sweep){
         mPath.reset();
         mPath.arcTo(outerCircle, start, sweep, false);
         mPath.arcTo(innerCircle, start+sweep, -sweep, false);
+        mPath.close();
+        canvas.drawPath(mPath, paint);
+    }
+
+    private void drawDiagonal(Canvas canvas, Paint paint, float startX, float startY, float endX, float endY, float width, boolean LtoR){
+        mPath.reset();
+        float offset=width/3.0f;
+        if(LtoR){
+            mPath.moveTo(startX-offset,startY);
+            mPath.lineTo(startX,startY);
+            mPath.lineTo(startX,startY-offset);
+            mPath.lineTo(endX+offset,endY);
+            mPath.lineTo(endX,endY);
+            mPath.lineTo(endX,endY+offset);
+        }
+        else{
+            mPath.moveTo(startX,startY-offset);
+            mPath.lineTo(startX,startY);
+            mPath.lineTo(startX+offset,startY);
+            mPath.lineTo(endX,endY+offset);
+            mPath.lineTo(endX,endY);
+            mPath.lineTo(endX-offset,endY);
+        }
         mPath.close();
         canvas.drawPath(mPath, paint);
     }
