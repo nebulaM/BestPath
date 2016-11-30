@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity{
     public void onResume() {
         super.onResume();
         sharedPref.registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
-        Toast.makeText(this,"ActResume!",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"ActResume!",Toast.LENGTH_SHORT).show();
 
     }
 
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity{
     public void onPause() {
         super.onPause();
         sharedPref.unregisterOnSharedPreferenceChangeListener(mPreferenceChangeListener);
-        Toast.makeText(this,"ActPause!",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"ActPause!",Toast.LENGTH_SHORT).show();
     }
 
     public void setBackground(){
