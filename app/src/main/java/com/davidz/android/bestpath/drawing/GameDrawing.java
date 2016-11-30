@@ -212,7 +212,6 @@ public class GameDrawing extends View {
                 float startY = mGameRouteOffsetY +(mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength)) + mNodeLength;
                 float endX = startX + mNodeLength/ 3.0f;
                 float endY = startY + mEdgeLengthY;
-
                 canvas.drawRect(startX, startY, endX, endY,mPaint);
             } else{
                 if (mGame.getNodeXCord(startNodeID) < mGame.getNodeXCord(endNodeID)) {
@@ -233,7 +232,7 @@ public class GameDrawing extends View {
         }
 
         //TODO:predict if player can win or not
-        //show a shortestPath if player not win
+        //show one of the possible shortest paths if player not win
         if(mDrawShortestPathFlag){
             List<Integer> shortestPath=mGame.getShortestList();
             mPaint.setColor(0xff919191);
@@ -251,7 +250,6 @@ public class GameDrawing extends View {
         mPaint.setColor(0xff3fff00);
         float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
         float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
-        //drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
         if(mDrawShortestPathFlag){
             drawDrawable(canvas, mPlayerNotWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
             mDrawShortestPathFlag=false;
@@ -286,21 +284,15 @@ public class GameDrawing extends View {
         if (ry > height/2) ry = height/2;
         float widthMinusCorners = (width - (2 * rx));
         float heightMinusCorners = (height - (2 * ry));
-
         path.moveTo(right, top + ry);
         path.rQuadTo(0, -ry, -rx, -ry);//top-right corner
         path.rLineTo(-widthMinusCorners, 0);
         path.rQuadTo(-rx, 0, -rx, ry); //top-left corner
         path.rLineTo(0, heightMinusCorners);
-
-
         path.rQuadTo(0, ry, rx, ry);//bottom-left corner
         path.rLineTo(widthMinusCorners, 0);
         path.rQuadTo(rx, 0, rx, -ry); //bottom-right corner
-
-
         path.rLineTo(0, -heightMinusCorners);
-
         path.close();
         canvas.drawPath(path, paint);
     }
@@ -343,6 +335,8 @@ public class GameDrawing extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //only interested in single touch
+        float toleranceX=mEdgeLengthX*0.4f;
+        float toleranceY=mEdgeLengthY*0.4f;
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
                 float x = event.getX();
@@ -351,7 +345,8 @@ public class GameDrawing extends View {
                     for (int i = 0; i < mGame.getNodeNum(); ++i) {
                         float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
                         float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
-                        if (x > startX && x < startX + mNodeLength && y > startY && y < startY + mNodeLength) {
+
+                        if (x > (startX-toleranceX) && x < (startX + mNodeLength+toleranceX) && (y > startY-toleranceY) && (y < startY + mNodeLength+toleranceY)) {
                             if (mGame.setPlayerPosition(i)) {
                                 invalidate();
                             } else {
