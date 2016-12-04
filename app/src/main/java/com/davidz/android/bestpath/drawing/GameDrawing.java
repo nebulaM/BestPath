@@ -7,8 +7,10 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.nebulaM.android.bestpath.R;
 import com.nebulaM.android.bestpath.backend.Game;
@@ -19,6 +21,7 @@ import java.util.List;
  * Created by nebulaM on 9/19/2016.
  */
 public class GameDrawing extends View {
+    private final String TAG="GameDrawing";
     private Game mGame;
 
     private float mEdgeLengthX;
@@ -52,6 +55,8 @@ public class GameDrawing extends View {
     private Drawable mPlayerDrooling;
     private Drawable mPlayerWin;
     private Drawable mPlayerNotWin;
+
+    private boolean mDrawingParametersReady=false;
     /**
      * @param context
      */
@@ -76,6 +81,10 @@ public class GameDrawing extends View {
         mPlayerWin=context.getResources().getDrawable(R.drawable.smile_normal);
         mPlayerNotWin=context.getResources().getDrawable(R.drawable.screming);
         mPath=new Path();
+
+
+
+
     }
     public void reset(){
         if(mGame!=null) {
@@ -97,6 +106,7 @@ public class GameDrawing extends View {
             mGame=null;
             mGame = new Game((int) mLevel, mEdgeProb, 'M');
             invalidate();
+            mDrawingParametersReady=false;
 
         }
     }
@@ -107,29 +117,33 @@ public class GameDrawing extends View {
             mGame=null;
             mGame = new Game((int) mLevel, mEdgeProb, 'M');
             invalidate();
+            mDrawingParametersReady=false;
         }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mRadius=getHeight()/16.0f;
-        mDiameter=mRadius*2;
-        outerCircle = new RectF();
-        innerCircle = new RectF();
-        shadowRectF = new RectF();
-        float startCord;
-        float horizontalOffset=getWidth()/2-mRadius;
-        startCord = .03f * mRadius;
-        //left top right bottom
-        outerCircle.set(startCord+horizontalOffset, startCord, mDiameter-startCord+horizontalOffset, mDiameter-startCord);
-        startCord = .3f * mRadius;
-        innerCircle.set(startCord+horizontalOffset, startCord, mDiameter-startCord+horizontalOffset, mDiameter-startCord);
+        if(!mDrawingParametersReady) {
+            mRadius = getHeight() / 16.0f;
+            mDiameter = mRadius * 2;
+            outerCircle = new RectF();
+            innerCircle = new RectF();
+            shadowRectF = new RectF();
+            float startCord;
+            float horizontalOffset = getWidth() / 2 - mRadius;
+            startCord = .03f * mRadius;
+            //left top right bottom
+            outerCircle.set(startCord + horizontalOffset, startCord, mDiameter - startCord + horizontalOffset, mDiameter - startCord);
+            startCord = .1f * mRadius;
+            innerCircle.set(startCord + horizontalOffset, startCord, mDiameter - startCord + horizontalOffset, mDiameter - startCord);
 
-        mGameRouteOffsetY= mDiameter*1.2f;
-        mNodeLength=Math.min(getWidth(),getHeight())/(mLevel+(mLevel-1.0f)*0.8f);
-        mEdgeLengthX =(getWidth()-mLevel*mNodeLength)/(mLevel-1.0f);
-        mEdgeLengthY =(getHeight()-mLevel*mNodeLength-mDiameter*1.2f)/(mLevel-1.0f);
+            mGameRouteOffsetY = mDiameter * 1.2f;
+            mNodeLength = Math.min(getWidth(), getHeight()) / (mLevel + (mLevel - 1.0f) * 0.8f);
+            mEdgeLengthX = (getWidth() - mLevel * mNodeLength) / (mLevel - 1.0f);
+            mEdgeLengthY = (getHeight() - mLevel * mNodeLength - mDiameter * 1.2f) / (mLevel - 1.0f);
+        }
+        mDrawingParametersReady=true;
         //draw energy view
         float currentEnergyPercent=(float)(mGame.getPlayerEnergy()*100/mGame.getMaxEnergy());
         if(currentEnergyPercent>30){
@@ -219,17 +233,19 @@ public class GameDrawing extends View {
                     float startY = (mGameRouteOffsetY +mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength))+mNodeLength;
                     float endX = (mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength));
                     float endY = (mGameRouteOffsetY +mGame.getNodeYCord(endNodeID) * (mEdgeLengthY + mNodeLength));
-                    drawDiagonal(canvas,mPaint,startX,startY,endX,endY,mEdgeLengthY,true);
+                    drawDiagonal(canvas,mPaint,startX,startY,endX,endY,mEdgeLengthX,true);
                 }
                 else{
                     float startX = (mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength));
                     float startY = (mGameRouteOffsetY +mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength))+mNodeLength;
                     float endX = (mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength))+mNodeLength;
                     float endY = (mGameRouteOffsetY +mGame.getNodeYCord(endNodeID) * (mEdgeLengthY + mNodeLength));
-                    drawDiagonal(canvas,mPaint,startX,startY,endX,endY,mEdgeLengthY,false);
+                    drawDiagonal(canvas,mPaint,startX,startY,endX,endY,mEdgeLengthX,false);
                 }
             }
         }
+
+        Log.d(TAG,"EdgeLengthX = "+mEdgeLengthX+" and EdgeLengthY = "+mEdgeLengthY);
 
         //TODO:predict if player can win or not
         //show one of the possible shortest paths if player not win
