@@ -85,6 +85,7 @@ public class GameDrawing extends View {
     public void reset(){
         if(mGame!=null) {
             mGame.resetPlayer();
+            this.clearDrawShortestPath();
             invalidate();
         }
     }
@@ -92,6 +93,7 @@ public class GameDrawing extends View {
     public void restart(){
         if(mGame!=null) {
             mGame.resetGame();
+            this.clearDrawShortestPath();
             invalidate();
         }
     }
@@ -101,9 +103,9 @@ public class GameDrawing extends View {
             mLevel += 1.0f;
             mGame=null;
             mGame = new Game((int) mLevel, mEdgeProb, 'M');
+            //not ready to draw, need to re-calculate drawing parameters in canvas method
+            this.notReadToDraw();
             invalidate();
-            mDrawingParametersReady=false;
-
         }
     }
 
@@ -112,8 +114,8 @@ public class GameDrawing extends View {
             mLevel -= 1.0f;
             mGame=null;
             mGame = new Game((int) mLevel, mEdgeProb, 'M');
+            this.notReadToDraw();
             invalidate();
-            mDrawingParametersReady=false;
         }
     }
 
@@ -242,6 +244,25 @@ public class GameDrawing extends View {
         Log.d(TAG,"NodeLength = "+mNodeLength);
         Log.d(TAG,"EdgeLengthX = "+mEdgeLengthX+" and EdgeLengthY = "+mEdgeLengthY);
 
+        //draw player
+        if(true) {//useless if statement, just want to locally define parameters i, startX and startY
+            int i = mGame.getPlayerPosition();
+            mPaint.setColor(0xff3fff00);
+            float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+            float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+            if (mDrawShortestPathFlag) {
+                drawDrawable(canvas, mPlayerNotWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+            } else if (mGame.gameOver() == 1) {
+                drawDrawable(canvas, mPlayerWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+            } else if (currentEnergyPercent > 50) {
+                drawDrawable(canvas, mPlayerNormal, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+            } else if (currentEnergyPercent > 30) {
+                drawDrawable(canvas, mPlayerTired, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+            } else {
+                drawDrawable(canvas, mPlayerDrooling, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
+            }
+        }
+
         //TODO:predict if player can win or not
         //show one of the possible shortest paths if player not win
         if(mDrawShortestPathFlag){
@@ -256,23 +277,7 @@ public class GameDrawing extends View {
                 canvas.drawCircle(centerX,centerY,mNodeLength/4.0f,mPaint);
             }
         }
-        //draw player
-        int i = mGame.getPlayerPosition();
-        mPaint.setColor(0xff3fff00);
-        float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
-        float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
-        if(mDrawShortestPathFlag){
-            drawDrawable(canvas, mPlayerNotWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
-            mDrawShortestPathFlag=false;
-        }else if(mGame.gameOver()==1){
-            drawDrawable(canvas, mPlayerWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
-        } else if (currentEnergyPercent > 50) {
-            drawDrawable(canvas, mPlayerNormal, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
-        } else if (currentEnergyPercent > 30) {
-            drawDrawable(canvas, mPlayerTired, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
-        } else {
-            drawDrawable(canvas, mPlayerDrooling, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
-        }
+
     }
 
     /**
@@ -375,6 +380,12 @@ public class GameDrawing extends View {
     //request drawing of a shortest path(may have more than one shortest path but only show one)
     private void setDrawShortestPath(){
         mDrawShortestPathFlag=true;
+    }
+
+    private void clearDrawShortestPath(){mDrawShortestPathFlag=false;}
+
+    private void notReadToDraw(){
+        mDrawingParametersReady=false;
     }
 
     @Override
