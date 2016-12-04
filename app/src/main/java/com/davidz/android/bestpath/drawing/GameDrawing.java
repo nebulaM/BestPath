@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.nebulaM.android.bestpath.R;
 import com.nebulaM.android.bestpath.backend.Game;
@@ -19,46 +18,51 @@ import java.util.List;
 
 /**
  * Created by nebulaM on 9/19/2016.
+ * Main view of the game
  */
 public class GameDrawing extends View {
     private final String TAG="GameDrawing";
     private Game mGame;
-
-    private float mEdgeLengthX;
-    private float mEdgeLengthY;
-
-    private Paint mPaint;
-    private float mNodeLength;
-
-    private float mGameRouteOffsetY;
-
-    private Path mPath;
-
-    private float mLevel=5.0f;
-
+    //max level has 10*10 nodes
     private final float mMaxLevel=10.0f;
+    //min level has 2*2 nodes
     private final float mMinLevel=2.0f;
-
+    //default level has 5*5 nodes
+    private float mLevel=5.0f;
+    //probability of having edge, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes
     private final int mEdgeProb=40;
 
-    private boolean mDrawShortestPathFlag;
-
-    private float mRadius;
-    private float mDiameter;
+    //draw shortest path if this flag = true
+    private boolean mDrawShortestPathFlag=false;
+    //rotation direction of energy view
     private boolean mClockwise=true;
-    RectF outerCircle;
-    RectF innerCircle;
-    RectF shadowRectF;
-
+    //parameters for donut-shaped energy view
+    private RectF outerCircle;
+    private RectF innerCircle;
+    private RectF shadowRectF;
+    //node-edge offset under energy view
+    private float mGameRouteOffsetY;
+    //edge/node dimensions
+    private float mEdgeLengthX;
+    private float mEdgeLengthY;
+    private float mNodeLength;
+    //canvas parameters
+    private Paint mPaint;
+    private Path mPath;
+    //canvas will update all drawing parameters before drawing if the following flag is set to false
+    private boolean mDrawingParametersReady=false;
+    //facial expression for players
     private Drawable mPlayerNormal;
     private Drawable mPlayerTired;
     private Drawable mPlayerDrooling;
     private Drawable mPlayerWin;
     private Drawable mPlayerNotWin;
 
-    private boolean mDrawingParametersReady=false;
+    private float mRadius;
+    private float mDiameter;
+
     /**
-     * @param context
+     * @param context context
      */
     public GameDrawing(Context context, AttributeSet attr) {
         super(context, attr);
@@ -81,6 +85,9 @@ public class GameDrawing extends View {
         mPlayerWin=context.getResources().getDrawable(R.drawable.smile_normal);
         mPlayerNotWin=context.getResources().getDrawable(R.drawable.screming);
         mPath=new Path();
+        outerCircle = new RectF();
+        innerCircle = new RectF();
+        shadowRectF = new RectF();
     }
     public void reset(){
         if(mGame!=null) {
@@ -125,9 +132,7 @@ public class GameDrawing extends View {
         if(!mDrawingParametersReady) {
             mRadius = getHeight() / 16.0f;
             mDiameter = mRadius * 2;
-            outerCircle = new RectF();
-            innerCircle = new RectF();
-            shadowRectF = new RectF();
+
             float startCord;
             float horizontalOffset = getWidth() / 2 - mRadius;
             startCord = .03f * mRadius;
@@ -282,12 +287,12 @@ public class GameDrawing extends View {
 
     /**
      * given boundaries, draw from source
-     * @param canvas
-     * @param draw
-     * @param startingX
-     * @param startingY
-     * @param endingX
-     * @param endingY
+     * @param canvas canvas to draw
+     * @param draw  source to draw
+     * @param startingX start x
+     * @param startingY start y
+     * @param endingX   end x
+     * @param endingY   end y
      */
     private void drawDrawable(Canvas canvas, Drawable draw, int startingX,
                               int startingY, int endingX, int endingY) {
@@ -323,9 +328,9 @@ public class GameDrawing extends View {
 
     /**
      * Draw donut shape
-     * @param canvas
-     * @param paint
-     * @param path
+     * @param canvas canvas to draw on
+     * @param paint canvas paint
+     * @param path canvas path
      * @param start start angle in degree
      * @param sweep draw how many degrees from start angle
      */
@@ -339,9 +344,9 @@ public class GameDrawing extends View {
 
     /**
      * Draw diagonal edge between two nodes
-     * @param canvas
-     * @param paint
-     * @param path
+     * @param canvas canvas
+     * @param paint paint
+     * @param path path
      * @param startX x cord of the corner of start node
      * @param startY y cord of the corner of start node
      * @param endX x cord of the corner of end node
