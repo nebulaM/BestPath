@@ -81,10 +81,6 @@ public class GameDrawing extends View {
         mPlayerWin=context.getResources().getDrawable(R.drawable.smile_normal);
         mPlayerNotWin=context.getResources().getDrawable(R.drawable.screming);
         mPath=new Path();
-
-
-
-
     }
     public void reset(){
         if(mGame!=null) {
@@ -146,51 +142,49 @@ public class GameDrawing extends View {
         mDrawingParametersReady=true;
         //draw energy view
         float currentEnergyPercent=(float)(mGame.getPlayerEnergy()*100/mGame.getMaxEnergy());
+        //use different color for energy view depend on current energy(in percentage)
         if(currentEnergyPercent>30){
             // green
             mPaint.setColor(0xff38e100);//, 0xff38e100);
-        }
-        else if(currentEnergyPercent>15){
+        } else if(currentEnergyPercent>15){
             // yellow
             mPaint.setColor(0xfff5c401);//,0xfff5c401);
-        }
-        else{
+        } else{
             //red
             mPaint.setColor(0xffb7161b);//,0xffb7161b);
         }
+        //energy decreases clockwise
         if(mClockwise) {
             if(currentEnergyPercent==100.0f){
-                drawDonut(canvas, mPaint,0.0f, 359.99f);
+                drawDonut(canvas, mPaint, mPath,0.0f, 359.99f);
             }
             else if(currentEnergyPercent==0.0f){
                 mPaint.setColor(0xffa2a2a2);
-                drawDonut(canvas, mPaint,0.0f, 359.99f);
+                drawDonut(canvas, mPaint, mPath, 0.0f, 359.99f);
             }
             else {
-                drawDonut(canvas, mPaint, 270.0f - currentEnergyPercent * 3.60f, currentEnergyPercent * 3.60f);
+                drawDonut(canvas, mPaint, mPath, 270.0f - currentEnergyPercent * 3.60f, currentEnergyPercent * 3.60f);
                 mPaint.setColor(0xffa2a2a2);
-                drawDonut(canvas, mPaint, 270.0f, (100-currentEnergyPercent) * 3.60f);
+                drawDonut(canvas, mPaint, mPath, 270.0f, (100-currentEnergyPercent) * 3.60f);
             }
-        }
-        else{
+        } else{//energy decreases counterclockwise
             if(currentEnergyPercent==100.0f){
-                drawDonut(canvas, mPaint,0.0f, 359.9f);
+                drawDonut(canvas, mPaint, mPath,0.0f, 359.9f);
             }
             else if(currentEnergyPercent==0.0f){
                 mPaint.setColor(0xffa2a2a2);
-                drawDonut(canvas, mPaint,0.0f, 359.99f);
+                drawDonut(canvas, mPaint, mPath,0.0f, 359.99f);
             }
             else {
-                drawDonut(canvas, mPaint, 270.0f, currentEnergyPercent * 3.60f);
+                drawDonut(canvas, mPaint, mPath, 270.0f, currentEnergyPercent * 3.60f);
                 mPaint.setColor(0xffa2a2a2);
-                drawDonut(canvas, mPaint, 270.0f+currentEnergyPercent * 3.60f, (100.0f-currentEnergyPercent) * 3.60f);
+                drawDonut(canvas, mPaint, mPath, 270.0f+currentEnergyPercent * 3.60f, (100.0f-currentEnergyPercent) * 3.60f);
             }
         }
         mPaint.setColor(0xffa2a2a2);
         if(mGame.getPlayerEnergy()>9) {
             canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
-        }
-        else{
+        } else{
             canvas.drawText(" "+mGame.getPlayerEnergy(), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
         }
 
@@ -204,8 +198,9 @@ public class GameDrawing extends View {
             float startY = (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
             drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
         }
-        //draw edges(different cost has different color)
+        //draw edges
         for (int i = 0; i < mGame.getEdgeNum(); ++i) {
+            //different cost has different color
             if (mGame.getEdgeCost(i) == 1) {
                 mPaint.setColor(0xff98fb98);
             } else if (mGame.getEdgeCost(i) == 2) {
@@ -233,18 +228,18 @@ public class GameDrawing extends View {
                     float startY = (mGameRouteOffsetY +mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength))+mNodeLength;
                     float endX = (mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength));
                     float endY = (mGameRouteOffsetY +mGame.getNodeYCord(endNodeID) * (mEdgeLengthY + mNodeLength));
-                    drawDiagonal(canvas,mPaint,startX,startY,endX,endY,mEdgeLengthX,true);
+                    drawDiagonal(canvas,mPaint,mPath, startX,startY,endX,endY,mEdgeLengthX,true);
                 }
                 else{
                     float startX = (mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength));
                     float startY = (mGameRouteOffsetY +mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength))+mNodeLength;
                     float endX = (mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength))+mNodeLength;
                     float endY = (mGameRouteOffsetY +mGame.getNodeYCord(endNodeID) * (mEdgeLengthY + mNodeLength));
-                    drawDiagonal(canvas,mPaint,startX,startY,endX,endY,mEdgeLengthX,false);
+                    drawDiagonal(canvas,mPaint,mPath,startX,startY,endX,endY,mEdgeLengthX,false);
                 }
             }
         }
-
+        Log.d(TAG,"NodeLength = "+mNodeLength);
         Log.d(TAG,"EdgeLengthX = "+mEdgeLengthX+" and EdgeLengthY = "+mEdgeLengthY);
 
         //TODO:predict if player can win or not
@@ -271,8 +266,7 @@ public class GameDrawing extends View {
             mDrawShortestPathFlag=false;
         }else if(mGame.gameOver()==1){
             drawDrawable(canvas, mPlayerWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
-        }
-        else if (currentEnergyPercent > 50) {
+        } else if (currentEnergyPercent > 50) {
             drawDrawable(canvas, mPlayerNormal, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
         } else if (currentEnergyPercent > 30) {
             drawDrawable(canvas, mPlayerTired, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
@@ -281,6 +275,15 @@ public class GameDrawing extends View {
         }
     }
 
+    /**
+     * given boundaries, draw from source
+     * @param canvas
+     * @param draw
+     * @param startingX
+     * @param startingY
+     * @param endingX
+     * @param endingY
+     */
     private void drawDrawable(Canvas canvas, Drawable draw, int startingX,
                               int startingY, int endingX, int endingY) {
         draw.setBounds(startingX, startingY, endingX, endingY);
@@ -313,37 +316,63 @@ public class GameDrawing extends View {
         canvas.drawPath(path, paint);
     }
 
-    private void drawDonut(Canvas canvas, Paint paint, float start,float sweep){
-        mPath.reset();
-        mPath.arcTo(outerCircle, start, sweep, false);
-        mPath.arcTo(innerCircle, start+sweep, -sweep, false);
-        mPath.close();
-        canvas.drawPath(mPath, paint);
+    /**
+     * Draw donut shape
+     * @param canvas
+     * @param paint
+     * @param path
+     * @param start start angle in degree
+     * @param sweep draw how many degrees from start angle
+     */
+    private void drawDonut(Canvas canvas, Paint paint, Path path, float start,float sweep){
+        path.reset();
+        path.arcTo(outerCircle, start, sweep, false);
+        path.arcTo(innerCircle, start+sweep, -sweep, false);
+        path.close();
+        canvas.drawPath(path, paint);
     }
 
-    private void drawDiagonal(Canvas canvas, Paint paint, float startX, float startY, float endX, float endY, float width, boolean LtoR){
-        mPath.reset();
-        float offset=width/3.0f;
+    /**
+     * Draw diagonal edge between two nodes
+     * @param canvas
+     * @param paint
+     * @param path
+     * @param startX x cord of the corner of start node
+     * @param startY y cord of the corner of start node
+     * @param endX x cord of the corner of end node
+     * @param endY y cord of the corner of end node
+     * @param width width of edge
+     * @param LtoR  since in our implementation, node index increases as we go from left to right, from top to bottom
+     *              define LtoR means "the edge from start node to end node" is "from left to right", which looks like this:
+     *              start
+     *                  \ \
+     *                   \ \
+     *                      end
+     *              whereas RtoL(LtoR=false) looks like this:
+     *                      start
+     *                    / /
+     *                   / /
+     *                  end
+     */
+    private void drawDiagonal(Canvas canvas, Paint paint, Path path, float startX, float startY, float endX, float endY, float width, boolean LtoR){
+        path.reset();
+        float offset=width/4.0f;
         if(LtoR){
-            mPath.moveTo(startX-offset,startY);
-            mPath.lineTo(startX,startY);
-            mPath.lineTo(startX,startY-offset);
-            mPath.lineTo(endX+offset,endY);
-            mPath.lineTo(endX,endY);
-            mPath.lineTo(endX,endY+offset);
+            path.moveTo(startX-offset,startY);
+            path.quadTo(startX, startY, startX, startY-offset); //top-left corner of this edge, which is bottom-right corner of start node
+            path.lineTo(endX+offset,endY);
+            path.quadTo(endX,endY,endX,endY+offset); //bottom-right corner of this edge, which is top-left corner of end node
         }
         else{
-            mPath.moveTo(startX,startY-offset);
-            mPath.lineTo(startX,startY);
-            mPath.lineTo(startX+offset,startY);
-            mPath.lineTo(endX,endY+offset);
-            mPath.lineTo(endX,endY);
-            mPath.lineTo(endX-offset,endY);
+            path.moveTo(startX,startY-offset);
+            path.quadTo(startX,startY,startX+offset,startY); //top-right corner of this edge, which is left-bottom corner of start node
+            path.lineTo(endX,endY+offset);
+            path.quadTo(endX,endY,endX-offset,endY); //bottom-left corner of this edge, which is top-right corner of end node
         }
-        mPath.close();
-        canvas.drawPath(mPath, paint);
+        path.close();
+        canvas.drawPath(path, paint);
     }
-
+    //request drawing of a shortest path(may have more than one shortest path but only show one)
     private void setDrawShortestPath(){
         mDrawShortestPathFlag=true;
     }
