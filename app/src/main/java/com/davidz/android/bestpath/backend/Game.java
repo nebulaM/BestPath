@@ -119,7 +119,7 @@ public class Game {
                             if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1 ) {
                                 //Graph is not bi-direct, so m[i][j] = m[j][i]
                                 if (m[endIndex][startIndex]==0) {
-                                    if((dx!=0 && dy==0 ) || (dx==0 && dy!=0 ) || (dx==0 && dy==0 )) {
+                                    if((dx!=0 && dy==0 ) || (dx==0 && dy!=0 ) || (dx==0 )) {
                                         //Case 1: endNode and startNode are in a line that is parallel to one of the Cartesian axis, nothing special
                                         if(!nodeHasEdge(startIndex,m)){
                                             m[startIndex][endIndex]=(1+randCost.nextInt(edgeCostMax));
@@ -131,14 +131,14 @@ public class Game {
                                         }
                                     }
                                     else if(edgeLevel!='S'){
-                                        if(dx!=0 && dy!=0 ){//Case 2: endNode and startNode forms an diagonal of a square on the x-y plane
+                                            //Case 2: endNode and startNode forms an diagonal of a square on the x-y plane
                                             //Only if the other diagonal of the square is not connected, will we try to connect THIS diagonal
                                             if(m[startIndex+dx][startIndex+(dy*yPositionScale)]==0){
                                                 if (randEdge.nextInt(100) <= probability) {
                                                     m[startIndex][endIndex] = (1 + randCost.nextInt(edgeCostMax));
                                                 }
                                             }
-                                        }
+
                                     }
 
                                     m[endIndex][startIndex]=m[startIndex][endIndex];
