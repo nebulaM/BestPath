@@ -404,19 +404,21 @@ public class GameDrawing extends View {
                 float y = event.getY();
                 if(mGame.gameOver()==0) {
                     for (int i = 0; i < mGame.getNodeNum(); ++i) {
-                        float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
-                        float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+                        if(!mDrawShortestPathFlag) {//disallow player to move once best path is shown
+                            float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+                            float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
 
-                        if (x > (startX-toleranceX) && x < (startX + mNodeLength+toleranceX) && (y > startY-toleranceY) && (y < startY + mNodeLength+toleranceY)) {
-                            if (mGame.setPlayerPosition(i)) {
-                                invalidate();
-                            } else {
-                                if (mGame.gameOver(i) == -1) {
-                                    setDrawShortestPath();
+                            if (x > (startX - toleranceX) && x < (startX + mNodeLength + toleranceX) && (y > startY - toleranceY) && (y < startY + mNodeLength + toleranceY)) {
+                                if (mGame.setPlayerPosition(i)) {
                                     invalidate();
+                                } else {
+                                    if (mGame.gameOver(i) == -1) {
+                                        setDrawShortestPath();
+                                        invalidate();
+                                    }
                                 }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
