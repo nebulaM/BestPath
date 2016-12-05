@@ -1,10 +1,12 @@
 package com.nebulaM.android.bestpath.backend;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -15,17 +17,16 @@ import java.util.Set;
  *
  */
 public class Game {
+    private final String TAG="Game";
     private final int routeSize;
     private final int nodeNum;
     private int edgeProbability;
-    private int[][] adjacentArray;
+    private List<ArrayList<Integer>> adjacentArray;
     private List<Node> nodeList;
     private List<Edge> edgeList;
     private final char edgeLevel;
 
     private static final int edgeCostMax=3;//max edgeCost is 3, we will add 1 to exclusive 0 and inclusive 3 in rand method
-
-    private static final boolean debug=false;//this is better:"true".equals(System.getProperty("debug"));
 
     private Player mPlayer;
 
@@ -50,12 +51,12 @@ public class Game {
             throw new IllegalArgumentException("routeSize must greater than 1");
 
         this.edgeProbability=edgeProbability;
-        this.nodeList=new ArrayList() ;
-        this.edgeList=new ArrayList() ;
+        this.nodeList=Collections.synchronizedList(new ArrayList()) ;
+        this.edgeList=Collections.synchronizedList(new ArrayList()) ;
 
         this.nodeNum=routeSize*routeSize;
 
-        this.adjacentArray=new int[nodeNum][nodeNum];
+        this.adjacentArray= Collections.synchronizedList(new ArrayList<ArrayList<Integer>>());
 
         //put all nodes in the nodeList
         for (int i=0;i<nodeNum;++i){
@@ -69,9 +70,7 @@ public class Game {
         }
         this.createPath(this.nodeList,this.edgeList, this.edgeProbability, this.adjacentArray);
 
-
-
-        mPlayerEnergy=shortestPath(0,nodeNum-1);
+        mPlayerEnergy=shortestPath(0,nodeNum-1,this.adjacentArray);
 
         mPlayer=new Player(0,nodeNum-1,mPlayerEnergy);
 
@@ -81,23 +80,18 @@ public class Game {
      * in total there are 3*routeSize different small adjacent matrices
      * the small adjacent matrices in "createPath" have a size of m[routeSize][routeSize], they will be mapped to a this.adjacentArray in the end
      */
-    private void createPath(List<Node> nodeList, List<Edge> edgeList, int edgeProbability, int[][] adjacentArray){
+    private void createPath(List<Node> nodeList, List<Edge> edgeList, int edgeProbability, List<ArrayList<Integer>> adjacentArray){
 
         randomConnectNodes(nodeList,edgeList,edgeProbability, adjacentArray);
         //keep track on all adjacent nodes of this node
         for(Node n : nodeList){
             n.clearAdjacentNodeID();
-            for(int i=0;i<adjacentArray.length;++i){
-                if(adjacentArray[n.getNodeID()][i]!=0){
+            for(int i=0;i<adjacentArray.size();++i){
+                if(adjacentArray.get(n.getNodeID()).get(i)!=0){
                     n.addAdjacentNodeID(i);
                 }
             }
         }
-
-        if(debug) {
-            printAdjacentMatrix("randomConnectNodes");
-        }
-       
     }
     /**
      * @param nodeList
@@ -105,7 +99,7 @@ public class Game {
      * @param m
      */
 
-    private void randomConnectNodes(List<Node> nodeList, List<Edge> edgeList, int probability, int[][] m){
+    private void randomConnectNodes(List<Node> nodeList, List<Edge> edgeList, int probability, List<ArrayList<Integer>> m){
         int upperBound=nodeNum;
         int yPositionScale=routeSize;
         Random randEdge = new Random();
@@ -115,9 +109,11 @@ public class Game {
 
         //initialize
         edgeList.clear();
+        m.clear();
         for(int startIndex=0;startIndex<upperBound;++startIndex) {
+            m.add(new ArrayList<Integer>());
             for(int endIndex=0;endIndex < upperBound; ++endIndex){
-                m[startIndex][endIndex]=0;
+                m.get(startIndex).add(0);
             }
         }
         //start to put connection information in adjacentMatrix
@@ -133,33 +129,33 @@ public class Game {
                             //only if the distance between two nodes <= 1 in all of x, y, z direction, will we consider connect the nodes.
                             if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1 ) {
                                 //Graph is not bi-direct, so m[i][j] = m[j][i]
-                                if (m[endIndex][startIndex]==0) {
+                                if (m.get(endIndex).get(startIndex)==0) {
                                     if((dx!=0 && dy==0 ) || (dx==0 && dy!=0 ) || (dx==0 )) {
                                         //Case 1: endNode and startNode are in a line that is parallel to one of the Cartesian axis, nothing special
                                         if(!nodeHasEdge(startIndex,m)){
-                                            m[startIndex][endIndex]=(1+randCost.nextInt(edgeCostMax));
+                                            m.get(startIndex).set(endIndex,1+randCost.nextInt(edgeCostMax));
                                         }
                                         else {
                                             if (randEdge.nextInt(100) <= probability) {//m[startIndex][endIndex]=true, so does m[endIndex][startIndex]
-                                                m[startIndex][endIndex]=(1+randCost.nextInt(edgeCostMax));
+                                                m.get(startIndex).set(endIndex,1+randCost.nextInt(edgeCostMax));
                                             }
                                         }
                                     }
                                     else if(edgeLevel!='S'){
                                             //Case 2: endNode and startNode forms an diagonal of a square on the x-y plane
                                             //Only if the other diagonal of the square is not connected, will we try to connect THIS diagonal
-                                            if(m[startIndex+dx][startIndex+(dy*yPositionScale)]==0){
+                                            if(m.get(startIndex+dx).get(startIndex+(dy*yPositionScale))==0){
                                                 if (randEdge.nextInt(100) <= probability) {
-                                                    m[startIndex][endIndex] = (1 + randCost.nextInt(edgeCostMax));
+                                                    m.get(startIndex).set(endIndex,1 + randCost.nextInt(edgeCostMax));
                                                 }
                                             }
 
                                     }
 
-                                    m[endIndex][startIndex]=m[startIndex][endIndex];
+                                    m.get(endIndex).set(startIndex,m.get(startIndex).get(endIndex));
                                 }
                                 else {
-                                    m[startIndex][endIndex] = m[endIndex][startIndex];
+                                    m.get(endIndex).set(startIndex,m.get(startIndex).get(endIndex));
                                 }
                             }
                     }
@@ -169,51 +165,23 @@ public class Game {
         //startIndex always < endIndex
         for(int startIndex=0;startIndex<upperBound;++startIndex) {
             for (int endIndex=startIndex; endIndex<upperBound;++endIndex)
-                if(m[startIndex][endIndex]!=0){
-                    Edge thisEdge=new Edge( startIndex, endIndex,m[startIndex][endIndex] );
+                if(m.get(startIndex).get(endIndex)!=0){
+                    Edge thisEdge=new Edge( startIndex, endIndex,m.get(startIndex).get(endIndex) );
                     edgeList.add(thisEdge);
                 }
         }
 
 
     }
-    private boolean nodeHasEdge(int startIndex, int[][] m){
+    private boolean nodeHasEdge(int startIndex, List<ArrayList<Integer>> m){
         for(int endIndex=0; endIndex<nodeNum; ++endIndex){
-            if(m[startIndex][endIndex]!=0){
+            if(m.get(startIndex).get(endIndex)!=0){
                 return true;
             }
         }
         return false;
     }
-    /**
-     * print out the usage and coordinate of node
-     */
-    public void printNodeList(String info){
-        System.out.println("Tracing node list @"+info+":");
-        System.out.println("Node ID\tx\ty");
-        for(int i=0;i<nodeNum;++i) {
-            System.out.println(nodeList.get(i).getNodeID()+"\t\t"+nodeList.get(i).getXCord()+"\t"+nodeList.get(i).getYCord()+"\t");
-        }
-    }
-    /**
-     * print out adjacent matrix for all nodes
-     */
-    private void printAdjacentMatrix(String info){
-        System.out.println("Tracing AdjacentMatrix @"+info+":");
-        System.out.println();
-        System.out.print("\t");
-        for(int i=0;i<nodeNum;++i){
-            System.out.print((i+1)+"\t");
-        }
-        for(int i=0;i<nodeNum;++i){
-            System.out.print("\n"+(i+1)+"\t");
-            for(int j=0;j<nodeNum;++j){
 
-                    System.out.print(adjacentArray[i][j]+"\t");
-
-            }
-        }
-    }
     public int getNodeNum(){
         return nodeNum;
     }
@@ -243,11 +211,11 @@ public class Game {
 
 
     public void setPlayerPosition(int nodeIndex){
-        int cost=adjacentArray[nodeIndex][mPlayer.getCurrentPosition()];
+        int cost=adjacentArray.get(nodeIndex).get(mPlayer.getCurrentPosition());
         if(cost<=0){//no edge between currentPosition and target node
             return;
         } else if( mPlayer.getEnergy()>=cost && mPlayer.getCurrentPosition()!=nodeIndex){
-            mPlayer.costEnergy(adjacentArray[nodeIndex][mPlayer.getCurrentPosition()]);
+            mPlayer.costEnergy(cost);
             mPlayer.setCurrentPosition(nodeIndex);
 
         } else{
@@ -266,7 +234,7 @@ public class Game {
             List<Integer> adjacentNodeID=nodeList.get(nodeIndex).getAdjacentNodeID();
             for(int i=0;i<adjacentNodeID.size();++i){
                 //at least player can move to one node next to this node
-                if(adjacentArray[nodeIndex][adjacentNodeID.get(i)]<=mPlayer.getEnergy()){
+                if(adjacentArray.get(nodeIndex).get(adjacentNodeID.get(i))<=mPlayer.getEnergy()){
                     //not end
                     return 0;
                 }
@@ -279,7 +247,7 @@ public class Game {
 
     public void resetGame(){
         createPath(nodeList, edgeList, edgeProbability, adjacentArray);
-        mPlayerEnergy=shortestPath(0,nodeNum-1);
+        mPlayerEnergy=shortestPath(0,nodeNum-1,adjacentArray);
         mPlayer.setCurrentPosition(0);
         mPlayer.setEnergy(mPlayerEnergy);
     }
@@ -314,63 +282,63 @@ public class Game {
     }
     /**
      *Dijkstra's Algorithm
-     *In this method, we DEFINE -1 as infinity
      * PreCondition:startNode and endNode >=0
      *              startNode!=endNode
      * PostCondition:return the cost of best path
      *               save one possible shortestPath in mShortestPath, from endNode to startNode.
      */
-    //TODO:BUG in calculating least cost, can find better path than calculated path
-    private int shortestPath(int startNode, int endNode){
+    private int shortestPath(int startNode, int endNode, List<ArrayList<Integer>> adjacentArray){
         //A list of node ID that shows shortest path from start to end
         List<Integer> shortestPath=new ArrayList<>();
-        //map nodeID to cost
+        //map node to cost
         //Map<this,costToStartNode>
-        Map<Integer,Integer> nodeCost=new HashMap<>();
+        Map<Node,Integer> nodeCost=new HashMap<>();
         //track previous node of this node
         //Map<this,previous>
         Map<Integer,Integer> nodePrev=new HashMap<>();
         //track all unvisited nodes by nodeID
         Set<Integer> unvisitedNodes=new HashSet<>();
         for(int i=0;i<nodeNum;++i){
-            nodeCost.put(i,-1);
-            nodePrev.put(i,-1);
+            int cost=(adjacentArray.get(startNode).get(i)==0)?Integer.MAX_VALUE-1:adjacentArray.get(startNode).get(i);
+            nodeCost.put(nodeList.get(i),cost);
+            if(cost!=Integer.MAX_VALUE-1){
+                nodePrev.put(i,startNode);
+            }else{
+                nodePrev.put(i,Integer.MAX_VALUE);
+            }
             unvisitedNodes.add(i);
         }
-        nodeCost.remove(startNode);
-        nodePrev.remove(startNode);
-        nodeCost.put(startNode,0);
         nodePrev.put(startNode,startNode);
         unvisitedNodes.remove(startNode);
         int currentNode=startNode;
         while(!unvisitedNodes.isEmpty()){
-            if (nodeCost.get(currentNode) != -1) {
-                unvisitedNodes.remove(currentNode);
-                for(int i=0;i<nodeNum;++i) {
-                    if (unvisitedNodes.contains(i)) {
-                        int thisEdgeCost = adjacentArray[currentNode][i];
-                        //thisEdgeCost==0 means no edge
-                        if (thisEdgeCost != 0) {
-                            int newCost=thisEdgeCost;
-                            int checkNode = currentNode;
-                            while (checkNode != startNode){
-                                //order does not matter, not a bi-direction array
-                                newCost += adjacentArray[nodePrev.get(checkNode)][checkNode];
-                                checkNode = nodePrev.get(checkNode);
-                            }
-                            if (nodeCost.get(i) == -1 || newCost < nodeCost.get(i)) {
-                                nodeCost.remove(i);
-                                nodePrev.remove(i);
-                                nodeCost.put(i, newCost);
-                                nodePrev.put(i, currentNode);
-                            }
-                        }
-                    }
+            int minCost=Integer.MAX_VALUE;
+            for(Integer nodeID : unvisitedNodes){
+                int cost=nodeCost.get(nodeList.get(nodeID));
+                if (cost < minCost) {
+                    minCost = cost;
+                    currentNode= nodeID;
                 }
             }
-            currentNode++;
-            if(currentNode>=nodeNum){
-                currentNode=0;
+            unvisitedNodes.remove(currentNode);
+            Log.d(TAG,"unvisited "+ unvisitedNodes);
+            List<Integer> neighborIDList=nodeList.get(currentNode).getAdjacentNodeID();
+            Log.d(TAG, "neighbor of "+currentNode +" are "+neighborIDList);
+            for(Integer i : neighborIDList) {
+                if (unvisitedNodes.contains(i)) {
+                    int newCost=adjacentArray.get(currentNode).get(i);
+                    int checkNode = currentNode;
+                    while (checkNode != startNode){
+                        //order does not matter, not a bi-direction array
+                        newCost += adjacentArray.get(nodePrev.get(checkNode)).get(checkNode);
+                        checkNode = nodePrev.get(checkNode);
+                    }
+                   if (newCost < nodeCost.get(nodeList.get(i))) {
+                        nodeCost.put(nodeList.get(i), newCost);
+                        nodePrev.put(i, currentNode);
+                       Log.d(TAG, "update cost for neighbor "+i+ " w/ new cost "+newCost);
+                    }
+                }
             }
         }
         int thisNode=endNode;
@@ -383,6 +351,8 @@ public class Game {
             mShortestList.clear();
         }
         mShortestList=shortestPath;
-        return nodeCost.get(endNode);
+        System.out.println(""+mShortestList);
+        System.out.println(""+nodeCost.get(nodeList.get(endNode)));
+        return nodeCost.get(nodeList.get(endNode));
     }
 }
