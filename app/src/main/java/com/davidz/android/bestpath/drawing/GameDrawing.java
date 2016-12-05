@@ -30,7 +30,8 @@ public class GameDrawing extends View {
     //default level has 5*5 nodes
     private float mLevel=5.0f;
     //probability of having edge, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes
-    private final int mEdgeProb=40;
+    //TODO:Change edge probability in setting
+    private final int mEdgeProb=20;
 
     //rotation direction of energy view
     private boolean mClockwise=true;
