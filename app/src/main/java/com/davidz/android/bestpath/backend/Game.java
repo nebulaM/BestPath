@@ -244,12 +244,13 @@ public class Game {
 
     public void setPlayerPosition(int nodeIndex){
         int cost=adjacentArray[nodeIndex][mPlayer.getCurrentPosition()];
-        if(cost>0 && mPlayer.getEnergy()>=cost && mPlayer.getCurrentPosition()!=nodeIndex){
+        if(cost<=0){//no edge between currentPosition and target node
+            return;
+        } else if( mPlayer.getEnergy()>=cost && mPlayer.getCurrentPosition()!=nodeIndex){
             mPlayer.costEnergy(adjacentArray[nodeIndex][mPlayer.getCurrentPosition()]);
             mPlayer.setCurrentPosition(nodeIndex);
 
-        }
-        else{
+        } else{
             mPlayer.setEnergy(0);
         }
     }
@@ -261,8 +262,7 @@ public class Game {
         //player win
         if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
             return 1;
-        }
-        else{
+        } else{
             List<Integer> adjacentNodeID=nodeList.get(nodeIndex).getAdjacentNodeID();
             for(int i=0;i<adjacentNodeID.size();++i){
                 //at least player can move to one node next to this node
@@ -320,6 +320,7 @@ public class Game {
      * PostCondition:return the cost of best path
      *               save one possible shortestPath in mShortestPath, from endNode to startNode.
      */
+    //TODO:BUG in calculating least cost, can find better path than calculated path
     private int shortestPath(int startNode, int endNode){
         //A list of node ID that shows shortest path from start to end
         List<Integer> shortestPath=new ArrayList<>();
@@ -336,6 +337,8 @@ public class Game {
             nodePrev.put(i,-1);
             unvisitedNodes.add(i);
         }
+        nodeCost.remove(startNode);
+        nodePrev.remove(startNode);
         nodeCost.put(startNode,0);
         nodePrev.put(startNode,startNode);
         unvisitedNodes.remove(startNode);
@@ -356,6 +359,8 @@ public class Game {
                                 checkNode = nodePrev.get(checkNode);
                             }
                             if (nodeCost.get(i) == -1 || newCost < nodeCost.get(i)) {
+                                nodeCost.remove(i);
+                                nodePrev.remove(i);
                                 nodeCost.put(i, newCost);
                                 nodePrev.put(i, currentNode);
                             }
