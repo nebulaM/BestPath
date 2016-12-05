@@ -34,7 +34,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     /*public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
-        if (key.equals(MainActivity.KEY_PREF_BG_COLOR)){
+        if (key.equals(MainActivity.SPColorBG)){
             Preference mPref = findPreference(key);
             mPref.setDefaultValue(sharedPreferences.getString(key, ""));
             setBackground(sharedPreferences.getString(key, ""));

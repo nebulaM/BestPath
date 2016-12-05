@@ -4,7 +4,7 @@
         android:title="@string/pref_title_color"
         android:key="pref_key_color_settings">
         <ListPreference
-            android:key="pref_key_background_color"
+            android:key="ColorBG"
             android:title="@string/pref_title_background"
             android:entries="@array/pref_background_color_entries"
             android:entryValues="@array/pref_background_color_values"
