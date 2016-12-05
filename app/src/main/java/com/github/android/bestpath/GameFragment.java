@@ -1,4 +1,4 @@
-package com.nebulaM.android.bestpath;
+package com.github.android.bestpath;
 
 
 import android.app.Fragment;
@@ -11,11 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.nebulaM.android.bestpath.drawing.GameDrawing;
+import com.github.android.bestpath.R;
+import com.github.android.bestpath.drawing.GameDrawing;
 
-/**
- * Created by nebulaM on 9/27/2016.
- */
 public class GameFragment extends Fragment {
     private GameDrawing mGameDrawing;
     private ImageButton mResetButton;

@@ -1,8 +1,5 @@
-package com.nebulaM.android.bestpath.backend;
+package com.github.android.bestpath.backend;
 
-/**
- * Created by nebulaM on 9/3/2016.
- */
 public class Edge {
     private final int startNodeIndex;
     private final int endNodeIndex;

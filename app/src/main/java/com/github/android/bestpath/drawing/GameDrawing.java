@@ -1,4 +1,4 @@
-package com.nebulaM.android.bestpath.drawing;
+package com.github.android.bestpath.drawing;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,13 +11,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.nebulaM.android.bestpath.R;
-import com.nebulaM.android.bestpath.backend.Game;
+import com.github.android.bestpath.R;
+import com.github.android.bestpath.backend.Game;
 
 import java.util.List;
 
 /**
- * Created by nebulaM on 9/19/2016.
  * Main view of the game
  */
 public class GameDrawing extends View {

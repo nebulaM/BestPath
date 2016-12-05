@@ -1,9 +1,11 @@
-package com.nebulaM.android.bestpath;
+package com.github.android.bestpath;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.github.android.bestpath.R;
 
 public class MainActivity extends AppCompatActivity{
     public static final String SPColorBG ="ColorBG";

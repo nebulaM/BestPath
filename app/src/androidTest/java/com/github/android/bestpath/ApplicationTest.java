@@ -1,4 +1,4 @@
-package com.nebulaM.android.bestpath;
+package com.github.android.bestpath;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

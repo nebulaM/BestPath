@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.1"
 
     defaultConfig {
-        applicationId "com.nebulaM.android.bestpath"
+        applicationId "com.github.android.bestpath"
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1

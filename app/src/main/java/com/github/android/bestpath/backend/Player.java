@@ -1,8 +1,5 @@
-package com.nebulaM.android.bestpath.backend;
+package com.github.android.bestpath.backend;
 
-/**
- * Created by nebulaM on 9/6/2016.
- */
 public class Player {
     private int currentPosition;
     private final int finalPosition;

@@ -1,4 +1,4 @@
-package com.nebulaM.android.bestpath.backend;
+package com.github.android.bestpath.backend;
 
 import java.util.ArrayList;
 import java.util.List;

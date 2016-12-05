@@ -1,13 +1,11 @@
-package com.nebulaM.android.bestpath;
+package com.github.android.bestpath;
 
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
+import com.github.android.bestpath.R;
 
-/**
- * Created by nebulaM on 9/27/2016.
- */
 public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
