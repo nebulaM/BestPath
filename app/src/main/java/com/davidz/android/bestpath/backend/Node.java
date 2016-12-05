@@ -1,5 +1,8 @@
 package com.nebulaM.android.bestpath.backend;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Stores information on whether a node is used or not, and node coordinates
  */
@@ -7,6 +10,8 @@ public class Node {
     private int nodeID;
     private int xCord;
     private int yCord;
+    //Node id of adjacent nodes that have connection to this node
+    private List<Integer> adjacentNodeID=new ArrayList<>();
 
     /**
      *
@@ -50,6 +55,16 @@ public class Node {
 
     public int getNodeID(){
         return nodeID;
+    }
+
+    public void clearAdjacentNodeID(){
+        adjacentNodeID.clear();
+    }
+    public List<Integer> getAdjacentNodeID(){
+        return adjacentNodeID;
+    }
+    public void addAdjacentNodeID(int nodeID){
+        adjacentNodeID.add(nodeID);
     }
 
 }

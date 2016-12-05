@@ -32,8 +32,6 @@ public class GameDrawing extends View {
     //probability of having edge, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes
     private final int mEdgeProb=40;
 
-    //draw shortest path if this flag = true
-    private boolean mDrawShortestPathFlag=false;
     //rotation direction of energy view
     private boolean mClockwise=true;
     //parameters for donut-shaped energy view
@@ -92,7 +90,6 @@ public class GameDrawing extends View {
     public void reset(){
         if(mGame!=null) {
             mGame.resetPlayer();
-            this.clearDrawShortestPath();
             invalidate();
         }
     }
@@ -100,7 +97,6 @@ public class GameDrawing extends View {
     public void restart(){
         if(mGame!=null) {
             mGame.resetGame();
-            this.clearDrawShortestPath();
             invalidate();
         }
     }
@@ -255,9 +251,9 @@ public class GameDrawing extends View {
             mPaint.setColor(0xff3fff00);
             float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
             float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
-            if (mDrawShortestPathFlag) {
+            if (mGame.gameOver(i)==-1) {
                 drawDrawable(canvas, mPlayerNotWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
-            } else if (mGame.gameOver() == 1) {
+            } else if (mGame.gameOver(i)==1) {
                 drawDrawable(canvas, mPlayerWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
             } else if (currentEnergyPercent > 50) {
                 drawDrawable(canvas, mPlayerNormal, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
@@ -270,7 +266,7 @@ public class GameDrawing extends View {
 
         //TODO:predict if player can win or not
         //show one of the possible shortest paths if player not win
-        if(mDrawShortestPathFlag){
+        if(mGame.gameOver(mGame.getPlayerPosition())==-1){
             List<Integer> shortestPath=mGame.getShortestList();
             mPaint.setColor(0xff919191);
             float circleCenterOffset=mNodeLength/2.0f;
@@ -282,7 +278,6 @@ public class GameDrawing extends View {
                 canvas.drawCircle(centerX,centerY,mNodeLength/4.0f,mPaint);
             }
         }
-
     }
 
     /**
@@ -382,12 +377,7 @@ public class GameDrawing extends View {
         path.close();
         canvas.drawPath(path, paint);
     }
-    //request drawing of a shortest path(may have more than one shortest path but only show one)
-    private void setDrawShortestPath(){
-        mDrawShortestPathFlag=true;
-    }
 
-    private void clearDrawShortestPath(){mDrawShortestPathFlag=false;}
 
     private void notReadToDraw(){
         mDrawingParametersReady=false;
@@ -400,26 +390,19 @@ public class GameDrawing extends View {
         float toleranceY=mEdgeLengthY*0.4f;
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
-                float x = event.getX();
-                float y = event.getY();
-                if(mGame.gameOver()==0) {
+                if(mGame.gameOver(mGame.getPlayerPosition())==0) {//disallow player to move once game over
+                    float x = event.getX();
+                    float y = event.getY();
                     for (int i = 0; i < mGame.getNodeNum(); ++i) {
-                        if(!mDrawShortestPathFlag) {//disallow player to move once best path is shown
-                            float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
-                            float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+                        float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+                        float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
 
-                            if (x > (startX - toleranceX) && x < (startX + mNodeLength + toleranceX) && (y > startY - toleranceY) && (y < startY + mNodeLength + toleranceY)) {
-                                if (mGame.setPlayerPosition(i)) {
-                                    invalidate();
-                                } else {
-                                    if (mGame.gameOver(i) == -1) {
-                                        setDrawShortestPath();
-                                        invalidate();
-                                    }
-                                }
-                                break;
-                            }
+                        if (x > (startX - toleranceX) && x < (startX + mNodeLength + toleranceX) && (y > startY - toleranceY) && (y < startY + mNodeLength + toleranceY)) {
+                            mGame.setPlayerPosition(i);
+                            invalidate();
+                            break;
                         }
+
                     }
                 }
                 break;

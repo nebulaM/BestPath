@@ -4,6 +4,7 @@ package com.nebulaM.android.bestpath.backend;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -63,10 +64,13 @@ public class Game {
 
         if(edgeLevel=='S' || edgeLevel=='M') {
             this.edgeLevel = edgeLevel;
-        }
-        else
+        } else {
             throw new IllegalArgumentException("choose edgeLevel from one of the following letters: S, M");
-        createPath();
+        }
+        this.createPath(this.nodeList,this.edgeList, this.edgeProbability, this.adjacentArray);
+
+
+
         mPlayerEnergy=shortestPath(0,nodeNum-1);
 
         mPlayer=new Player(0,nodeNum-1,mPlayerEnergy);
@@ -77,11 +81,22 @@ public class Game {
      * in total there are 3*routeSize different small adjacent matrices
      * the small adjacent matrices in "createPath" have a size of m[routeSize][routeSize], they will be mapped to a this.adjacentArray in the end
      */
-    private void createPath(){
+    private void createPath(List<Node> nodeList, List<Edge> edgeList, int edgeProbability, int[][] adjacentArray){
 
-        randomConnectNodes(nodeList,edgeProbability, adjacentArray);
-        if(debug)
+        randomConnectNodes(nodeList,edgeList,edgeProbability, adjacentArray);
+        //keep track on all adjacent nodes of this node
+        for(Node n : nodeList){
+            n.clearAdjacentNodeID();
+            for(int i=0;i<adjacentArray.length;++i){
+                if(adjacentArray[n.getNodeID()][i]!=0){
+                    n.addAdjacentNodeID(i);
+                }
+            }
+        }
+
+        if(debug) {
             printAdjacentMatrix("randomConnectNodes");
+        }
        
     }
     /**
@@ -90,7 +105,7 @@ public class Game {
      * @param m
      */
 
-    private void randomConnectNodes(List<Node> nodeList, int probability, int[][] m){
+    private void randomConnectNodes(List<Node> nodeList, List<Edge> edgeList, int probability, int[][] m){
         int upperBound=nodeNum;
         int yPositionScale=routeSize;
         Random randEdge = new Random();
@@ -227,15 +242,15 @@ public class Game {
     }
 
 
-    public boolean setPlayerPosition(int nodeIndex){
+    public void setPlayerPosition(int nodeIndex){
         int cost=adjacentArray[nodeIndex][mPlayer.getCurrentPosition()];
         if(cost>0 && mPlayer.getEnergy()>=cost && mPlayer.getCurrentPosition()!=nodeIndex){
             mPlayer.costEnergy(adjacentArray[nodeIndex][mPlayer.getCurrentPosition()]);
             mPlayer.setCurrentPosition(nodeIndex);
-            return true;
+
         }
         else{
-            return false;
+            mPlayer.setEnergy(0);
         }
     }
     /**
@@ -247,39 +262,31 @@ public class Game {
         if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
             return 1;
         }
-        //player lose
-        else if(mPlayer.getEnergy()<adjacentArray[nodeIndex][mPlayer.getCurrentPosition()]){
+        else{
+            List<Integer> adjacentNodeID=nodeList.get(nodeIndex).getAdjacentNodeID();
+            for(int i=0;i<adjacentNodeID.size();++i){
+                //at least player can move to one node next to this node
+                if(adjacentArray[nodeIndex][adjacentNodeID.get(i)]<=mPlayer.getEnergy()){
+                    //not end
+                    return 0;
+                }
+            }
+            //player lose
             return -1;
         }
-        //not end
-        else{
-            return 0;
-        }
-    }
 
-    public int gameOver(){
-        //player win
-        if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
-            return 1;
-        }
-        //not end
-        else{
-            return 0;
-        }
     }
 
     public void resetGame(){
-        createPath();
+        createPath(nodeList, edgeList, edgeProbability, adjacentArray);
         mPlayerEnergy=shortestPath(0,nodeNum-1);
         mPlayer.setCurrentPosition(0);
         mPlayer.setEnergy(mPlayerEnergy);
-
     }
 
     public void resetPlayer(){
         mPlayer.setCurrentPosition(0);
         mPlayer.setEnergy(mPlayerEnergy);
-
     }
 
     public int getPlayerPosition() {
