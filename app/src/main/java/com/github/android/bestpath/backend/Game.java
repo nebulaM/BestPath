@@ -119,47 +119,41 @@ public class Game {
         //start to put connection information in adjacentMatrix
         for(int startIndex=0;startIndex<upperBound;++startIndex) {
             startNode = nodeList.get(startIndex);
-                for (int endIndex = 0; endIndex < upperBound; ++endIndex) {
-                    // a node does not connect to itself
-                    if (startIndex != endIndex) {
-                        endNode = nodeList.get(endIndex);
-                            dx = endNode.getXCord() - startNode.getXCord();
-                            dy = endNode.getYCord() - startNode.getYCord();
-
-                            //only if the distance between two nodes <= 1 in all of x, y, z direction, will we consider connect the nodes.
-                            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1 ) {
-                                //Graph is not bi-direct, so m[i][j] = m[j][i]
-                                if (m.get(endIndex).get(startIndex)==noEdge) {
-                                    if((dx!=0 && dy==0 ) || (dx==0 && dy!=0 ) || (dx==0 )) {
-                                        //Case 1: endNode and startNode are in a line that is parallel to one of the Cartesian axis, nothing special
-                                        if(!nodeHasEdge(startIndex,m)){
-                                            m.get(startIndex).set(endIndex,1+randCost.nextInt(edgeCostMax));
-                                        }
-                                        else {
-                                            if (randEdge.nextInt(100) <= probability) {//m[startIndex][endIndex]=true, so does m[endIndex][startIndex]
-                                                m.get(startIndex).set(endIndex,1+randCost.nextInt(edgeCostMax));
-                                            }
-                                        }
+            for (int endIndex = 0; endIndex < upperBound; ++endIndex) {
+                // a node does not connect to itself
+                if (startIndex != endIndex) {
+                    endNode = nodeList.get(endIndex);
+                    dx = endNode.getXCord() - startNode.getXCord();
+                    dy = endNode.getYCord() - startNode.getYCord();
+                    //only if the distance between two nodes <= 1 in all of x, y, z direction, will we consider connect the nodes.
+                    if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1 ) {
+                        //Graph is not bi-direct, so m[i][j] = m[j][i]
+                        if (m.get(endIndex).get(startIndex)==noEdge) {
+                            if((dx!=0 && dy==0 ) || (dx==0 && dy!=0 ) || (dx==0 )) {
+                                //Case 1: endNode and startNode are in a line that is parallel to one of the Cartesian axis, nothing special
+                                if(!nodeHasEdge(startIndex,m)){
+                                    m.get(startIndex).set(endIndex,1+randCost.nextInt(edgeCostMax));
+                                } else {
+                                    if (randEdge.nextInt(100) <= probability) {//m[startIndex][endIndex]=true, so does m[endIndex][startIndex]
+                                        m.get(startIndex).set(endIndex,1+randCost.nextInt(edgeCostMax));
                                     }
-                                    else if(edgeLevel!='S'){
-                                            //Case 2: endNode and startNode forms an diagonal of a square on the x-y plane
-                                            //Only if the other diagonal of the square is not connected, will we try to connect THIS diagonal
-                                            if(m.get(startIndex+dx).get(startIndex+(dy*yPositionScale))==noEdge){
-                                                if (randEdge.nextInt(100) <= probability) {
-                                                    m.get(startIndex).set(endIndex,1 + randCost.nextInt(edgeCostMax));
-                                                }
-                                            }
-
-                                    }
-
-                                    m.get(endIndex).set(startIndex,m.get(startIndex).get(endIndex));
                                 }
-                                else {
-                                    m.get(endIndex).set(startIndex,m.get(startIndex).get(endIndex));
+                            } else if(edgeLevel!='S'){
+                                //Case 2: endNode and startNode forms an diagonal of a square on the x-y plane
+                                //Only if the other diagonal of the square is not connected, will we try to connect THIS diagonal
+                                if(m.get(startIndex+dx).get(startIndex+(dy*yPositionScale))==noEdge){
+                                    if (randEdge.nextInt(100) <= probability) {
+                                        m.get(startIndex).set(endIndex,1 + randCost.nextInt(edgeCostMax));
+                                    }
                                 }
                             }
+                            m.get(endIndex).set(startIndex,m.get(startIndex).get(endIndex));
+                        } else {
+                            m.get(endIndex).set(startIndex,m.get(startIndex).get(endIndex));
+                        }
                     }
                 }
+            }
         }
         //Not bi-direction, so endIndex is always bigger than startIndex
         //startIndex always < endIndex
