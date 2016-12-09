@@ -33,9 +33,12 @@ public class Game {
     //player on this map
     private Player mPlayer;
     private int mPlayerEnergy;
+    private boolean storeShortestPath;
     private List<Integer> mShortestList=new ArrayList<>();
     //Important that thsi value is less than Integer.MAX_VALUE for a compare in shortest path
     private final int noEdge=Integer.MAX_VALUE-1;
+
+    private final int endNode;
 
     /**
      *
@@ -56,6 +59,7 @@ public class Game {
         this.nodeList=Collections.synchronizedList(new ArrayList()) ;
         this.edgeList=Collections.synchronizedList(new ArrayList()) ;
         this.nodeNum=routeSize*routeSize;
+        this.endNode=nodeNum-1;
         this.adjacentArray= Collections.synchronizedList(new ArrayList<ArrayList<Integer>>());
 
         //put all nodes in the nodeList
@@ -68,8 +72,9 @@ public class Game {
             throw new IllegalArgumentException("choose edgeLevel from one of the following letters: S, M");
         }
         this.createPath(this.nodeList,this.edgeList, this.edgeProbability, this.adjacentArray);
+        storeShortestPath=true;
         mPlayerEnergy=shortestPath(0,nodeNum-1,this.adjacentArray);
-        mPlayer=new Player(0,nodeNum-1,mPlayerEnergy);
+        mPlayer=new Player(0,endNode,mPlayerEnergy);
     }
     /**
      * edge between node
@@ -223,16 +228,10 @@ public class Game {
         if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
             return 1;
         } else{
-            List<Integer> adjacentNodeID=nodeList.get(nodeIndex).getAdjacentNodeID();
-            for(int i=0;i<adjacentNodeID.size();++i){
-                //at least player can move to one node next to this node
-                if(adjacentArray.get(nodeIndex).get(adjacentNodeID.get(i))<=mPlayer.getEnergy()){
-                    //not end
-                    return 0;
-                }
-            }
-            //player lose
-            return -1;
+            //minimum energy required to reach endNode
+            int minEnergy=this.shortestPath(mPlayer.getCurrentPosition(),endNode,adjacentArray);
+            //-1 means player loss, 0 means game not end
+            return minEnergy>mPlayer.getEnergy()?-1:0;
         }
 
     }
@@ -242,6 +241,7 @@ public class Game {
         mPlayerEnergy=shortestPath(0,nodeNum-1,adjacentArray);
         mPlayer.setCurrentPosition(0);
         mPlayer.setEnergy(mPlayerEnergy);
+        storeShortestPath=true;
     }
 
     public void resetPlayer(){
@@ -340,10 +340,13 @@ public class Game {
             thisNode=nodePrev.get(thisNode);
         }
         shortestPath.add(startNode);
-        if(!mShortestList.isEmpty()) {
-            mShortestList.clear();
+        if(storeShortestPath) {
+            if (!mShortestList.isEmpty()) {
+                mShortestList.clear();
+            }
+            mShortestList = shortestPath;
+            storeShortestPath=false;
         }
-        mShortestList=shortestPath;
         return nodeCost.get(nodeList.get(endNode));
     }
 }
