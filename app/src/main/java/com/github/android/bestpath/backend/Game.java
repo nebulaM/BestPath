@@ -308,9 +308,9 @@ public class Game {
                 }
             }
             unvisitedNodes.remove(currentNode);
-            Log.d(TAG,"unvisited "+ unvisitedNodes);
+            //Log.d(TAG,"unvisited "+ unvisitedNodes);
             List<Integer> neighborIDList=nodeList.get(currentNode).getAdjacentNodeID();
-            Log.d(TAG, "neighbor of "+currentNode +" are "+neighborIDList);
+            //Log.d(TAG, "neighbor of "+currentNode +" are "+neighborIDList);
             for(Integer i : neighborIDList) {
                 if (unvisitedNodes.contains(i)) {
                     int newCost=adjacentArray.get(currentNode).get(i);
@@ -323,7 +323,7 @@ public class Game {
                    if (newCost < nodeCost.get(nodeList.get(i))) {
                         nodeCost.put(nodeList.get(i), newCost);
                         nodePrev.put(i, currentNode);
-                       Log.d(TAG, "update cost for neighbor "+i+ " w/ new cost "+newCost);
+                       //Log.d(TAG, "update cost for neighbor "+i+ " w/ new cost "+newCost);
                     }
                 }
             }
