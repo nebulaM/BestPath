@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -77,11 +78,11 @@ public class GameDrawing extends View {
         /*
         * Emoji provided free by http://emojione.com
         * */
-        mPlayerNormal =context.getResources().getDrawable(R.drawable.neutral);
-        mPlayerTired =context.getResources().getDrawable(R.drawable.tired);
-        mPlayerDrooling=context.getResources().getDrawable(R.drawable.drooling);
-        mPlayerWin=context.getResources().getDrawable(R.drawable.smile_normal);
-        mPlayerNotWin=context.getResources().getDrawable(R.drawable.screming);
+        mPlayerNormal = ContextCompat.getDrawable(context,R.drawable.neutral);
+        mPlayerTired = ContextCompat.getDrawable(context,R.drawable.tired);
+        mPlayerDrooling= ContextCompat.getDrawable(context,R.drawable.drooling);
+        mPlayerWin= ContextCompat.getDrawable(context,R.drawable.smile_normal);
+        mPlayerNotWin= ContextCompat.getDrawable(context,R.drawable.screming);
         mPath=new Path();
         outerCircle = new RectF();
         innerCircle = new RectF();
