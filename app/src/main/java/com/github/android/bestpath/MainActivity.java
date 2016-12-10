@@ -2,14 +2,11 @@ package com.github.android.bestpath;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.github.android.bestpath.R;
-
 public class MainActivity extends AppCompatActivity{
-    public static final String SPColorBG ="ColorBG";
+    public static final String SP_KEY_THEME ="SP_KEY_THEME";
     private SharedPreferences mSP;
     private SharedPreferences.OnSharedPreferenceChangeListener mSPListener;
 
@@ -30,7 +27,7 @@ public class MainActivity extends AppCompatActivity{
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                     //TODO:customize color for path in game
                     // Implementation
-                    if (key.equals(MainActivity.SPColorBG)){
+                    if (key.equals(MainActivity.SP_KEY_THEME)){
 
                         setBackground();
                     }
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void setBackground(){
-        mColorBG = mSP.getString(SPColorBG, "");
+        mColorBG = mSP.getString(SP_KEY_THEME, "");
         if(mColorBG.equals("gradient_background_cyan")) {
             this.findViewById(R.id.frag_container).setBackgroundColor(0xff303030);
         }

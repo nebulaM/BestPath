@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:alpha="0.8">
+
+    <TextView
+        android:id="@+id/dialog_theme_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingTop="@dimen/padding_half"
+        android:paddingLeft="@dimen/padding"
+        android:gravity="left"
+        android:background="#FFFFBB33"
+        android:text="@string/theme"
+        android:textColor="#000000"
+        android:textSize="@dimen/text_size_large"
+        android:textStyle="bold"
+        />
+    <ImageView
+        android:id="@+id/dialog_theme_circle_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_theme_title"
+        android:paddingTop="@dimen/padding_half"
+        android:paddingBottom="@dimen/padding_half"
+        android:paddingLeft="@dimen/padding_half"
+        android:src="@drawable/circle_grey"
+        />
+    <ImageView
+        android:id="@+id/dialog_theme_circle_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_theme_title"
+        android:layout_toRightOf="@id/dialog_theme_circle_0"
+        android:paddingTop="@dimen/padding_half"
+        android:paddingBottom="@dimen/padding_half"
+        android:paddingLeft="@dimen/padding_half"
+
+        android:src="@drawable/circle_dark"
+        />
+
+</RelativeLayout>

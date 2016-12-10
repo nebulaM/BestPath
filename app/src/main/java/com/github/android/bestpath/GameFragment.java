@@ -1,10 +1,10 @@
 package com.github.android.bestpath;
 
 
+
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -12,11 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.github.android.bestpath.R;
 import com.github.android.bestpath.drawing.GameDrawing;
 
 public class GameFragment extends Fragment {
-    private final String TAG="GameFragment";
+    public static final String TAG="GameFragment";
     private GameDrawing mGameDrawing;
     private ImageButton mResetButton;
     private ImageButton mRestartButton;
@@ -34,9 +33,6 @@ public class GameFragment extends Fragment {
         mNextLevelButton=(ImageButton)view.findViewById(R.id.NextLevelButton);
         mPreviousLevelButton=(ImageButton)view.findViewById(R.id.PreviousLevelButton);
         mSettingsButton=(ImageButton)view.findViewById(R.id.SettingButton);
-
-
-
         return view;
     }
 

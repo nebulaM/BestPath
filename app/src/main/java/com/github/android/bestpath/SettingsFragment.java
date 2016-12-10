@@ -4,55 +4,76 @@ package com.github.android.bestpath;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-import com.github.android.bestpath.R;
+import android.support.v7.app.AppCompatActivity;
 
-public class SettingsFragment extends PreferenceFragment {
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.github.android.bestpath.dialog.MyDialog;
+import com.github.android.bestpath.dialog.ThemeDialog;
+
+public class SettingsFragment extends PreferenceFragment implements View.OnClickListener,MyDialog.onCloseListener{
+    public static final String TAG="SettingsFragment";
+    private TextView mThemeText;
+    //image modified from http://www.freepik.com, Designed by Milano83 / Freepik
+    private ImageView mThemeImage;
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //TODO:better UI for settings
-        addPreferencesFromResource(R.xml.preferences);
-        //Toast.makeText(getActivity(),"TextCreate!",Toast.LENGTH_SHORT).show();
-    }
-   /* @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        mThemeText=(TextView)view.findViewById(R.id.ThemeColorText);
+        mThemeImage=(ImageView)view.findViewById(R.id.ThemeColorImage);
+        mThemeText.setOnClickListener(this);
+
+
         return view;
-    }*/
-    /*@Override
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.settings);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
 
 
-        getView().setClickable(true);
-    }*/
 
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.ThemeColorText:
+                mThemeImage.setVisibility(View.VISIBLE);
+                //getFragmentManager().popBackStack("GameFragment",POP_BACK_STACK_INCLUSIVE);<--this is a test on how back stack works
+                //for some reason previously "new ThemeDialog()" was not working, had to use "ThemeDialog.newInstance()" instead
+                ThemeDialog  dialog=new ThemeDialog();
+                dialog.setOnCloseListener (this);
+                dialog.show(getFragmentManager(), "dialog");
 
-    /*public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                          String key) {
-        if (key.equals(MainActivity.SPColorBG)){
-            Preference mPref = findPreference(key);
-            mPref.setDefaultValue(sharedPreferences.getString(key, ""));
-            setBackground(sharedPreferences.getString(key, ""));
+                break;
+            default:
+
+                break;
         }
     }
+    /**
+     * Clear selected setting
+     */
     @Override
-    public void onResume() {
-        super.onResume();
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        Toast.makeText(getActivity(),"TextResume!",Toast.LENGTH_SHORT).show();
-
+    public void onDialogClose(String tag){
+        switch (tag) {
+            case ThemeDialog.TAG:
+                mThemeImage.setVisibility(View.INVISIBLE);
+                break;
+            default:
+                break;
+        }
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-        Toast.makeText(getActivity(),"TextPasue!",Toast.LENGTH_SHORT).show();
-    }*/
-
 
 }
 
