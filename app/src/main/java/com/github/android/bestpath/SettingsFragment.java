@@ -1,6 +1,8 @@
 package com.github.android.bestpath;
 
 
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
@@ -72,6 +74,17 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //clear dialog, (without cleaning back stack, sometimes need to click dialog multiply times to close it after resumed from pause)
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            DialogFragment df = (DialogFragment) prev;
+            df.dismiss();
         }
     }
 
