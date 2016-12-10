@@ -19,6 +19,7 @@ import com.github.android.bestpath.dialog.ThemeDialog;
 
 public class SettingsFragment extends PreferenceFragment implements View.OnClickListener,MyDialog.onCloseListener{
     public static final String TAG="SettingsFragment";
+    public static final String TAG_DIALOG_ON_BACK_STACK="dialog";
     private TextView mThemeText;
     //image modified from http://www.freepik.com, Designed by Milano83 / Freepik
     private ImageView mThemeImage;
@@ -55,7 +56,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 //for some reason previously "new ThemeDialog()" was not working, had to use "ThemeDialog.newInstance()" instead
                 ThemeDialog  dialog=new ThemeDialog();
                 dialog.setOnCloseListener (this);
-                dialog.show(getFragmentManager(), "dialog");
+                dialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
 
                 break;
             default:
@@ -81,7 +82,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     public void onPause() {
         super.onPause();
         //clear dialog, (without cleaning back stack, sometimes need to click dialog multiply times to close it after resumed from pause)
-        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        Fragment prev = getFragmentManager().findFragmentByTag(TAG_DIALOG_ON_BACK_STACK);
         if (prev != null) {
             DialogFragment df = (DialogFragment) prev;
             df.dismiss();
