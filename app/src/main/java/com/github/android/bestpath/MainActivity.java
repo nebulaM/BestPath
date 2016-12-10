@@ -2,6 +2,7 @@ package com.github.android.bestpath;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -16,14 +17,15 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
         mSP = PreferenceManager.getDefaultSharedPreferences(this);
 
         setBackground();
         if (savedInstanceState == null) {
-            GameFragment newFragment = new GameFragment();
-            //TODO:addToBackStack NOT working
-            getFragmentManager().beginTransaction().add(R.id.frag_container, newFragment).commit();
+            //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
+            // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)
+            getFragmentManager().beginTransaction().add(R.id.frag_container, new GameFragment()).commit();
             mSPListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                     //TODO:customize color for path in game
@@ -65,4 +67,5 @@ public class MainActivity extends AppCompatActivity{
             this.findViewById(R.id.frag_container).setBackgroundColor(0xffececec);
         }
     }
+
 }

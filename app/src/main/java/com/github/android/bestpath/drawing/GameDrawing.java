@@ -86,10 +86,12 @@ public class GameDrawing extends View {
         outerCircle = new RectF();
         innerCircle = new RectF();
         shadowRectF = new RectF();
+        notReadToDraw();
     }
     public void reset(){
         if(mGame!=null) {
             mGame.resetPlayer();
+            notReadToDraw();
             invalidate();
         }
     }
@@ -97,6 +99,7 @@ public class GameDrawing extends View {
     public void restart(){
         if(mGame!=null) {
             mGame.resetGame();
+            notReadToDraw();
             invalidate();
         }
     }
@@ -107,7 +110,7 @@ public class GameDrawing extends View {
             mGame=null;
             mGame = new Game((int) mLevel, mEdgeProb, 'M');
             //not ready to draw, need to re-calculate drawing parameters in canvas method
-            this.notReadToDraw();
+            notReadToDraw();
             invalidate();
         }
     }
@@ -117,7 +120,7 @@ public class GameDrawing extends View {
             mLevel -= 1.0f;
             mGame=null;
             mGame = new Game((int) mLevel, mEdgeProb, 'M');
-            this.notReadToDraw();
+            notReadToDraw();
             invalidate();
         }
     }
@@ -125,7 +128,8 @@ public class GameDrawing extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(!mDrawingParametersReady) {
+        //disable this for drawing problem after fragment transaction
+        //if(!mDrawingParametersReady) {
             mRadius = getHeight() / 16.0f;
             mDiameter = mRadius * 2;
 
@@ -141,7 +145,7 @@ public class GameDrawing extends View {
             mNodeLength = Math.min(getWidth(), getHeight()) / (mLevel + (mLevel - 1.0f) * 0.8f);
             mEdgeLengthX = (getWidth() - mLevel * mNodeLength) / (mLevel - 1.0f);
             mEdgeLengthY = (getHeight() - mLevel * mNodeLength - mDiameter * 1.2f) / (mLevel - 1.0f);
-        }
+        //}
         mDrawingParametersReady=true;
         //draw energy view
         float currentEnergyPercent=(float)(mGame.getPlayerEnergy()*100/mGame.getMaxEnergy());
@@ -263,8 +267,6 @@ public class GameDrawing extends View {
                 drawDrawable(canvas, mPlayerDrooling, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
             }
         }
-
-        //TODO:predict if player can win or not
         //show one of the possible shortest paths if player not win
         if(mGame.gameOver(mGame.getPlayerPosition())==-1){
             List<Integer> shortestPath=mGame.getShortestList();
