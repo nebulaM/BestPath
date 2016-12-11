@@ -26,7 +26,7 @@
         android:paddingTop="@dimen/padding_half"
         android:paddingBottom="@dimen/padding_half"
         android:paddingLeft="@dimen/padding_half"
-        android:src="@drawable/circle_grey"
+        android:src="@drawable/circle_dark"
         />
     <ImageView
         android:id="@+id/dialog_theme_circle_1"
@@ -38,7 +38,7 @@
         android:paddingBottom="@dimen/padding_half"
         android:paddingLeft="@dimen/padding_half"
 
-        android:src="@drawable/circle_dark"
+        android:src="@drawable/circle_grey"
         />
 
 </RelativeLayout>

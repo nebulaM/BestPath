@@ -10,6 +10,6 @@ public interface MyDialog{
          * Do something on dialog close
          * @param tag name of the dialog being closed
          */
-        void onDialogClose(String tag);
+        void onDialogClose(String tag, int Value);
     }
 }
