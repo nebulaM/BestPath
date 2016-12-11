@@ -8,14 +8,17 @@
 
     <!-- theme color -->
     <color name="theme_grey">#ececec</color>
+    <color name="theme_grey_dark">#9c9c9c</color>
+    <color name="theme_grey_trans">#f2f2f2</color>
+
     <color name="theme_dark">#303030</color>
+    <color name="theme_dark_dark">#000000</color>
+    <color name="theme_dark_trans">#7d7d7d</color>
 
 
-
-
-    <color name="pink">#fb7299</color>
-    <color name="pink_dark">#b85671</color>
-    <color name="pink_trans">#99f0486c</color>
+    <color name="theme_pink">#fb7299</color>
+    <color name="theme_pink_dark">#b85671</color>
+    <color name="theme_pink_trans">#99f0486c</color>
 
     <color name="blue">#2196F3</color>
     <color name="blue_dark">#1565C0</color>

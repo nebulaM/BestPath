@@ -1,20 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape
-        android:shape="oval">
+            android:shape="oval">
             <solid
-            android:color="@color/theme_dark_dark"/>
+                android:color="@color/theme_pink_dark"/>
             <size
-            android:width="@dimen/theme_dialog_circle"
-            android:height="@dimen/theme_dialog_circle"/>
+                android:width="@dimen/theme_dialog_circle"
+                android:height="@dimen/theme_dialog_circle"/>
         </shape>
     </item>
     <item android:state_focused="true">
         <shape
             android:shape="oval">
             <solid
-                android:color="@color/theme_dark_trans"/>
+                android:color="@color/theme_pink_trans"/>
             <size
                 android:width="@dimen/theme_dialog_circle"
                 android:height="@dimen/theme_dialog_circle"/>
@@ -24,7 +23,7 @@
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
             android:shape="oval">
             <solid
-                android:color="@color/theme_dark"/>
+                android:color="@color/theme_pink"/>
             <size
                 android:width="@dimen/theme_dialog_circle"
                 android:height="@dimen/theme_dialog_circle"/>
