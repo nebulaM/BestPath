@@ -38,7 +38,7 @@ public class GameDrawing extends View {
     //parameters for donut-shaped energy view
     private RectF outerCircle;
     private RectF innerCircle;
-    private RectF shadowRectF;
+    private float mGameRouteOffsetX;
     //node-edge offset under energy view
     private float mGameRouteOffsetY;
     //edge/node dimensions
@@ -86,7 +86,6 @@ public class GameDrawing extends View {
         mPath=new Path();
         outerCircle = new RectF();
         innerCircle = new RectF();
-        shadowRectF = new RectF();
         notReadToDraw();
     }
     public void reset(){
@@ -131,6 +130,8 @@ public class GameDrawing extends View {
         super.onDraw(canvas);
         //disable this for drawing problem after fragment transaction
         //if(!mDrawingParametersReady) {
+
+        float side=Math.min(getHeight(),getWidth());
             mRadius = getHeight() / 16.0f;
             mDiameter = mRadius * 2;
 
@@ -142,10 +143,14 @@ public class GameDrawing extends View {
             startCord = .1f * mRadius;
             innerCircle.set(startCord + horizontalOffset, startCord, mDiameter - startCord + horizontalOffset, mDiameter - startCord);
 
-            mGameRouteOffsetY = mDiameter * 1.2f;
-            mNodeLength = Math.min(getWidth(), getHeight()) / (mLevel + (mLevel - 1.0f) * 0.8f);
-            mEdgeLengthX = (getWidth() - mLevel * mNodeLength) / (mLevel - 1.0f);
-            mEdgeLengthY = (getHeight() - mLevel * mNodeLength - mDiameter * 1.2f) / (mLevel - 1.0f);
+
+            mNodeLength = side / (mLevel + (mLevel - 1.0f) * 0.8f);
+            mEdgeLengthX = (side - mLevel * mNodeLength) / (mLevel - 1.0f);
+            mEdgeLengthY = mEdgeLengthX;
+
+        mGameRouteOffsetY = mDiameter * 1.2f;
+        mGameRouteOffsetX = (getWidth() -(mNodeLength*(mLevel)+mEdgeLengthX*(mLevel-1)))/2;
+
         //}
         mDrawingParametersReady=true;
         //draw energy view
@@ -202,8 +207,8 @@ public class GameDrawing extends View {
             /*int startX = (int) (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
             int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
             drawDrawable(canvas, mNode, startX,startY,(int)(startX + mNodeLength),(int)(startY + mNodeLength));*/
-            float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
-            float startY = (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+            float startX = mGameRouteOffsetX+ mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength);
+            float startY = mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength);
             drawRoundRect(canvas,mPaint,mPath,startX,startY,(startX + mNodeLength),(startY + mNodeLength),mNodeLength/8.0f,mNodeLength/8.0f);
         }
         //draw edges
@@ -219,42 +224,40 @@ public class GameDrawing extends View {
             int startNodeID=mGame.getEdgeStartNode(i);
             int endNodeID=mGame.getEdgeEndNode(i);
             if ( mGame.getNodeYCord(startNodeID)==mGame.getNodeYCord(endNodeID)) {
-                float startX = (mGame.getNodeXCord(startNodeID)) * (mEdgeLengthX + mNodeLength) + mNodeLength;
+                float startX = mGameRouteOffsetX +(mGame.getNodeXCord(startNodeID)) * (mEdgeLengthX + mNodeLength) + mNodeLength;
                 float startY = mGameRouteOffsetY +(mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength)) + mNodeLength/ 3.0f;
                 float endX = startX + mEdgeLengthX;
                 float endY = startY + mNodeLength/ 3.0f;
                 canvas.drawRect(startX, startY, endX, endY,mPaint);
             } else if (mGame.getNodeXCord(startNodeID) == mGame.getNodeXCord(endNodeID)) {
-                float startX = (mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength)) + mNodeLength/ 3.0f;
+                float startX = mGameRouteOffsetX +(mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength)) + mNodeLength/ 3.0f;
                 float startY = mGameRouteOffsetY +(mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength)) + mNodeLength;
                 float endX = startX + mNodeLength/ 3.0f;
                 float endY = startY + mEdgeLengthY;
                 canvas.drawRect(startX, startY, endX, endY,mPaint);
             } else{
                 if (mGame.getNodeXCord(startNodeID) < mGame.getNodeXCord(endNodeID)) {
-                    float startX = (mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength))+mNodeLength;
+                    float startX = mGameRouteOffsetX +(mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength))+mNodeLength;
                     float startY = (mGameRouteOffsetY +mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength))+mNodeLength;
-                    float endX = (mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength));
+                    float endX = mGameRouteOffsetX +(mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength));
                     float endY = (mGameRouteOffsetY +mGame.getNodeYCord(endNodeID) * (mEdgeLengthY + mNodeLength));
                     drawDiagonal(canvas,mPaint,mPath, startX,startY,endX,endY,mEdgeLengthX,true);
                 }
                 else{
-                    float startX = (mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength));
+                    float startX = mGameRouteOffsetX +(mGame.getNodeXCord(startNodeID) * (mEdgeLengthX + mNodeLength));
                     float startY = (mGameRouteOffsetY +mGame.getNodeYCord(startNodeID) * (mEdgeLengthY + mNodeLength))+mNodeLength;
-                    float endX = (mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength))+mNodeLength;
+                    float endX = mGameRouteOffsetX +(mGame.getNodeXCord(endNodeID) * (mEdgeLengthX + mNodeLength))+mNodeLength;
                     float endY = (mGameRouteOffsetY +mGame.getNodeYCord(endNodeID) * (mEdgeLengthY + mNodeLength));
                     drawDiagonal(canvas,mPaint,mPath,startX,startY,endX,endY,mEdgeLengthX,false);
                 }
             }
         }
-        Log.d(TAG,"NodeLength = "+mNodeLength);
-        Log.d(TAG,"EdgeLengthX = "+mEdgeLengthX+" and EdgeLengthY = "+mEdgeLengthY);
 
         //draw player
         if(true) {//useless if statement, just want to locally define parameters i, startX and startY
             int i = mGame.getPlayerPosition();
             mPaint.setColor(0xff3fff00);
-            float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+            float startX = mGameRouteOffsetX +(mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
             float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
             if (mGame.gameOver(i)==-1) {
                 drawDrawable(canvas, mPlayerNotWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
@@ -274,7 +277,7 @@ public class GameDrawing extends View {
             mPaint.setColor(0xff919191);
             float circleCenterOffset=mNodeLength/2.0f;
             for(int i=0;i<shortestPath.size();++i){
-                float startX = (mGame.getNodeXCord(shortestPath.get(i)) * (mEdgeLengthX + mNodeLength));
+                float startX = mGameRouteOffsetX +(mGame.getNodeXCord(shortestPath.get(i)) * (mEdgeLengthX + mNodeLength));
                 float startY = (mGameRouteOffsetY +mGame.getNodeYCord(shortestPath.get(i)) * (mEdgeLengthY + mNodeLength));
                 float centerX=startX+circleCenterOffset;
                 float centerY=startY+circleCenterOffset;
@@ -397,7 +400,7 @@ public class GameDrawing extends View {
                     float x = event.getX();
                     float y = event.getY();
                     for (int i = 0; i < mGame.getNodeNum(); ++i) {
-                        float startX = (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+                        float startX = mGameRouteOffsetX +(mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
                         float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
 
                         if (x > (startX - toleranceX) && x < (startX + mNodeLength + toleranceX) && (y > startY - toleranceY) && (y < startY + mNodeLength + toleranceY)) {

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.github.android.bestpath.drawing.GameDrawing;
@@ -20,7 +21,7 @@ public class GameFragment extends Fragment{
     private SharedPreferences mSP;
     private GameDrawing mGameDrawing;
 
-    private RelativeLayout mGameFragmentContainer;
+    private LinearLayout mGameFragmentContainer;
 
     private ImageButton mResetButton;
     private ImageButton mRestartButton;
@@ -63,7 +64,7 @@ public class GameFragment extends Fragment{
 
         mGameDrawing=(GameDrawing)view.findViewById(R.id.GameDrawing);
 
-        mGameFragmentContainer=(RelativeLayout) view.findViewById(R.id.GameFragmentContainer);
+        mGameFragmentContainer=(LinearLayout) view.findViewById(R.id.GameFragmentContainer);
         mResetButton=(ImageButton)view.findViewById(R.id.ResetButton);
         mRestartButton=(ImageButton)view.findViewById(R.id.RestartButton);
         mNextLevelButton=(ImageButton)view.findViewById(R.id.NextLevelButton);
