@@ -74,7 +74,7 @@ public class GameDrawing extends View {
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setAntiAlias(true);
 
-        mPaint.setTextSize(50);
+        mPaint.setTextSize(40);
         /*
         * Emoji provided free by http://emojione.com
         * */
@@ -131,10 +131,10 @@ public class GameDrawing extends View {
         //disable this for drawing problem after fragment transaction
         //if(!mDrawingParametersReady) {
 
-        float side=Math.min(getHeight(),getWidth());
+
             mRadius = getHeight() / 16.0f;
             mDiameter = mRadius * 2;
-
+            float side=Math.min(getHeight()-mDiameter * 1.2f,getWidth());
             float startCord;
             float horizontalOffset = getWidth() / 2 - mRadius;
             startCord = .03f * mRadius;
@@ -148,8 +148,8 @@ public class GameDrawing extends View {
             mEdgeLengthX = (side - mLevel * mNodeLength) / (mLevel - 1.0f);
             mEdgeLengthY = mEdgeLengthX;
 
-        mGameRouteOffsetY = mDiameter * 1.2f;
-        mGameRouteOffsetX = (getWidth() -(mNodeLength*(mLevel)+mEdgeLengthX*(mLevel-1)))/2;
+            mGameRouteOffsetY = mDiameter * 1.2f;
+            mGameRouteOffsetX = (getWidth() -(mNodeLength*(mLevel)+mEdgeLengthX*(mLevel-1)))/2;
 
         //}
         mDrawingParametersReady=true;
@@ -195,10 +195,11 @@ public class GameDrawing extends View {
             }
         }
         mPaint.setColor(0xffa2a2a2);
+        mPaint.setTextSize(mRadius*0.6f );
         if(mGame.getPlayerEnergy()>9) {
             canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
         } else{
-            canvas.drawText(" "+mGame.getPlayerEnergy(), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
+            canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.2f, mRadius * 1.2f, mPaint);
         }
 
         //draw nodes

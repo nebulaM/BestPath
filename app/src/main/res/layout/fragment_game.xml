@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/GameFragmentContainer"
     android:layout_width="match_parent"
@@ -16,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="0dp">
-    <ImageButton
+    <ImageView
         android:id="@+id/ResetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +25,7 @@
         android:src="@drawable/reset_button"
         android:background="@null"
         />
-    <ImageButton
+    <ImageView
         android:id="@+id/RestartButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +34,7 @@
         android:background="@null"
         />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/SettingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,7 +43,7 @@
         android:background="@null"
         />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/NextLevelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,7 +52,7 @@
         android:src="@drawable/next_level_button"
         android:background="@null"
         />
-    <ImageButton
+    <ImageView
         android:id="@+id/PreviousLevelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,6 +61,30 @@
         android:src="@drawable/previous_level_button"
         android:background="@null"
         />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_weight="0"
+        android:layout_height="0dp">
+        <com.github.android.bestpath.drawing.DrawDonut
+            android:id="@+id/PlayerEnergyImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            custom:clockwise="false"
+            custom:radius="30dp"/>
+        <TextView
+            android:id="@+id/PlayerEnergyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="0"
+            android:textSize="@dimen/text_size_small"
+            android:textColor="@android:color/white"
+            android:fontFamily="sans-serif-thin"
+            />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"

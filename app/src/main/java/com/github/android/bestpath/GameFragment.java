@@ -10,7 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -23,11 +23,11 @@ public class GameFragment extends Fragment{
 
     private LinearLayout mGameFragmentContainer;
 
-    private ImageButton mResetButton;
-    private ImageButton mRestartButton;
-    private ImageButton mNextLevelButton;
-    private ImageButton mPreviousLevelButton;
-    private ImageButton mSettingsButton;
+    private ImageView mResetButton;
+    private ImageView mRestartButton;
+    private ImageView mNextLevelButton;
+    private ImageView mPreviousLevelButton;
+    private ImageView mSettingsButton;
 
     private int mTheme;
     private Boolean mSound;
@@ -65,11 +65,11 @@ public class GameFragment extends Fragment{
         mGameDrawing=(GameDrawing)view.findViewById(R.id.GameDrawing);
 
         mGameFragmentContainer=(LinearLayout) view.findViewById(R.id.GameFragmentContainer);
-        mResetButton=(ImageButton)view.findViewById(R.id.ResetButton);
-        mRestartButton=(ImageButton)view.findViewById(R.id.RestartButton);
-        mNextLevelButton=(ImageButton)view.findViewById(R.id.NextLevelButton);
-        mPreviousLevelButton=(ImageButton)view.findViewById(R.id.PreviousLevelButton);
-        mSettingsButton=(ImageButton)view.findViewById(R.id.SettingButton);
+        mResetButton=(ImageView)view.findViewById(R.id.ResetButton);
+        mRestartButton=(ImageView)view.findViewById(R.id.RestartButton);
+        mNextLevelButton=(ImageView)view.findViewById(R.id.NextLevelButton);
+        mPreviousLevelButton=(ImageView)view.findViewById(R.id.PreviousLevelButton);
+        mSettingsButton=(ImageView)view.findViewById(R.id.SettingButton);
         init();
         return view;
     }
