@@ -22,10 +22,8 @@
             android:layout_height="match_parent">
             <ImageView
             android:id="@+id/ModeImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:visibility="invisible"
             android:src="@mipmap/ic_select_1_cyan" />
             <TextView
@@ -64,8 +62,8 @@
                 android:layout_height="0dp">
             <ImageView
                 android:id="@+id/ThemeColorImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:visibility="invisible"
@@ -98,8 +96,8 @@
                 android:layout_height="0dp">
                 <ImageView
                     android:id="@+id/SoundImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:visibility="invisible"
@@ -151,8 +149,8 @@
                 android:layout_height="0dp">
                 <ImageView
                     android:id="@+id/EffectImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:visibility="invisible"
@@ -185,8 +183,8 @@
                 android:layout_height="0dp">
                 <ImageView
                     android:id="@+id/LanguageImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:visibility="invisible"
@@ -221,8 +219,8 @@
             android:layout_height="match_parent">
             <ImageView
                 android:id="@+id/HelpImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:visibility="invisible"
@@ -267,8 +265,8 @@
             android:layout_height="match_parent">
             <ImageView
                 android:id="@+id/ShareImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:visibility="invisible"
@@ -302,8 +300,8 @@
             android:layout_height="match_parent">
             <ImageView
                 android:id="@+id/RemoveAddsImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:visibility="invisible"
