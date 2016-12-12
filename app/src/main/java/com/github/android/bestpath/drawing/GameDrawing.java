@@ -84,11 +84,11 @@ public class GameDrawing extends View {
         /*
         * Emoji provided free by http://emojione.com
         * */
-        mPlayerNormal = ContextCompat.getDrawable(context,R.drawable.neutral);
-        mPlayerTired = ContextCompat.getDrawable(context,R.drawable.tired);
-        mPlayerDrooling= ContextCompat.getDrawable(context,R.drawable.drooling);
-        mPlayerWin= ContextCompat.getDrawable(context,R.drawable.smile_normal);
-        mPlayerNotWin= ContextCompat.getDrawable(context,R.drawable.screming);
+        mPlayerNormal = ContextCompat.getDrawable(context,R.drawable.neutral_black);
+        mPlayerTired = ContextCompat.getDrawable(context,R.drawable.tired_black);
+        mPlayerDrooling= ContextCompat.getDrawable(context,R.drawable.drooling_black);
+        mPlayerWin= ContextCompat.getDrawable(context,R.drawable.smile_normal_black);
+        mPlayerNotWin= ContextCompat.getDrawable(context,R.drawable.screming_black);
         mPath=new Path();
         outerCircle = new RectF();
         innerCircle = new RectF();
