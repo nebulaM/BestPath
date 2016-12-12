@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:id="@+id/GameFragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,19 +12,15 @@
     android:background="@color/theme_dark"
     tools:context="com.github.android.bestpath.GameFragment">
 
-    <com.github.android.bestpath.drawing.GameDrawing
-        android:id="@+id/GameDrawing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="100dp"
-        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp">
     <ImageButton
         android:id="@+id/ResetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/GameDrawing"
+        android:layout_alignParentLeft="true"
         android:src="@drawable/reset_button"
         android:background="@null"
         />
@@ -40,7 +37,7 @@
         android:id="@+id/SettingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@id/GameDrawing"
+        android:layout_alignParentRight="true"
         android:src="@drawable/settings_button"
         android:background="@null"
         />
@@ -63,7 +60,23 @@
         android:src="@drawable/previous_level_button"
         android:background="@null"
         />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_weight="9"
+        android:layout_height="0dp">
+    <com.github.android.bestpath.drawing.GameDrawing
+        android:id="@+id/GameDrawing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp">
+    </RelativeLayout>
 
 
-
-</RelativeLayout>
+</LinearLayout>
