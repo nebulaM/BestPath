@@ -130,27 +130,43 @@ public class GameDrawing extends View {
         super.onDraw(canvas);
         //disable this for drawing problem after fragment transaction
         //if(!mDrawingParametersReady) {
+            if(getWidth()<getHeight()) {
+
+                mRadius = getHeight() / 16.0f;
+                mDiameter = mRadius * 2;
+                float side = Math.min(getHeight() - mDiameter * 1.2f, getWidth());
+                float startCord;
+                float horizontalOffset = getWidth() / 2 - mRadius;
+                startCord = .03f * mRadius;
+                //left top right bottom
+                outerCircle.set(startCord + horizontalOffset, startCord, mDiameter - startCord + horizontalOffset, mDiameter - startCord);
+                startCord = .1f * mRadius;
+                innerCircle.set(startCord + horizontalOffset, startCord, mDiameter - startCord + horizontalOffset, mDiameter - startCord);
 
 
-            mRadius = getHeight() / 16.0f;
-            mDiameter = mRadius * 2;
-            float side=Math.min(getHeight()-mDiameter * 1.2f,getWidth());
-            float startCord;
-            float horizontalOffset = getWidth() / 2 - mRadius;
-            startCord = .03f * mRadius;
-            //left top right bottom
-            outerCircle.set(startCord + horizontalOffset, startCord, mDiameter - startCord + horizontalOffset, mDiameter - startCord);
-            startCord = .1f * mRadius;
-            innerCircle.set(startCord + horizontalOffset, startCord, mDiameter - startCord + horizontalOffset, mDiameter - startCord);
+                mNodeLength = side / (mLevel + (mLevel - 1.0f) * 0.8f);
+                mEdgeLengthX = (side - mLevel * mNodeLength) / (mLevel - 1.0f);
+                mEdgeLengthY = mEdgeLengthX;
 
-
-            mNodeLength = side / (mLevel + (mLevel - 1.0f) * 0.8f);
-            mEdgeLengthX = (side - mLevel * mNodeLength) / (mLevel - 1.0f);
-            mEdgeLengthY = mEdgeLengthX;
-
-            mGameRouteOffsetY = mDiameter * 1.2f;
-            mGameRouteOffsetX = (getWidth() -(mNodeLength*(mLevel)+mEdgeLengthX*(mLevel-1)))/2;
-
+                mGameRouteOffsetY = mDiameter * 1.2f;
+                mGameRouteOffsetX = (getWidth() - (mNodeLength * (mLevel) + mEdgeLengthX * (mLevel - 1))) / 2;
+            }else{
+                mRadius = getWidth() / 16.0f;
+                mDiameter = mRadius * 2;
+                float side = Math.min(getHeight() , getWidth()- mDiameter * 1.2f);
+                float startCord;
+                float verticalOffset = getHeight() / 2 - mRadius;
+                startCord = .03f * mRadius;
+                //left top right bottom
+                outerCircle.set(startCord , startCord+ verticalOffset, mDiameter - startCord , mDiameter - startCord+ verticalOffset);
+                startCord = .1f * mRadius;
+                innerCircle.set(startCord , startCord+ verticalOffset, mDiameter - startCord , mDiameter - startCord+ verticalOffset);
+                mNodeLength = side / (mLevel + (mLevel - 1.0f) * 0.8f);
+                mEdgeLengthY = (side - mLevel * mNodeLength) / (mLevel - 1.0f);
+                mEdgeLengthX = mEdgeLengthY;
+                mGameRouteOffsetY = 0;
+                mGameRouteOffsetX = (getWidth() - (mNodeLength * (mLevel) + mEdgeLengthX * (mLevel - 1))) / 2;
+            }
         //}
         mDrawingParametersReady=true;
         //draw energy view
@@ -197,9 +213,17 @@ public class GameDrawing extends View {
         mPaint.setColor(0xffa2a2a2);
         mPaint.setTextSize(mRadius*0.6f );
         if(mGame.getPlayerEnergy()>9) {
-            canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
+            if(getWidth()<getHeight()) {
+                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
+            }else{
+                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mRadius*0.6f,getHeight() / 2+mRadius * 0.2f,  mPaint);
+            }
         } else{
-            canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.2f, mRadius * 1.2f, mPaint);
+            if(getWidth()<getHeight()) {
+                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.2f, mRadius * 1.2f, mPaint);
+            }else{
+                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mRadius*0.8f,getHeight() / 2+mRadius * 0.2f ,  mPaint);
+            }
         }
 
         //draw nodes
