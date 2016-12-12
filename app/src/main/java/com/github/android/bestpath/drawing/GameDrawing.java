@@ -60,11 +60,17 @@ public class GameDrawing extends View {
     private float mRadius;
     private float mDiameter;
 
+    private Context mContext;
+    private int mNodeColor=0x000000;
+
+
+
     /**
      * @param context context
      */
     public GameDrawing(Context context, AttributeSet attr) {
         super(context, attr);
+        mContext=context;
         mGame =new Game((int)mLevel,mEdgeProb,'M');
 
         mPaint = new Paint();
@@ -123,6 +129,11 @@ public class GameDrawing extends View {
             notReadToDraw();
             invalidate();
         }
+    }
+
+    public void setNodeColor(int RColorId){
+        mNodeColor=ContextCompat.getColor(mContext, RColorId);
+        invalidate();
     }
 
     @Override
@@ -227,7 +238,7 @@ public class GameDrawing extends View {
         }
 
         //draw nodes
-        mPaint.setColor(0xff984c15);
+        mPaint.setColor(mNodeColor);
         for (int i = 0; i < mGame.getNodeNum(); ++i) {
             /*int startX = (int) (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
             int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));

@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -102,6 +103,7 @@ public class GameFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 mGameDrawing.previousLevel();
+
             }
         });
 
@@ -119,15 +121,19 @@ public class GameFragment extends Fragment{
         switch (theme){
             case 0:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_dark);
+                mGameDrawing.setNodeColor(R.color.theme_red);
                 break;
             case 1:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_red);
+                mGameDrawing.setNodeColor(R.color.theme_dark);
                 break;
             case 2:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_grey);
+                mGameDrawing.setNodeColor(R.color.theme_blue);
                 break;
             case 3:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_blue);
+                mGameDrawing.setNodeColor(R.color.theme_grey);
                 break;
             default:
                 break;
