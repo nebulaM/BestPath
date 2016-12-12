@@ -118,10 +118,17 @@ public class GameFragment extends Fragment{
         switch (theme){
             case 0:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_dark);
-
                 break;
             case 1:
+                mGameFragmentContainer.setBackgroundResource(R.color.theme_red);
+                break;
+            case 2:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_grey);
+                break;
+            case 3:
+                mGameFragmentContainer.setBackgroundResource(R.color.theme_blue);
+                break;
+            default:
                 break;
         }
     }

@@ -25,8 +25,9 @@ import com.github.android.bestpath.R;
 public class ThemeDialog extends DialogFragment implements View.OnClickListener{
     public static final String TAG="ThemeDialog";
     private MyDialog.onCloseListener mOnCloseListener;
-    private ImageView[] mTheme=new ImageView[2];
-    private int selected;
+    private ImageView[] mTheme=new ImageView[4];
+    //default -1 to indicate user close this dialog without giving any input
+    private int selected=-1;
     private SharedPreferences.Editor mSPEditor;
     /*public static ThemeDialog newInstance() {
         ThemeDialog frag = new ThemeDialog();
@@ -43,6 +44,8 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener{
         //Setup clickable theme buttons
         mTheme[0]=(ImageView) view.findViewById(R.id.dialog_theme_circle_0);
         mTheme[1]=(ImageView) view.findViewById(R.id.dialog_theme_circle_1);
+        mTheme[2]=(ImageView) view.findViewById(R.id.dialog_theme_circle_2);
+        mTheme[3]=(ImageView) view.findViewById(R.id.dialog_theme_circle_3);
         for(ImageView clickable : mTheme){
             clickable.setOnClickListener(this);
         }
@@ -61,20 +64,23 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.dialog_theme_circle_0:
-                Log.d(TAG,"click on theme 0");
                 selected=0;
-                mSPEditor.putInt(MainActivity.SP_KEY_THEME,0).commit();
-                this.dismiss();
                 break;
             case R.id.dialog_theme_circle_1:
-                Log.d(TAG,"click on theme 1");
                 selected=1;
-                mSPEditor.putInt(MainActivity.SP_KEY_THEME,1).commit();
-                this.dismiss();
+                break;
+            case R.id.dialog_theme_circle_2:
+                selected=2;
+                break;
+            case R.id.dialog_theme_circle_3:
+                selected=3;
                 break;
             default:
                 break;
         }
+        mSPEditor.putInt(MainActivity.SP_KEY_THEME,selected).commit();
+        Log.d(TAG,"click on theme "+selected);
+        this.dismiss();
     }
 
     public void setOnCloseListener(MyDialog.onCloseListener onCloseListener){

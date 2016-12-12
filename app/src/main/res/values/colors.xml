@@ -7,21 +7,26 @@
     <color name="actionbarColor">#383838</color>
 
     <!-- theme color -->
-    <color name="theme_grey">#a9a9a9</color>
+    <color name="theme_grey">#818181</color>
     <color name="theme_grey_dark">#494949</color>
     <color name="theme_grey_trans">#f2f2f2</color>
-    <color name="theme_blue">#11b4f1</color>
+    <color name="theme_grey_blue">#11b4f1</color>
 
     <color name="theme_dark">#303030</color>
     <color name="theme_dark_dark">#000000</color>
     <color name="theme_dark_trans">#7d7d7d</color>
-    <color name="theme_red_dark">#8b1d1d</color>
 
 
-    <color name="blue_dark">#1565C0</color>
-    <color name="blue_trans">#B41A78C3</color>
+    <color name="theme_red">#8b1d1d</color>
+    <color name="theme_red_dark">#681515</color>
+    <color name="theme_red_trans">#e58282</color>
 
 
+    <color name="theme_blue">#1565C0</color>
+    <color name="theme_blue_dark">#1565C0</color>
+    <color name="theme_blue_trans">#B41A78C3</color>
+
+    <color name="theme_gold">#e1bd00</color>
 
 
     <color name="theme_pink">#fb7299</color>

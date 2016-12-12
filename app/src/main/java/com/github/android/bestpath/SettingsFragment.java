@@ -127,15 +127,18 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     public void onDialogClose(String tag, int parameter){
         switch (tag) {
             case ThemeDialog.TAG:
-                Log.d(TAG,"theme dialog closed");
-                int theme=parameter;
-                Log.d(TAG,"theme is "+theme);
-                if(theme !=mTheme){
-                    mTheme=theme;
-                    setSettingsTheme(theme);
+                if(parameter!=-1) {
+                    int theme = parameter;
+                    Log.d(TAG,"theme dialog closed and user selected a theme");
+                    Log.d(TAG, "theme is " + theme);
+                    if (theme != mTheme) {
+                        mTheme = theme;
+                        setSettingsTheme(theme);
+                    }
                 }
                 mThemeImage.setVisibility(View.INVISIBLE);
                 break;
+
             default:
                 break;
         }
@@ -158,7 +161,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
             case 0:
                 //background color
                 mSettingsSector1.setBackgroundResource(R.color.theme_dark);
-                mSettingsSector2.setBackgroundResource(R.color.theme_red_dark);
+                mSettingsSector2.setBackgroundResource(R.color.theme_red);
                 mSettingsSector3.setBackgroundResource(R.color.theme_dark);
                 //button color
                 mModeImage.setImageResource(R.mipmap.ic_select_1_cyan);
@@ -171,6 +174,19 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
             case 1:
+                mSettingsSector1.setBackgroundResource(R.color.theme_red);
+                mSettingsSector2.setBackgroundResource(R.color.theme_dark);
+                mSettingsSector3.setBackgroundResource(R.color.theme_red);
+                mModeImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mThemeImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mSoundImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mEffectImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mShareImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                break;
+            case 2:
                 mSettingsSector1.setBackgroundResource(R.color.theme_grey);
                 mSettingsSector2.setBackgroundResource(R.color.theme_blue);
                 mSettingsSector3.setBackgroundResource(R.color.theme_grey);
@@ -183,9 +199,22 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mShareImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
+            case 3:
+                mSettingsSector1.setBackgroundResource(R.color.theme_blue);
+                mSettingsSector2.setBackgroundResource(R.color.theme_grey);
+                mSettingsSector3.setBackgroundResource(R.color.theme_blue);
+                mModeImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mThemeImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mSoundImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mEffectImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mShareImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                break;
             default:
                 mSettingsSector1.setBackgroundResource(R.color.theme_dark);
-                mSettingsSector2.setBackgroundResource(R.color.theme_red_dark);
+                mSettingsSector2.setBackgroundResource(R.color.theme_red);
                 mSettingsSector3.setBackgroundResource(R.color.theme_dark);
                 mModeImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mThemeImage.setImageResource(R.mipmap.ic_select_1_cyan);
