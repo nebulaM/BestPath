@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.github.android.bestpath.drawing.GameDrawing;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 
 

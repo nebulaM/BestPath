@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.github.android.bestpath.backend.Game;
+
 public class MainActivity extends AppCompatActivity{
     public static final String TAG="MainActivity";
     public static final String SP_FILE_NAME ="BPSP";
@@ -22,6 +24,10 @@ public class MainActivity extends AppCompatActivity{
     private SharedPreferences mSP;
     private SharedPreferences.Editor mSPEditor;
 
+    protected static Game GAME;
+    protected static int GAME_EDGE_PROBABILITY;
+    protected static float GAME_LEVEL;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +37,11 @@ public class MainActivity extends AppCompatActivity{
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //read from shared preference
         checkSP();
+
+        GAME_LEVEL=5.0f;
+        GAME_EDGE_PROBABILITY=30;
+        GAME =new Game((int)GAME_LEVEL,GAME_EDGE_PROBABILITY,'M');
+
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)
         getFragmentManager().beginTransaction().add(R.id.frag_container, new GameFragment()).commit();
@@ -67,5 +78,4 @@ public class MainActivity extends AppCompatActivity{
 
         //Toast.makeText(this,"ActPause!",Toast.LENGTH_SHORT).show();
     }
-
 }

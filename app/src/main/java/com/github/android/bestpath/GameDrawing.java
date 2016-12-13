@@ -1,4 +1,4 @@
-package com.github.android.bestpath.drawing;
+package com.github.android.bestpath;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.github.android.bestpath.MainActivity;
 import com.github.android.bestpath.R;
 import com.github.android.bestpath.backend.Game;
 
@@ -27,11 +28,10 @@ public class GameDrawing extends View {
     private final float mMaxLevel=10.0f;
     //min level has 2*2 nodes
     private final float mMinLevel=2.0f;
-    //default level has 5*5 nodes
-    private float mLevel=5.0f;
+    //current game level
+    private float mLevel;
     //probability of having edge, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes
-    //TODO:Change edge probability in setting
-    private final int mEdgeProb=20;
+    private int mEdgeProb;
 
     //rotation direction of energy view
     private boolean mClockwise=true;
@@ -63,16 +63,16 @@ public class GameDrawing extends View {
     private Context mContext;
     private int mNodeColor=0x000000;
 
-
-
     /**
      * @param context context
      */
     public GameDrawing(Context context, AttributeSet attr) {
         super(context, attr);
         mContext=context;
-        mGame =new Game((int)mLevel,mEdgeProb,'M');
-
+        //mGame points to the game stored in main activity
+        mGame= MainActivity.GAME;
+        mLevel=MainActivity.GAME_LEVEL;
+        mEdgeProb=MainActivity.GAME_EDGE_PROBABILITY;
         mPaint = new Paint();
         mPaint.setDither(true);
         mPaint.setStyle(Paint.Style.FILL);
@@ -185,13 +185,13 @@ public class GameDrawing extends View {
         //use different color for energy view depend on current energy(in percentage)
         if(currentEnergyPercent>30){
             // green
-            mPaint.setColor(0xff38e100);//, 0xff38e100);
+            mPaint.setColor(0xff38e100);
         } else if(currentEnergyPercent>15){
             // yellow
-            mPaint.setColor(0xfff5c401);//,0xfff5c401);
+            mPaint.setColor(0xfff5c401);
         } else{
             //red
-            mPaint.setColor(0xffb7161b);//,0xffb7161b);
+            mPaint.setColor(0xffb7161b);
         }
         //energy decreases clockwise
         if(mClockwise) {
