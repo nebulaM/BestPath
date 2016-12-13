@@ -51,7 +51,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private int mTheme;
     private Boolean mSound;
     private String mLanguage;
-
+    //sound from http://www.freesfx.co.uk
     private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
     private Toast mToastSound;
 
@@ -74,7 +74,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
 
-        mMP =MediaPlayer.create(getActivity().getApplicationContext(),R.raw.dang);
+        mMP =MediaPlayer.create(getActivity().getApplicationContext(),R.raw.click_1);
         Log.d(TAG,"Create media player on Create");
 
     }
@@ -156,25 +156,28 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
      */
     @Override
     public void onDialogClose(String tag, int parameter){
-        playSound(mSound);
+        //parameter == -1 means close the dialog without clicking on any option
+        if(parameter!=-1) {
+            playSound(mSound);
+        }
         switch (tag) {
             case ThemeDialog.TAG:
-                //for theme dialog, -1 means close the dialog without clicking on any option
                 if(parameter!=-1) {
-                    Log.d(TAG,"theme dialog closed and user selected a theme");
+                    Log.d(TAG, "theme dialog closed and user selected a theme");
                     Log.d(TAG, "theme is " + parameter);
                     if (parameter != mTheme) {
                         mTheme = parameter;
                         setSettingsTheme(parameter);
+
                     }
                 }
                 mThemeImage.setVisibility(View.INVISIBLE);
                 break;
-
             default:
                 break;
         }
     }
+
 
     /**
      * set theme(color) for this fragment
@@ -315,7 +318,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         super.onResume();
         if(mMP ==null){
             Log.d(TAG,"Create media player on Resume");
-            mMP =MediaPlayer.create(getActivity().getApplicationContext(), R.raw.dang);
+            mMP =MediaPlayer.create(getActivity().getApplicationContext(), R.raw.click_1);
         }
 
     }

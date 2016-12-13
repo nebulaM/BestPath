@@ -2,6 +2,7 @@ package com.github.android.bestpath;
 
 
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +27,9 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
-
+        //use hardware volume key to control audio volume for all fragments under this activity
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        //read from shared preference
         checkSP();
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)
