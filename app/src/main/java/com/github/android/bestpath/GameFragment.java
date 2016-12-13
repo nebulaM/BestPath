@@ -4,6 +4,8 @@ package com.github.android.bestpath;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +16,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.github.android.bestpath.drawing.GameDrawing;
+import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
+
+import java.io.IOException;
 
 public class GameFragment extends Fragment{
     public static final String TAG="GameFragment";
@@ -32,6 +37,9 @@ public class GameFragment extends Fragment{
     private Boolean mSound;
     private String mLanguage;
 
+    private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
+    private Uri  path_click_settings;
+
     /*public static GameFragment newInstance(int theme, boolean sound, String language) {
         GameFragment myFragment = new GameFragment();
         Bundle args = new Bundle();
@@ -47,6 +55,9 @@ public class GameFragment extends Fragment{
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
 
+        mMP =MediaPlayer.create(getActivity().getApplicationContext(), R.raw.click_1);
+        path_click_settings = Uri.parse("android.resource://" + getActivity().getPackageName()+ "/" + R.raw.click_1);
+        Log.d(TAG,"Create media player on Create, string"+path_click_settings);
     }
 
 
@@ -80,6 +91,7 @@ public class GameFragment extends Fragment{
         mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(mSound);
                 mGameDrawing.reset();
             }
         });
@@ -87,12 +99,14 @@ public class GameFragment extends Fragment{
         mRestartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(mSound);
                 mGameDrawing.restart();
             }
         });
         mNextLevelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(mSound);
                 mGameDrawing.nextLevel();
             }
         });
@@ -100,6 +114,7 @@ public class GameFragment extends Fragment{
         mPreviousLevelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(mSound);
                 mGameDrawing.previousLevel();
 
             }
@@ -108,6 +123,8 @@ public class GameFragment extends Fragment{
         mSettingsButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                playSound(mSound);
+
                 getFragmentManager().beginTransaction().replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
             }
 
@@ -141,5 +158,40 @@ public class GameFragment extends Fragment{
 
     private void init() {
         setGameTheme(mTheme);
+    }
+
+
+    private void playSound(boolean enable){
+        if(enable) {
+            Log.d(TAG,"play sound");
+            //prevent from unexpected null pointer
+            if(mMP !=null) {
+                if (mMP.isPlaying()) {
+                    mMP.stop();
+                }
+                mMP.start();
+            }
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(mMP ==null){
+            Log.d(TAG,"Create media player on Resume");
+            mMP =MediaPlayer.create(getActivity().getApplicationContext(), R.raw.click_1);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        //release media player
+        if(mMP !=null) {
+            Log.d(TAG,"Release media player on Pause");
+            mMP.release();
+            mMP = null;
+        }
     }
 }
