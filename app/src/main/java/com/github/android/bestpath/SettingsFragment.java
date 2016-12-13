@@ -8,9 +8,6 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-
-import android.support.v7.app.AppCompatActivity;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +20,6 @@ import android.widget.Toast;
 import com.github.android.bestpath.dialog.MyDialog;
 import com.github.android.bestpath.dialog.ThemeDialog;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
-
-import java.io.IOException;
 
 public class SettingsFragment extends PreferenceFragment implements View.OnClickListener,MyDialog.onCloseListener{
     public static final String TAG="SettingsFragment";
@@ -87,7 +82,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mTheme = mSP.getInt(MainActivity.SP_KEY_THEME, MainActivity.SP_KEY_THEME_DEFAULT);
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
         mLanguage = mSP.getString(MainActivity.SP_KEY_LANG, MainActivity.SP_KEY_LANG_PACKAGE[0]);
-
 
         mModeImage=(ImageView)view.findViewById(R.id.ModeImage);
         mThemeImage=(ImageView)view.findViewById(R.id.ThemeColorImage);
