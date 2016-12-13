@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,6 @@ import android.widget.LinearLayout;
 import com.github.android.bestpath.drawing.GameDrawing;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 
-import java.io.IOException;
 
 public class GameFragment extends Fragment{
     public static final String TAG="GameFragment";
@@ -124,7 +122,7 @@ public class GameFragment extends Fragment{
             @Override
             public void onClick(View v){
                 playSound(mSound);
-                getFragmentManager().beginTransaction().replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_left,R.animator.slide_out_right).replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
             }
 
         });
@@ -185,7 +183,6 @@ public class GameFragment extends Fragment{
     @Override
     public void onPause() {
         super.onPause();
-
         //release media player
         if(mMP !=null) {
             Log.d(TAG,"Release media player on Pause");
