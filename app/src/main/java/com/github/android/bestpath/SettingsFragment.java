@@ -139,7 +139,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 break;
             case R.id.SoundText:
                 mSound=!mSound;
-                mSP.edit().putBoolean(MainActivity.SP_KEY_SOUND,mSound).commit();
+                mSP.edit().putBoolean(MainActivity.SP_KEY_SOUND,mSound).apply();
                 setSound(mSound,false);
                 break;
 
