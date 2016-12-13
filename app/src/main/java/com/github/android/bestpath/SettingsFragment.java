@@ -117,8 +117,8 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.settings);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        //((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.settings);
+        //((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
 
     /**

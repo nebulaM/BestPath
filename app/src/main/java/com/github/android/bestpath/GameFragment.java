@@ -87,7 +87,7 @@ public class GameFragment extends Fragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+        //((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +124,6 @@ public class GameFragment extends Fragment{
             @Override
             public void onClick(View v){
                 playSound(mSound);
-
                 getFragmentManager().beginTransaction().replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
             }
 
