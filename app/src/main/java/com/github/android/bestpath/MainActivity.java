@@ -1,5 +1,6 @@
 package com.github.android.bestpath;
 
+
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,9 +21,6 @@ public class MainActivity extends AppCompatActivity{
     private SharedPreferences mSP;
     private SharedPreferences.Editor mSPEditor;
 
-    public static SettingsFragment mSettingsFragment;
-    public static GameFragment mGameFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,20 +34,19 @@ public class MainActivity extends AppCompatActivity{
     }
 
     /**
-     * Assign default value to SP if SP had never been read before
+     * Assign default value to SharedPreference if SP had never been read before
      */
     private void checkSP(){
         mSP = getSharedPreferences(MainActivity. SP_FILE_NAME, MODE_PRIVATE);
-        mSPEditor=getSharedPreferences(MainActivity. SP_FILE_NAME, MODE_PRIVATE).edit();
         int readAgain=mSP.getInt(SP_KEY_First_Time_READ,-99);
         if(readAgain==-99){
+            mSPEditor=getSharedPreferences(MainActivity. SP_FILE_NAME, MODE_PRIVATE).edit();
             Log.d(TAG,"First time access this preference file!");
             mSPEditor.putInt(SP_KEY_First_Time_READ,1);
             mSPEditor.putInt(SP_KEY_THEME,SP_KEY_THEME_DEFAULT);
             mSPEditor.putBoolean(SP_KEY_SOUND,SP_KEY_SOUND_DEFAULT);
             mSPEditor.putString(SP_KEY_LANG,SP_KEY_LANG_PACKAGE[0]);
             mSPEditor.commit();
-
         }
     }
 

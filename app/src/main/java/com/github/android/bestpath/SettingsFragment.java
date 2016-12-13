@@ -120,6 +120,11 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.settings);
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
+
+    /**
+     * listen to click and deal w/ different settings
+     * @param v view
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -143,21 +148,24 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         }
         playSound(mSound);
     }
+
     /**
-     * Clear selected setting
+     * Listen to dialog close event and get the parameter passed from dialog(which is selected by user)
+     * @param tag name of the dialog being closed
+     * @param parameter user selected option
      */
     @Override
     public void onDialogClose(String tag, int parameter){
         playSound(mSound);
         switch (tag) {
             case ThemeDialog.TAG:
+                //for theme dialog, -1 means close the dialog without clicking on any option
                 if(parameter!=-1) {
-                    int theme = parameter;
                     Log.d(TAG,"theme dialog closed and user selected a theme");
-                    Log.d(TAG, "theme is " + theme);
-                    if (theme != mTheme) {
-                        mTheme = theme;
-                        setSettingsTheme(theme);
+                    Log.d(TAG, "theme is " + parameter);
+                    if (parameter != mTheme) {
+                        mTheme = parameter;
+                        setSettingsTheme(parameter);
                     }
                 }
                 mThemeImage.setVisibility(View.INVISIBLE);
@@ -168,7 +176,10 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         }
     }
 
-
+    /**
+     * set theme(color) for this fragment
+     * @param theme input
+     */
     private void setSettingsTheme(int theme){
         switch (theme){
             case 0:
@@ -267,21 +278,27 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         }
     }
 
+    /**
+     * init this fragment's view w/ user preferenced settings
+     */
     private void init(){
         setSettingsTheme(mTheme);
         setSound(mSound,true);
         setLanguage(mLanguage);
     }
 
+    /**
+     * sound effect method
+     * @param enable play sound if enable == true
+     */
     private void playSound(boolean enable){
         if(enable) {
+            //prevent from unexpected null pointer
             if(mMP !=null) {
                 if (mMP.isPlaying()) {
                     mMP.stop();
                     try {
                         mMP.prepare();
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -313,7 +330,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
             DialogFragment df = (DialogFragment) prev;
             df.dismiss();
         }
-        //clear media player
+        //release media player
         if(mMP !=null) {
             Log.d(TAG,"Release media player on Pause");
             mMP.release();

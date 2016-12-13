@@ -1,10 +1,7 @@
 package com.github.android.bestpath.mediaPlayer;
 
-import android.content.Context;
-import android.media.MediaPlayer;
-import android.support.v4.content.ContextCompat;
 
-import com.github.android.bestpath.R;
+import android.media.MediaPlayer;
 
 /**
  * http://stackoverflow.com/questions/30143255/how-to-use-one-instance-of-mediaplayer-for-several-fragments
@@ -13,16 +10,13 @@ import com.github.android.bestpath.R;
 
 public class MediaPlayerSingleton extends MediaPlayer {
     private static MediaPlayer mp;
-
     private MediaPlayerSingleton() {}
 
     public static MediaPlayer getInstance() {
-        synchronized (MediaPlayerSingleton.class){// if you'll be using it in moe then one thread
+        synchronized (MediaPlayerSingleton.class){// if you'll be using it in more then one thread
         if (mp== null)
             mp = new MediaPlayerSingleton();
         }
-
         return mp;
     }
-
 }
