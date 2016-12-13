@@ -18,5 +18,7 @@
     <string name="share">Share</string>
     <string name="removeAdds">Remove Adds</string>
     <string name="cancel">Dismiss</string>
+    <string name="soundOn">Sound On</string>
+    <string name="soundOff">Sound Off</string>
 
 </resources>

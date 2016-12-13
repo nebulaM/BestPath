@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
@@ -17,9 +18,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.android.bestpath.dialog.MyDialog;
 import com.github.android.bestpath.dialog.ThemeDialog;
+import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
+
+import java.io.IOException;
 
 public class SettingsFragment extends PreferenceFragment implements View.OnClickListener,MyDialog.onCloseListener{
     public static final String TAG="SettingsFragment";
@@ -40,13 +45,15 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private ImageView mRemoveAddsImage;
     //texts
     private TextView mThemeText;
+    private TextView mSoundText;
 
     private SharedPreferences mSP;
-
     private int mTheme;
     private Boolean mSound;
     private String mLanguage;
 
+    private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
+    private Toast mToastSound;
 
     public interface onPreferenceChangeListener {
         void onPreferenceChange(String tag, int parameter);
@@ -66,6 +73,10 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
+
+        mMP =MediaPlayer.create(getActivity().getApplicationContext(),R.raw.dang);
+        Log.d(TAG,"Create media player on Create");
+
     }
 
     @Override
@@ -77,7 +88,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
         mLanguage = mSP.getString(MainActivity.SP_KEY_LANG, MainActivity.SP_KEY_LANG_PACKAGE[0]);
 
-        mThemeText=(TextView)view.findViewById(R.id.ThemeColorText);
 
         mModeImage=(ImageView)view.findViewById(R.id.ModeImage);
         mThemeImage=(ImageView)view.findViewById(R.id.ThemeColorImage);
@@ -88,12 +98,17 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mShareImage=(ImageView)view.findViewById(R.id.ShareImage);
         mRemoveAddsImage=(ImageView)view.findViewById(R.id.RemoveAddsImage);
 
+        mThemeText=(TextView)view.findViewById(R.id.ThemeColorText);
+        mSoundText=(TextView)view.findViewById(R.id.SoundText);
+
         //set color for each sector in this setting fragment
         mSettingsSector1=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L1);
         mSettingsSector2=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L2);
         mSettingsSector3=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L3);
 
         mThemeText.setOnClickListener(this);
+        mSoundText.setOnClickListener(this);
+        mToastSound=Toast.makeText(getActivity().getApplicationContext(),"",Toast.LENGTH_SHORT);
         //IMPORTANT, initialize relevant things in this fragment
         init();
         return view;
@@ -109,6 +124,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.ThemeColorText:
+                Log.d(TAG,"click theme");
                 mThemeImage.setVisibility(View.VISIBLE);
                 //getFragmentManager().popBackStack("GameFragment",POP_BACK_STACK_INCLUSIVE);<--this is a test on how back stack works
                 //for some reason previously "new ThemeDialog()" was not working, had to use "ThemeDialog.newInstance()" instead
@@ -116,15 +132,23 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 dialog.setOnCloseListener (this);
                 dialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
                 break;
+            case R.id.SoundText:
+                mSound=!mSound;
+                mSP.edit().putBoolean(MainActivity.SP_KEY_SOUND,mSound).commit();
+                setSound(mSound,false);
+                break;
+
             default:
                 break;
         }
+        playSound(mSound);
     }
     /**
      * Clear selected setting
      */
     @Override
     public void onDialogClose(String tag, int parameter){
+        playSound(mSound);
         switch (tag) {
             case ThemeDialog.TAG:
                 if(parameter!=-1) {
@@ -144,17 +168,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         }
     }
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        //clear dialog, (without cleaning back stack, sometimes need to click dialog multiply times to close it after resumed from pause)
-        Fragment prev = getFragmentManager().findFragmentByTag(TAG_DIALOG_ON_BACK_STACK);
-        if (prev != null) {
-            DialogFragment df = (DialogFragment) prev;
-            df.dismiss();
-        }
-    }
 
     private void setSettingsTheme(int theme){
         switch (theme){
@@ -232,15 +245,80 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
 
     }
 
+    /**
+     *
+     * @param sound sound on or off
+     * @param init whether this is the first access this method in SettingsFragment
+     *             (first time is when initialize SettingsFragment's view, so do not toast MSG)
+     */
+    private void setSound(boolean sound, boolean init){
+        if(sound){
+            if(!init) {
+                mToastSound.setText(R.string.soundOn);
+                mToastSound.show();
+            }
+            mSoundImage.setVisibility(View.VISIBLE);
+        }else{
+            if(!init) {
+                mToastSound.setText(R.string.soundOff);
+                mToastSound.show();
+            }
+            mSoundImage.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void init(){
         setSettingsTheme(mTheme);
+        setSound(mSound,true);
         setLanguage(mLanguage);
+    }
+
+    private void playSound(boolean enable){
+        if(enable) {
+            if(mMP !=null) {
+                if (mMP.isPlaying()) {
+                    mMP.stop();
+                    try {
+                        mMP.prepare();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(mMP !=null) {
+                    mMP.start();
+                }
+            }
+        }
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        if(mMP ==null){
+            Log.d(TAG,"Create media player on Resume");
+            mMP =MediaPlayer.create(getActivity().getApplicationContext(), R.raw.dang);
+        }
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //clear dialog, (without cleaning back stack, sometimes need to click dialog multiply times to close it after resumed from pause)
+        Fragment prev = getFragmentManager().findFragmentByTag(TAG_DIALOG_ON_BACK_STACK);
+        if (prev != null) {
+            Log.d(TAG,"close opened dialog on Pause");
+            DialogFragment df = (DialogFragment) prev;
+            df.dismiss();
+        }
+        //clear media player
+        if(mMP !=null) {
+            Log.d(TAG,"Release media player on Pause");
+            mMP.release();
+            mMP = null;
+        }
     }
 
 }
