@@ -18,9 +18,9 @@ import java.util.Set;
  */
 public class Game {
     private final String TAG="Game";
-    private final int nodeNum;
+    private int nodeNum;
     //route size is nodeNum*nodeNum
-    private final int routeSize;
+    private int routeSize;
     private int edgeProbability;
     //adjacentArray has all cost of nodes
     private List<ArrayList<Integer>> adjacentArray;
@@ -38,44 +38,53 @@ public class Game {
     //Important that thsi value is less than Integer.MAX_VALUE for a compare in shortest path
     private final int noEdge=Integer.MAX_VALUE-1;
 
-    private final int endNode;
+    private int endNode;
 
     /**
-     *
-     * @param routeSize number of node in a single dimension
-     *
-     *
-     * @param edgeProbability edgeProbability
      *
      * @param edgeLevel options are S for Simple, M for Medium or H for Hard
      */
 
-    public Game(int routeSize, int edgeProbability, char edgeLevel){
-        if(routeSize>1) {
-            this.routeSize = routeSize;
-        } else
-            throw new IllegalArgumentException("routeSize must greater than 1");
-        this.edgeProbability=edgeProbability;
+    public Game(char edgeLevel){
         this.nodeList=Collections.synchronizedList(new ArrayList()) ;
         this.edgeList=Collections.synchronizedList(new ArrayList()) ;
-        this.nodeNum=routeSize*routeSize;
-        this.endNode=nodeNum-1;
         this.adjacentArray= Collections.synchronizedList(new ArrayList<ArrayList<Integer>>());
 
-        //put all nodes in the nodeList
-        for (int i=0;i<nodeNum;++i){
-            nodeList.add(new Node(i,this.routeSize));
-        }
         if(edgeLevel=='S' || edgeLevel=='M') {
             this.edgeLevel = edgeLevel;
         } else {
             throw new IllegalArgumentException("choose edgeLevel from one of the following letters: S, M");
         }
+    }
+
+    /**
+     *
+     * @param routeSize number of node in a single dimension
+     * @param edgeProbability edge probability
+     */
+    public void init(int routeSize,int edgeProbability){
+        if(routeSize>1) {
+            this.routeSize = routeSize;
+        } else
+            throw new IllegalArgumentException("routeSize must greater than 1");
+        this.edgeProbability=edgeProbability;
+        this.nodeNum=routeSize*routeSize;
+        this.endNode=nodeNum-1;
+        nodeList.clear();
+        edgeList.clear();
+        adjacentArray.clear();
+        //put all nodes in the nodeList
+        for (int i=0;i<nodeNum;++i){
+            nodeList.add(new Node(i,this.routeSize));
+        }
+
         this.createPath(this.nodeList,this.edgeList, this.edgeProbability, this.adjacentArray);
         storeShortestPath=true;
         mPlayerEnergy=shortestPath(0,nodeNum-1,this.adjacentArray);
         mPlayer=new Player(0,endNode,mPlayerEnergy);
     }
+
+
     /**
      * edge between node
      * in total there are 3*routeSize different small adjacent matrices
@@ -342,5 +351,12 @@ public class Game {
             storeShortestPath=false;
         }
         return nodeCost.get(nodeList.get(endNode));
+    }
+
+    public int getGameLevel(){
+        return routeSize;
+    }
+    public int getEdgeProbability(){
+        return edgeProbability;
     }
 }

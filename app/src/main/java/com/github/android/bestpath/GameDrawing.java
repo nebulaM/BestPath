@@ -71,8 +71,8 @@ public class GameDrawing extends View {
         mContext=context;
         //mGame points to the game stored in main activity
         mGame= MainActivity.GAME;
-        mLevel=MainActivity.GAME_LEVEL;
-        mEdgeProb=MainActivity.GAME_EDGE_PROBABILITY;
+        mLevel=mGame.getGameLevel();
+        mEdgeProb=mGame.getEdgeProbability();
         mPaint = new Paint();
         mPaint.setDither(true);
         mPaint.setStyle(Paint.Style.FILL);
@@ -113,8 +113,7 @@ public class GameDrawing extends View {
     public void nextLevel(){
         if(mLevel<mMaxLevel) {
             mLevel += 1.0f;
-            mGame=null;
-            mGame = new Game((int) mLevel, mEdgeProb, 'M');
+            mGame.init((int) mLevel, mEdgeProb);
             //not ready to draw, need to re-calculate drawing parameters in canvas method
             notReadToDraw();
             invalidate();
@@ -124,8 +123,7 @@ public class GameDrawing extends View {
     public void previousLevel(){
         if(mLevel>mMinLevel) {
             mLevel -= 1.0f;
-            mGame=null;
-            mGame = new Game((int) mLevel, mEdgeProb, 'M');
+            mGame.init((int) mLevel, mEdgeProb);
             notReadToDraw();
             invalidate();
         }

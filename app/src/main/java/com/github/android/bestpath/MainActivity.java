@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity{
 
         GAME_LEVEL=5.0f;
         GAME_EDGE_PROBABILITY=30;
-        GAME =new Game((int)GAME_LEVEL,GAME_EDGE_PROBABILITY,'M');
+        GAME =new Game('M');
+        GAME.init((int)GAME_LEVEL,GAME_EDGE_PROBABILITY);
 
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)
