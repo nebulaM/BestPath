@@ -122,7 +122,7 @@ public class GameFragment extends Fragment{
             public void onClick(View v){
                 playSound(mSound);
                 while(mMP.isPlaying());
-                getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_left,R.animator.slide_out_right).replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_right,R.animator.slide_out_left,R.animator.slide_in_left,R.animator.slide_out_right).replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
             }
 
         });
