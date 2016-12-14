@@ -17,16 +17,22 @@ public class MainActivity extends AppCompatActivity{
     public static final String SP_KEY_SOUND ="SP_KEY_SOUND";
     public static final String SP_KEY_LANG="SP_KEY_LANG";
 
+    public static final String SP_KEY_GAME_LEVEL="SP_KEY_GAME_LEVEL";
+
     public static final int SP_KEY_THEME_DEFAULT=0;
     public static final boolean SP_KEY_SOUND_DEFAULT=true;
     public static final String[] SP_KEY_LANG_PACKAGE={"en","ch", "jp"};
+
+    private static final int SP_KEY_GAME_LEVEL_DEFAULT=2;
 
     private SharedPreferences mSP;
     private SharedPreferences.Editor mSPEditor;
 
     protected static Game GAME;
+    private int mGameLevel;
     protected static int GAME_EDGE_PROBABILITY;
-    protected static float GAME_LEVEL;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +42,11 @@ public class MainActivity extends AppCompatActivity{
         //use hardware volume key to control audio volume for all fragments under this activity
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //read from shared preference
-        checkSP();
+        checkSP(false);
 
-        GAME_LEVEL=5.0f;
         GAME_EDGE_PROBABILITY=30;
         GAME =new Game('M');
-        GAME.init((int)GAME_LEVEL,GAME_EDGE_PROBABILITY);
+        GAME.init( mGameLevel,GAME_EDGE_PROBABILITY);
 
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)
@@ -50,18 +55,24 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      * Assign default value to SharedPreference if SP had never been read before
+     * @param Overwrite overwrite the SP file w/ default parameters
      */
-    private void checkSP(){
+    private void checkSP(boolean Overwrite){
         mSP = getSharedPreferences(MainActivity. SP_FILE_NAME, MODE_PRIVATE);
-        int readAgain=mSP.getInt(SP_KEY_First_Time_READ,-99);
-        if(readAgain==-99){
-            mSPEditor=getSharedPreferences(MainActivity. SP_FILE_NAME, MODE_PRIVATE).edit();
-            Log.d(TAG,"First time access this preference file!");
-            mSPEditor.putInt(SP_KEY_First_Time_READ,1);
+        mSPEditor=getSharedPreferences(MainActivity. SP_FILE_NAME, MODE_PRIVATE).edit();
+        boolean firstTimeAccess=mSP.getBoolean(SP_KEY_First_Time_READ,true);
+        if(Overwrite||firstTimeAccess){
+            Log.d(TAG,"Rewrite this preference file with default values!");
+            mSPEditor.putBoolean(SP_KEY_First_Time_READ,false);
             mSPEditor.putInt(SP_KEY_THEME,SP_KEY_THEME_DEFAULT);
             mSPEditor.putBoolean(SP_KEY_SOUND,SP_KEY_SOUND_DEFAULT);
             mSPEditor.putString(SP_KEY_LANG,SP_KEY_LANG_PACKAGE[0]);
+            mSPEditor.putInt(SP_KEY_GAME_LEVEL,SP_KEY_GAME_LEVEL_DEFAULT);
             mSPEditor.commit();
+
+            mGameLevel=SP_KEY_GAME_LEVEL_DEFAULT;
+        }else{
+            mGameLevel= mSP.getInt(SP_KEY_GAME_LEVEL,SP_KEY_GAME_LEVEL_DEFAULT);
         }
     }
 
@@ -75,8 +86,12 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onPause() {
+        //write user preferred game info to SP
+        if (mGameLevel != GAME.getGameLevel()) {
+            mGameLevel = GAME.getGameLevel();
+            mSPEditor.putInt(SP_KEY_GAME_LEVEL, GAME.getGameLevel()).apply();
+            }
         super.onPause();
-
         //Toast.makeText(this,"ActPause!",Toast.LENGTH_SHORT).show();
     }
 }
