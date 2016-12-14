@@ -3,11 +3,13 @@ package com.github.android.bestpath;
 
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.github.android.bestpath.backend.Game;
+import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 
 public class MainActivity extends AppCompatActivity{
     public static final String TAG="MainActivity";
@@ -32,19 +34,22 @@ public class MainActivity extends AppCompatActivity{
     private int mGameLevel;
     protected static int GAME_EDGE_PROBABILITY;
 
+    //sound from http://www.freesfx.co.uk
+    protected static MediaPlayer mMP = MediaPlayerSingleton.getInstance();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
+        mMP = MediaPlayer.create(getApplicationContext(),R.raw.click_1);
+        Log.d(TAG,"@onCreate: Create media player");
         //use hardware volume key to control audio volume for all fragments under this activity
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //read from shared preference
         checkSP(false);
 
-        GAME_EDGE_PROBABILITY=30;
+        GAME_EDGE_PROBABILITY=50;
         GAME =new Game('M');
         GAME.init( mGameLevel,GAME_EDGE_PROBABILITY);
 
@@ -62,7 +67,7 @@ public class MainActivity extends AppCompatActivity{
         mSPEditor=getSharedPreferences(MainActivity. SP_FILE_NAME, MODE_PRIVATE).edit();
         boolean firstTimeAccess=mSP.getBoolean(SP_KEY_First_Time_READ,true);
         if(Overwrite||firstTimeAccess){
-            Log.d(TAG,"Rewrite this preference file with default values!");
+            Log.d(TAG,"@checkSP: Rewrite this preference file with default values!");
             mSPEditor.putBoolean(SP_KEY_First_Time_READ,false);
             mSPEditor.putInt(SP_KEY_THEME,SP_KEY_THEME_DEFAULT);
             mSPEditor.putBoolean(SP_KEY_SOUND,SP_KEY_SOUND_DEFAULT);
@@ -72,6 +77,7 @@ public class MainActivity extends AppCompatActivity{
 
             mGameLevel=SP_KEY_GAME_LEVEL_DEFAULT;
         }else{
+            Log.d(TAG,"@checkSP: get saved values from preference file");
             mGameLevel= mSP.getInt(SP_KEY_GAME_LEVEL,SP_KEY_GAME_LEVEL_DEFAULT);
         }
     }
@@ -79,19 +85,26 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
-
-        //Toast.makeText(this,"ActResume!",Toast.LENGTH_SHORT).show();
-
+        if(mMP ==null){
+            Log.d(TAG,"@onResume: Create media player");
+            mMP =MediaPlayer.create(getApplicationContext(), R.raw.click_1);
+        }
     }
 
     @Override
     public void onPause() {
         //write user preferred game info to SP
         if (mGameLevel != GAME.getGameLevel()) {
+            Log.d(TAG,"@onPause: Save new preferred Game level");
             mGameLevel = GAME.getGameLevel();
             mSPEditor.putInt(SP_KEY_GAME_LEVEL, GAME.getGameLevel()).apply();
             }
         super.onPause();
-        //Toast.makeText(this,"ActPause!",Toast.LENGTH_SHORT).show();
+        //release media player
+        if(mMP !=null) {
+            Log.d(TAG,"@onPause: Release media player");
+            mMP.release();
+            mMP = null;
+        }
     }
 }

@@ -39,6 +39,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private ImageView mShareImage;
     private ImageView mRemoveAddsImage;
     //texts
+    private TextView mModeText;
     private TextView mThemeText;
     private TextView mSoundText;
 
@@ -46,7 +47,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private int mTheme;
     private Boolean mSound;
     private String mLanguage;
-    //sound from http://www.freesfx.co.uk
     private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
     private Toast mToastSound;
 
@@ -68,10 +68,8 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
-
-        mMP =MediaPlayer.create(getActivity().getApplicationContext(),R.raw.click_1);
-        Log.d(TAG,"Create media player on Create");
-
+        Log.d(TAG,"@onCreate: obtain media player from parent activity");
+        mMP=MainActivity.mMP;
     }
 
     @Override
@@ -92,6 +90,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mShareImage=(ImageView)view.findViewById(R.id.ShareImage);
         mRemoveAddsImage=(ImageView)view.findViewById(R.id.RemoveAddsImage);
 
+        mModeText=(TextView)view.findViewById(R.id.ModeText);
         mThemeText=(TextView)view.findViewById(R.id.ThemeColorText);
         mSoundText=(TextView)view.findViewById(R.id.SoundText);
 
@@ -100,6 +99,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mSettingsSector2=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L2);
         mSettingsSector3=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L3);
 
+        mModeText.setOnClickListener(this);
         mThemeText.setOnClickListener(this);
         mSoundText.setOnClickListener(this);
         mToastSound=Toast.makeText(getActivity().getApplicationContext(),"",Toast.LENGTH_SHORT);
@@ -136,7 +136,10 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mSP.edit().putBoolean(MainActivity.SP_KEY_SOUND,mSound).apply();
                 setSound(mSound,false);
                 break;
+            case R.id.ModeText:
+               // mModeImage.setVisibility(View.VISIBLE);
 
+                break;
             default:
                 break;
         }
@@ -304,10 +307,8 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     @Override
     public void onResume(){
         super.onResume();
-        if(mMP ==null){
-            Log.d(TAG,"Create media player on Resume");
-            mMP =MediaPlayer.create(getActivity().getApplicationContext(), R.raw.click_1);
-        }
+        Log.d(TAG,"@onResume: obtain pointer to media player from parent activity");
+        mMP=MainActivity.mMP;
 
     }
 
@@ -317,16 +318,12 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         //clear dialog, (without cleaning back stack, sometimes need to click dialog multiply times to close it after resumed from pause)
         Fragment prev = getFragmentManager().findFragmentByTag(TAG_DIALOG_ON_BACK_STACK);
         if (prev != null) {
-            Log.d(TAG,"close opened dialog on Pause");
+            Log.d(TAG,"@onPause: close opened dialog on Pause");
             DialogFragment df = (DialogFragment) prev;
             df.dismiss();
         }
-        //release media player
-        if(mMP !=null) {
-            Log.d(TAG,"Release media player on Pause");
-            mMP.release();
-            mMP = null;
-        }
+        Log.d(TAG,"@onPause: release pointer to media player");
+        mMP=null;
     }
 
 }

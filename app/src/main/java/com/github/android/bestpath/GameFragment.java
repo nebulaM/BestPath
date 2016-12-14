@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +34,6 @@ public class GameFragment extends Fragment{
     private String mLanguage;
 
     private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
-    private Uri  path_click_settings;
 
     /*public static GameFragment newInstance(int theme, boolean sound, String language) {
         GameFragment myFragment = new GameFragment();
@@ -51,10 +49,9 @@ public class GameFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
+        Log.d(TAG,"@onCreate: obtain media player from parent activity");
+        mMP =MainActivity.mMP;
 
-        mMP =MediaPlayer.create(getActivity().getApplicationContext(), R.raw.click_1);
-        path_click_settings = Uri.parse("android.resource://" + getActivity().getPackageName()+ "/" + R.raw.click_1);
-        Log.d(TAG,"Create media player on Create, string"+path_click_settings);
     }
 
 
@@ -67,7 +64,7 @@ public class GameFragment extends Fragment{
         mTheme = mSP.getInt(MainActivity.SP_KEY_THEME, MainActivity.SP_KEY_THEME_DEFAULT);
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
         mLanguage = mSP.getString(MainActivity.SP_KEY_LANG, MainActivity.SP_KEY_LANG_PACKAGE[0]);
-        Log.d(TAG, "args theme "+mTheme+" sound "+mSound+" language "+mLanguage);
+        Log.d(TAG, "@onCreateView: args theme "+mTheme+" sound "+mSound+" language "+mLanguage);
 
         mGameDrawing=(GameDrawing)view.findViewById(R.id.GameDrawing);
 
@@ -84,7 +81,6 @@ public class GameFragment extends Fragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,20 +170,14 @@ public class GameFragment extends Fragment{
     @Override
     public void onResume(){
         super.onResume();
-        if(mMP ==null){
-            Log.d(TAG,"Create media player on Resume");
-            mMP =MediaPlayer.create(getActivity().getApplicationContext(), R.raw.click_1);
-        }
+        Log.d(TAG,"@onResume: obtain media player from parent activity");
+        mMP=MainActivity.mMP;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        //release media player
-        if(mMP !=null) {
-            Log.d(TAG,"Release media player on Pause");
-            mMP.release();
-            mMP = null;
-        }
+        Log.d(TAG,"@onPause: release pointer to media player");
+        mMP=null;
     }
 }
