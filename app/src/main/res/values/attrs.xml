@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DrawDonut">
+        <attr name="clockwise" format="boolean"/>
+        <attr name="radius" format="dimension"/>
+    </declare-styleable>
+</resources>
