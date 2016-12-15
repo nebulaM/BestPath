@@ -20,13 +20,13 @@ public class MainActivity extends AppCompatActivity{
     public static final String SP_KEY_LANG="SP_KEY_LANG";
 
     public static final String SP_KEY_GAME_LEVEL="SP_KEY_GAME_LEVEL";
-
+    public static final String SP_KEY_GAME_MODE="SP_KEY_GAME_MODE";
     public static final int SP_KEY_THEME_DEFAULT=0;
     public static final boolean SP_KEY_SOUND_DEFAULT=true;
     public static final String[] SP_KEY_LANG_PACKAGE={"en","ch", "jp"};
 
     private static final int SP_KEY_GAME_LEVEL_DEFAULT=2;
-
+    public static final int SP_KEY_GAME_MODE_DEFAULT=0;
     private SharedPreferences mSP;
     private SharedPreferences.Editor mSPEditor;
 
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity{
             mSPEditor.putBoolean(SP_KEY_SOUND,SP_KEY_SOUND_DEFAULT);
             mSPEditor.putString(SP_KEY_LANG,SP_KEY_LANG_PACKAGE[0]);
             mSPEditor.putInt(SP_KEY_GAME_LEVEL,SP_KEY_GAME_LEVEL_DEFAULT);
+            mSPEditor.putInt(SP_KEY_GAME_MODE,SP_KEY_GAME_MODE_DEFAULT);
             mSPEditor.commit();
 
             mGameLevel=SP_KEY_GAME_LEVEL_DEFAULT;

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dialog_mode_container"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -27,8 +26,8 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content">
+
                 <ImageView
-                    android:id="@+id/card_mode_medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/padding"
@@ -45,7 +44,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content">
                 <ImageView
-                    android:id="@+id/card_mode_easy"
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -54,11 +52,10 @@
                     android:paddingLeft="@dimen/padding"
                     android:paddingRight="@dimen/padding"
                     android:src="@mipmap/card2"
-                    />
+                   />
             </RelativeLayout>
         </LinearLayout>
         <ImageView
-            android:id="@+id/card_mode_hard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/padding"

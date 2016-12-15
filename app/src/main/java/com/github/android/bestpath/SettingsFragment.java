@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.android.bestpath.dialog.ModeDialog;
 import com.github.android.bestpath.dialog.MyDialog;
 import com.github.android.bestpath.dialog.ThemeDialog;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
@@ -50,6 +51,8 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
     private Toast mToastSound;
 
+    private int mGameMode;
+
     public interface onPreferenceChangeListener {
         void onPreferenceChange(String tag, int parameter);
     }
@@ -80,6 +83,8 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mTheme = mSP.getInt(MainActivity.SP_KEY_THEME, MainActivity.SP_KEY_THEME_DEFAULT);
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
         mLanguage = mSP.getString(MainActivity.SP_KEY_LANG, MainActivity.SP_KEY_LANG_PACKAGE[0]);
+        mGameMode =mSP.getInt(MainActivity.SP_KEY_GAME_MODE,MainActivity.SP_KEY_GAME_MODE_DEFAULT);
+
 
         mModeImage=(ImageView)view.findViewById(R.id.ModeImage);
         mThemeImage=(ImageView)view.findViewById(R.id.ThemeColorImage);
@@ -137,8 +142,10 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 setSound(mSound,false);
                 break;
             case R.id.ModeText:
-               // mModeImage.setVisibility(View.VISIBLE);
-
+                mModeImage.setVisibility(View.VISIBLE);
+                ModeDialog modeDialog=new ModeDialog();
+                modeDialog.setOnCloseListener (this);
+                modeDialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
                 break;
             default:
                 break;
@@ -164,11 +171,21 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                     Log.d(TAG, "theme is " + parameter);
                     if (parameter != mTheme) {
                         mTheme = parameter;
+                        mSP.edit().putInt(MainActivity.SP_KEY_THEME,parameter).apply();
                         setSettingsTheme(parameter);
-
                     }
                 }
                 mThemeImage.setVisibility(View.INVISIBLE);
+                break;
+            case ModeDialog.TAG:
+                if(parameter!=-1) {
+                    if (parameter != mGameMode) {
+                        mGameMode = parameter;
+                        Log.d(TAG, "mode is " + parameter);
+                        mSP.edit().putInt(MainActivity.SP_KEY_GAME_MODE,parameter);
+                    }
+                }
+                mModeImage.setVisibility(View.INVISIBLE);
                 break;
             default:
                 break;
