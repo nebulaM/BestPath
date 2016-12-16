@@ -46,7 +46,7 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener{
             clickable.setOnClickListener(this);
         }
         builder.setView(view)
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
