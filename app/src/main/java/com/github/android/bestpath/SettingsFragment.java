@@ -85,7 +85,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mLanguage = mSP.getString(MainActivity.SP_KEY_LANG, MainActivity.SP_KEY_LANG_PACKAGE[0]);
         mGameMode =mSP.getInt(MainActivity.SP_KEY_GAME_MODE,MainActivity.SP_KEY_GAME_MODE_DEFAULT);
 
-
+        Log.d(TAG, "@onCreateView: args theme "+mTheme+" sound "+mSound+" language "+mLanguage+" gameMode "+mGameMode);
         mModeImage=(ImageView)view.findViewById(R.id.ModeImage);
         mThemeImage=(ImageView)view.findViewById(R.id.ThemeColorImage);
         mSoundImage=(ImageView)view.findViewById(R.id.SoundImage);
@@ -128,7 +128,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.ThemeColorText:
-                Log.d(TAG,"click theme");
                 mThemeImage.setVisibility(View.VISIBLE);
                 //getFragmentManager().popBackStack("GameFragment",POP_BACK_STACK_INCLUSIVE);<--this is a test on how back stack works
                 //for some reason previously "new ThemeDialog()" was not working, had to use "ThemeDialog.newInstance()" instead
@@ -143,7 +142,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 break;
             case R.id.ModeText:
                 mModeImage.setVisibility(View.VISIBLE);
-                ModeDialog modeDialog=new ModeDialog();
+                ModeDialog modeDialog=ModeDialog.newInstance(mGameMode);
                 modeDialog.setOnCloseListener (this);
                 modeDialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
                 break;
@@ -167,8 +166,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         switch (tag) {
             case ThemeDialog.TAG:
                 if(parameter!=-1) {
-                    Log.d(TAG, "theme dialog closed and user selected a theme");
-                    Log.d(TAG, "theme is " + parameter);
+                    Log.d(TAG, "@onDialogClose new theme is " + parameter);
                     if (parameter != mTheme) {
                         mTheme = parameter;
                         mSP.edit().putInt(MainActivity.SP_KEY_THEME,parameter).apply();
@@ -181,8 +179,8 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 if(parameter!=-1) {
                     if (parameter != mGameMode) {
                         mGameMode = parameter;
-                        Log.d(TAG, "mode is " + parameter);
-                        mSP.edit().putInt(MainActivity.SP_KEY_GAME_MODE,parameter);
+                        Log.d(TAG, "@onDialogClose new game mode is " + parameter);
+                        mSP.edit().putInt(MainActivity.SP_KEY_GAME_MODE,parameter).apply();
                     }
                 }
                 mModeImage.setVisibility(View.INVISIBLE);

@@ -10,63 +10,59 @@
         android:layout_height="match_parent"
         android:paddingTop="@dimen/padding_half"
         android:paddingLeft="@dimen/padding"
-        android:gravity="left"
+        android:gravity="center"
         android:background="#FFFFBB33"
         android:text="@string/mode"
         android:textColor="#000000"
         android:textSize="@dimen/text_size_large"
         android:textStyle="bold"
         />
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+    <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <RelativeLayout
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/card_mode_medium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/padding"
-                    android:paddingBottom="@dimen/padding"
-                    android:paddingLeft="@dimen/padding"
-                    android:paddingRight="@dimen/padding"
-                    android:src="@mipmap/card1"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/card_mode_easy"
-                    android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/padding"
-                    android:paddingBottom="@dimen/padding"
-                    android:paddingLeft="@dimen/padding"
-                    android:paddingRight="@dimen/padding"
-                    android:src="@mipmap/card2"
-                    />
-            </RelativeLayout>
-        </LinearLayout>
-        <ImageView
-            android:id="@+id/card_mode_hard"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/padding"
-            android:paddingBottom="@dimen/padding"
-            android:paddingLeft="@dimen/padding"
-            android:paddingRight="@dimen/padding"
-            android:layout_marginTop="50dp"
-            android:layout_gravity="center|bottom"
-            android:src="@mipmap/card3"/>
-    </FrameLayout>
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin">
+            <View
+                android:id="@+id/centerBar"
+                android:layout_width="@dimen/settings_divider_thickness"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"/>
+            <ImageView
+                android:id="@+id/card_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/padding"
+                android:paddingBottom="@dimen/padding"
+                android:paddingLeft="@dimen/padding"
+                android:paddingRight="@dimen/padding"
+                android:layout_alignRight="@id/centerBar"
+                android:layout_marginRight="@dimen/activity_vertical_margin"
+                android:src="@mipmap/card_hard"/>
+            <ImageView
+                android:id="@+id/card_right"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/padding"
+                android:paddingBottom="@dimen/padding"
+                android:paddingLeft="@dimen/padding"
+                android:paddingRight="@dimen/padding"
+                android:layout_alignLeft="@id/centerBar"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/card_medium"
+                />
+            <ImageView
+                android:id="@+id/card_front"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/padding"
+                android:paddingBottom="@dimen/padding"
+                android:paddingLeft="@dimen/padding"
+                android:paddingRight="@dimen/padding"
+                android:layout_marginTop="100dp"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/card_easy"/>
+        </RelativeLayout>
+
 </LinearLayout>

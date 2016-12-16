@@ -28,6 +28,12 @@
 
     <color name="theme_gold">#e1bd00</color>
 
+    <color name="mode_card_easy">#00964d</color>
+    <color name="mode_card_medium">#ebe840</color>
+    <color name="mode_card_hard">#92000d</color>
+
+
+
 
     <color name="theme_pink">#fb7299</color>
     <color name="theme_pink_dark">#b85671</color>
