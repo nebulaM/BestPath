@@ -324,6 +324,12 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         super.onResume();
         Log.d(TAG,"@onResume: obtain pointer to media player from parent activity");
         mMP=MainActivity.mMP;
+        Fragment prev = getFragmentManager().findFragmentByTag(TAG_DIALOG_ON_BACK_STACK);
+        if (prev != null) {
+            Log.d(TAG,"onResume: close opened dialog on Pause");
+            DialogFragment df = (DialogFragment) prev;
+            df.dismiss();
+        }
 
     }
 
