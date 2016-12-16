@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity{
     public static final boolean SP_KEY_SOUND_DEFAULT=true;
     public static final String[] SP_KEY_LANG_PACKAGE={"en","ch", "jp"};
 
-    private static final int SP_KEY_GAME_LEVEL_DEFAULT=2;
+    public static final int SP_KEY_GAME_LEVEL_DEFAULT=3;
     public static final int SP_KEY_GAME_MODE_DEFAULT=0;
     private SharedPreferences mSP;
     private SharedPreferences.Editor mSPEditor;

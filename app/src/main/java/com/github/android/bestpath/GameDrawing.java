@@ -27,7 +27,7 @@ public class GameDrawing extends View {
     //max level has 10*10 nodes
     private final float mMaxLevel=10.0f;
     //min level has 2*2 nodes
-    private final float mMinLevel=2.0f;
+    private final float mMinLevel=MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
     //current game level
     private float mLevel;
     //probability of having edge, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes

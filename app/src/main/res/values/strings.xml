@@ -23,4 +23,8 @@
     <string name="soundOn">Sound On</string>
     <string name="soundOff">Sound Off</string>
 
+    <string name="selectModeNotify">mode is selected</string>
+    <string name="hard">Hard</string>
+    <string name="medium">Medium</string>
+    <string name="easy">Easy</string>
 </resources>
