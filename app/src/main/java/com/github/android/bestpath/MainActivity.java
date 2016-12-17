@@ -1,6 +1,8 @@
 package com.github.android.bestpath;
 
 
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -35,14 +37,15 @@ public class MainActivity extends AppCompatActivity{
     protected static int GAME_EDGE_PROBABILITY;
 
     //sound from http://www.freesfx.co.uk
-    protected static MediaPlayer mMP = MediaPlayerSingleton.getInstance();
-
+    protected static MediaPlayer mMPClick = MediaPlayerSingleton.getInstance();
+    public static MediaPlayer mMPSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mMP = MediaPlayer.create(getApplicationContext(),R.raw.click_1);
+        mMPClick = MediaPlayer.create(getApplicationContext(),R.raw.click_1);
+        mMPSwitch= MediaPlayer.create(getApplicationContext(),R.raw.switch_sound);
         Log.d(TAG,"@onCreate: Create media player");
         //use hardware volume key to control audio volume for all fragments under this activity
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -51,7 +54,7 @@ public class MainActivity extends AppCompatActivity{
 
         GAME_EDGE_PROBABILITY=50;
         GAME =new Game('M');
-        GAME.init( mGameLevel,GAME_EDGE_PROBABILITY);
+        GAME.init( mGameLevel,GAME_EDGE_PROBABILITY,mSP.getInt(SP_KEY_GAME_MODE,SP_KEY_GAME_MODE_DEFAULT));
 
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)
@@ -86,9 +89,12 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
-        if(mMP ==null){
+        if(mMPClick ==null){
             Log.d(TAG,"@onResume: Create media player");
-            mMP =MediaPlayer.create(getApplicationContext(), R.raw.click_1);
+            mMPClick =MediaPlayer.create(getApplicationContext(), R.raw.click_1);
+        }
+        if(mMPSwitch==null){
+            mMPSwitch= MediaPlayer.create(getApplicationContext(),R.raw.switch_sound);
         }
     }
 
@@ -102,10 +108,14 @@ public class MainActivity extends AppCompatActivity{
             }
         super.onPause();
         //release media player
-        if(mMP !=null) {
+        if(mMPClick !=null) {
             Log.d(TAG,"@onPause: Release media player");
-            mMP.release();
-            mMP = null;
+            mMPClick.release();
+            mMPClick = null;
+        }
+        if(mMPSwitch!=null){
+            mMPSwitch.release();
+            mMPSwitch=null;
         }
     }
 }

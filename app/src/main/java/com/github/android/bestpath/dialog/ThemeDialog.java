@@ -82,6 +82,8 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener{
     }
     @Override
     public void onDismiss (DialogInterface dialog) {
+        //without super.onDismiss(dialog), dismissed dialog may appear again after activity onResume
+        super.onDismiss(dialog);
         mOnCloseListener.onDialogClose(TAG,selected);
     }
 }

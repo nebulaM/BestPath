@@ -21,6 +21,8 @@ public class Game {
     private int nodeNum;
     //route size is nodeNum*nodeNum
     private int routeSize;
+
+    private int mGameMode;
     private int edgeProbability;
     //adjacentArray has all cost of nodes
     private List<ArrayList<Integer>> adjacentArray;
@@ -36,7 +38,8 @@ public class Game {
     private boolean storeShortestPath;
     private List<Integer> mShortestList=new ArrayList<>();
     //Important that thsi value is less than Integer.MAX_VALUE for a compare in shortest path
-    private final int noEdge=Integer.MAX_VALUE-1;
+    public static final int noEdge=Integer.MAX_VALUE-1;
+    public static final int setPlayer=1;
 
     private int endNode;
 
@@ -62,7 +65,8 @@ public class Game {
      * @param routeSize number of node in a single dimension
      * @param edgeProbability edge probability
      */
-    public void init(int routeSize,int edgeProbability){
+    public void init(int routeSize,int edgeProbability,int gameMode){
+        setGameMode(gameMode);
         if(routeSize>1) {
             this.routeSize = routeSize;
         } else
@@ -210,16 +214,17 @@ public class Game {
 
     }
 
-    public void setPlayerPosition(int nodeIndex){
+    public int setPlayerPosition(int nodeIndex){
         int cost=adjacentArray.get(nodeIndex).get(mPlayer.getCurrentPosition());
         if(cost==noEdge){//no edge between currentPosition and target node
-            return;
+            return noEdge;
         } else if( mPlayer.getEnergy()>=cost && mPlayer.getCurrentPosition()!=nodeIndex){
             mPlayer.costEnergy(cost);
             mPlayer.setCurrentPosition(nodeIndex);
-
+            return setPlayer;
         } else{
             mPlayer.setEnergy(0);
+            return setPlayer;
         }
     }
     /**
@@ -239,7 +244,8 @@ public class Game {
 
     }
 
-    public void resetGame(){
+    public void resetGame(int gameMode){
+        setGameMode(gameMode);
         createPath(nodeList, edgeList, edgeProbability, adjacentArray);
         mPlayerEnergy=shortestPath(0,nodeNum-1,adjacentArray);
         mPlayer.setCurrentPosition(0);
@@ -252,6 +258,17 @@ public class Game {
         mPlayer.setEnergy(mPlayerEnergy);
     }
 
+    private void setGameMode(int gameMode){
+        if(gameMode>=0&&gameMode<3) {
+            mGameMode = gameMode;
+        }else {
+            throw new IllegalArgumentException("Game Mode must between 0-2");
+        }
+    }
+
+    public int getGameMode(){
+        return mGameMode;
+    }
     public int getPlayerPosition() {
         return mPlayer.getCurrentPosition();
     }

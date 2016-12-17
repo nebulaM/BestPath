@@ -72,7 +72,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
         Log.d(TAG,"@onCreate: obtain media player from parent activity");
-        mMP=MainActivity.mMP;
+        mMP=MainActivity.mMPClick;
     }
 
     @Override
@@ -142,7 +142,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 break;
             case R.id.ModeText:
                 mModeImage.setVisibility(View.VISIBLE);
-                ModeDialog modeDialog=ModeDialog.newInstance(mGameMode);
+                ModeDialog modeDialog=ModeDialog.newInstance(mGameMode,mSound);
                 modeDialog.setOnCloseListener (this);
                 modeDialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
                 break;
@@ -323,26 +323,15 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     public void onResume(){
         super.onResume();
         Log.d(TAG,"@onResume: obtain pointer to media player from parent activity");
-        mMP=MainActivity.mMP;
-        Fragment prev = getFragmentManager().findFragmentByTag(TAG_DIALOG_ON_BACK_STACK);
-        if (prev != null) {
-            Log.d(TAG,"onResume: close opened dialog on Pause");
-            DialogFragment df = (DialogFragment) prev;
-            df.dismiss();
-        }
+        mMP=MainActivity.mMPClick;
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        //clear dialog, (without cleaning back stack, sometimes need to click dialog multiply times to close it after resumed from pause)
-        Fragment prev = getFragmentManager().findFragmentByTag(TAG_DIALOG_ON_BACK_STACK);
-        if (prev != null) {
-            Log.d(TAG,"@onPause: close opened dialog on Pause");
-            DialogFragment df = (DialogFragment) prev;
-            df.dismiss();
-        }
+
+
         Log.d(TAG,"@onPause: release pointer to media player");
         mMP=null;
     }

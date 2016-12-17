@@ -1,6 +1,7 @@
 package com.github.android.bestpath;
 
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,10 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.github.android.bestpath.backend.Game;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 
 
-public class GameFragment extends Fragment{
+public class GameFragment extends Fragment implements GameDrawing.onPlayerMovingListener{
     public static final String TAG="GameFragment";
     private SharedPreferences mSP;
     private GameDrawing mGameDrawing;
@@ -32,6 +34,7 @@ public class GameFragment extends Fragment{
     private int mTheme;
     private Boolean mSound;
     private String mLanguage;
+    private int mGameMode;
 
     private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
 
@@ -50,7 +53,7 @@ public class GameFragment extends Fragment{
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
         Log.d(TAG,"@onCreate: obtain media player from parent activity");
-        mMP =MainActivity.mMP;
+        mMP =MainActivity.mMPClick;
 
     }
 
@@ -64,7 +67,8 @@ public class GameFragment extends Fragment{
         mTheme = mSP.getInt(MainActivity.SP_KEY_THEME, MainActivity.SP_KEY_THEME_DEFAULT);
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
         mLanguage = mSP.getString(MainActivity.SP_KEY_LANG, MainActivity.SP_KEY_LANG_PACKAGE[0]);
-        Log.d(TAG, "@onCreateView: args theme "+mTheme+" sound "+mSound+" language "+mLanguage);
+        mGameMode=mSP.getInt(MainActivity.SP_KEY_GAME_MODE,MainActivity.SP_KEY_GAME_MODE_DEFAULT);
+        Log.d(TAG, "@onCreateView: args Theme "+mTheme+" Sound "+mSound+" Game Mode "+mGameMode);
 
         mGameDrawing=(GameDrawing)view.findViewById(R.id.GameDrawing);
 
@@ -93,14 +97,14 @@ public class GameFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 playSound(mSound);
-                mGameDrawing.restart();
+                mGameDrawing.restart(mGameMode);
             }
         });
         mNextLevelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playSound(mSound);
-                mGameDrawing.nextLevel();
+                mGameDrawing.nextLevel(mGameMode);
             }
         });
 
@@ -108,7 +112,7 @@ public class GameFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 playSound(mSound);
-                mGameDrawing.previousLevel();
+                mGameDrawing.previousLevel(mGameMode);
 
             }
         });
@@ -122,6 +126,8 @@ public class GameFragment extends Fragment{
             }
 
         });
+
+        mGameDrawing.setOnPlayerMovingListener(this);
 
     }
 
@@ -171,7 +177,8 @@ public class GameFragment extends Fragment{
     public void onResume(){
         super.onResume();
         Log.d(TAG,"@onResume: obtain media player from parent activity");
-        mMP=MainActivity.mMP;
+        mMP=MainActivity.mMPClick;
+
     }
 
     @Override
@@ -179,5 +186,20 @@ public class GameFragment extends Fragment{
         super.onPause();
         Log.d(TAG,"@onPause: release pointer to media player");
         mMP=null;
+    }
+
+    @Override
+    public void onPlayerMoving(int state){
+        switch (state){
+            case 0:
+                playSound(mSound);
+                break;
+            case 1:
+                break;
+            case -1:
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,13 +14,13 @@ import android.view.ViewTreeObserver;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
+import com.github.android.bestpath.MainActivity;
 import com.github.android.bestpath.R;
 
 /**
  * Created by nebulaM on 12/14/2016.
  * Mode dialog
  */
-//TODO:Sound effect
 //TODO:Bug in landscape view, need to implement onMeasure when rotating screen
 public class ModeDialog extends DialogFragment implements View.OnClickListener{
     public static final String TAG="ModeDialog";
@@ -38,10 +39,13 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
     private int mCCWAnimStep =0;
     private int mCWAnimStep =0;
 
-    public static ModeDialog newInstance(int gameMode) {
+    private MediaPlayer mMPSwitch;
+    private boolean mSound;
+    public static ModeDialog newInstance(int gameMode,boolean sound) {
         ModeDialog myFragment = new ModeDialog();
         Bundle args = new Bundle();
         args.putInt("gameMode", gameMode);
+        args.putBoolean("sound", sound);
         myFragment.setArguments(args);
         return myFragment;
     }
@@ -49,6 +53,8 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMode=getArguments().getInt("gameMode");
+        mSound=getArguments().getBoolean("sound");
+        mMPSwitch= MainActivity.mMPSwitch;
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -151,11 +157,14 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
     }
     @Override
     public void onDismiss (DialogInterface dialog) {
+        //without super.onDismiss(dialog), dismissed dialog may appear again after activity onResume
+        super.onDismiss(dialog);
         mOnCloseListener.onDialogClose(TAG,selected);
     }
 
 
     private void setCWAnimation(int step) {
+        playSound(mSound);
         switch (step) {
             case 0:
                 Log.d(TAG,"@setCWAnimation: set card case 0");
@@ -200,7 +209,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
         Log.d(TAG,"x0:  "+(mFrontCardXY[0])+" y0: "+(mFrontCardXY[1]));
         Log.d(TAG,"x1:  "+(mLeftCardXY[0])+" y1: "+(mLeftCardXY[1]));
         Log.d(TAG,"x2:  "+(mRightCardXY[0])+" y2: "+(mRightCardXY[1]));
-        switch (animStep) {
+        switch_sound (animStep) {
             case 0:
                 //card 0 at left
                 anim[0] = new TranslateAnimation(0,leftTOFrontX , 0, leftTOFrontY);
@@ -230,7 +239,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
         for(int i = 0; i< mCard.length; ++i){
                 mCard[i].startAnimation(anim[i]);
         }*/
-
+        playSound(mSound);
         switch (step) {
             case 0:
                 mCard[0].setX(mFrontCardXY[0]);
@@ -286,6 +295,34 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
                 break;
             default:
                 break;
+        }
+    }
+
+    private void playSound(boolean enable){
+        if(enable) {
+
+            //prevent from unexpected null pointer
+            if(mMPSwitch !=null) {
+                if (mMPSwitch.isPlaying()) {
+                    mMPSwitch.stop();
+                }
+                mMPSwitch.start();
+            }
+        }
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(mMPSwitch==null) {
+            mMPSwitch = MainActivity.mMPSwitch;
+        }
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        if(mMPSwitch!=null) {
+            mMPSwitch = null;
         }
     }
 }

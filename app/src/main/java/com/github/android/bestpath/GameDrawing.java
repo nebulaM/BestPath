@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -30,6 +31,10 @@ public class GameDrawing extends View {
     private final float mMinLevel=MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
     //current game level
     private float mLevel;
+
+    private Drawable mGameEasy;
+    private Drawable mGameNormal;
+    private Drawable mGameHard;
     //probability of having edge, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes
     private int mEdgeProb;
 
@@ -63,6 +68,11 @@ public class GameDrawing extends View {
     private Context mContext;
     private int mNodeColor=0x000000;
 
+    private onPlayerMovingListener mOnPlayerMovingListener;
+
+    public interface onPlayerMovingListener{
+        void onPlayerMoving(int gameState);
+    }
     /**
      * @param context context
      */
@@ -73,6 +83,9 @@ public class GameDrawing extends View {
         mGame= MainActivity.GAME;
         mLevel=mGame.getGameLevel();
         mEdgeProb=mGame.getEdgeProbability();
+
+
+
         mPaint = new Paint();
         mPaint.setDither(true);
         mPaint.setStyle(Paint.Style.FILL);
@@ -84,6 +97,9 @@ public class GameDrawing extends View {
         /*
         * Emoji provided free by http://emojione.com
         * */
+        mGameEasy= ContextCompat.getDrawable(context,R.drawable.icon_mode_easy);
+        mGameNormal= ContextCompat.getDrawable(context,R.drawable.icon_mode_medium);
+        mGameHard= ContextCompat.getDrawable(context,R.drawable.icon_mode_hard);
         mPlayerNormal = ContextCompat.getDrawable(context,R.drawable.neutral_black);
         mPlayerTired = ContextCompat.getDrawable(context,R.drawable.tired_black);
         mPlayerDrooling= ContextCompat.getDrawable(context,R.drawable.drooling_black);
@@ -102,28 +118,28 @@ public class GameDrawing extends View {
         }
     }
 
-    public void restart(){
+    public void restart(int gameMode){
         if(mGame!=null) {
-            mGame.resetGame();
+            mGame.resetGame(gameMode);
             notReadToDraw();
             invalidate();
         }
     }
 
-    public void nextLevel(){
+    public void nextLevel(int gameMode){
         if(mLevel<mMaxLevel) {
             mLevel += 1.0f;
-            mGame.init((int) mLevel, mEdgeProb);
+            mGame.init((int) mLevel, mEdgeProb,gameMode);
             //not ready to draw, need to re-calculate drawing parameters in canvas method
             notReadToDraw();
             invalidate();
         }
     }
 
-    public void previousLevel(){
+    public void previousLevel(int gameMode){
         if(mLevel>mMinLevel) {
             mLevel -= 1.0f;
-            mGame.init((int) mLevel, mEdgeProb);
+            mGame.init((int) mLevel, mEdgeProb,gameMode);
             notReadToDraw();
             invalidate();
         }
@@ -178,6 +194,21 @@ public class GameDrawing extends View {
             }
         //}
         mDrawingParametersReady=true;
+        //draw mode icon
+        switch (mGame.getGameMode()){
+            case 0:
+                drawDrawable(canvas,mGameEasy,0,0,(int)mDiameter,(int)mDiameter);
+                break;
+            case 1:
+                drawDrawable(canvas,mGameNormal,0,0,(int)mDiameter,(int)mDiameter);
+                break;
+            case 2:
+                drawDrawable(canvas,mGameHard,0,0,(int)mDiameter,(int)mDiameter);
+                break;
+            default:
+                break;
+        }
+
         //draw energy view
         float currentEnergyPercent=(float)(mGame.getPlayerEnergy()*100/mGame.getMaxEnergy());
         //use different color for energy view depend on current energy(in percentage)
@@ -195,12 +226,10 @@ public class GameDrawing extends View {
         if(mClockwise) {
             if(currentEnergyPercent==100.0f){
                 drawDonut(canvas, mPaint, mPath,0.0f, 359.99f);
-            }
-            else if(currentEnergyPercent==0.0f){
+            } else if(currentEnergyPercent==0.0f){
                 mPaint.setColor(0xffa2a2a2);
                 drawDonut(canvas, mPaint, mPath, 0.0f, 359.99f);
-            }
-            else {
+            } else {
                 drawDonut(canvas, mPaint, mPath, 270.0f - currentEnergyPercent * 3.60f, currentEnergyPercent * 3.60f);
                 mPaint.setColor(0xffa2a2a2);
                 drawDonut(canvas, mPaint, mPath, 270.0f, (100-currentEnergyPercent) * 3.60f);
@@ -208,12 +237,10 @@ public class GameDrawing extends View {
         } else{//energy decreases counterclockwise
             if(currentEnergyPercent==100.0f){
                 drawDonut(canvas, mPaint, mPath,0.0f, 359.9f);
-            }
-            else if(currentEnergyPercent==0.0f){
+            } else if(currentEnergyPercent==0.0f){
                 mPaint.setColor(0xffa2a2a2);
                 drawDonut(canvas, mPaint, mPath,0.0f, 359.99f);
-            }
-            else {
+            } else {
                 drawDonut(canvas, mPaint, mPath, 270.0f, currentEnergyPercent * 3.60f);
                 mPaint.setColor(0xffa2a2a2);
                 drawDonut(canvas, mPaint, mPath, 270.0f+currentEnergyPercent * 3.60f, (100.0f-currentEnergyPercent) * 3.60f);
@@ -234,6 +261,7 @@ public class GameDrawing extends View {
                 canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mRadius*0.8f,getHeight() / 2+mRadius * 0.2f ,  mPaint);
             }
         }
+
 
         //draw nodes
         mPaint.setColor(mNodeColor);
@@ -438,7 +466,17 @@ public class GameDrawing extends View {
                         float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
 
                         if (x > (startX - toleranceX) && x < (startX + mNodeLength + toleranceX) && (y > startY - toleranceY) && (y < startY + mNodeLength + toleranceY)) {
-                            mGame.setPlayerPosition(i);
+                            int move=mGame.setPlayerPosition(i);
+                            switch (move){
+                                case Game.noEdge:
+                                    break;
+                                case Game.setPlayer:
+                                    //check if game over so we know which sound to play
+                                    mOnPlayerMovingListener.onPlayerMoving(mGame.gameOver(i));
+                                    break;
+                                default:
+                                    break;
+                            }
                             invalidate();
                             break;
                         }
@@ -448,6 +486,10 @@ public class GameDrawing extends View {
                 break;
         }
         return true;
+    }
+
+    public void setOnPlayerMovingListener(onPlayerMovingListener listener){
+        mOnPlayerMovingListener=listener;
     }
 }
 
