@@ -12,6 +12,8 @@ public class Node {
     private int yCord;
 
     private boolean needToBeHere=false;
+
+    private boolean visited=false;
     //Node id of adjacent nodes that have connection to this node
     private List<Integer> adjacentNodeID=new ArrayList<>();
 
@@ -75,6 +77,13 @@ public class Node {
     }
     public boolean getNeedToBeHere(){
         return needToBeHere;
+    }
+
+    public void setVisited(boolean visit){
+        visited=visit;
+    }
+    public boolean getVisited(){
+        return visited;
     }
 
 }
