@@ -1,8 +1,6 @@
 package com.github.android.bestpath;
 
 
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -34,7 +32,6 @@ public class MainActivity extends AppCompatActivity{
 
     protected static Game GAME;
     private int mGameLevel;
-    protected static int GAME_EDGE_PROBABILITY;
 
     //sound from http://www.freesfx.co.uk
     protected static MediaPlayer mMPClick = MediaPlayerSingleton.getInstance();
@@ -52,9 +49,8 @@ public class MainActivity extends AppCompatActivity{
         //read from shared preference
         checkSP(false);
 
-        GAME_EDGE_PROBABILITY=50;
         GAME =new Game('M');
-        GAME.init( mGameLevel,GAME_EDGE_PROBABILITY,mSP.getInt(SP_KEY_GAME_MODE,SP_KEY_GAME_MODE_DEFAULT));
+        GAME.init( mGameLevel,mSP.getInt(SP_KEY_GAME_MODE,SP_KEY_GAME_MODE_DEFAULT));
 
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)

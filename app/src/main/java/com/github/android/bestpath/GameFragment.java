@@ -18,6 +18,7 @@ import com.github.android.bestpath.backend.Game;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 
 
+
 public class GameFragment extends Fragment implements GameDrawing.onPlayerMovingListener{
     public static final String TAG="GameFragment";
     private SharedPreferences mSP;
@@ -189,14 +190,14 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
     }
 
     @Override
-    public void onPlayerMoving(int state){
+    public void onPlayerMoving(Game.GameState state){
         switch (state){
-            case 0:
+            case GAME_NOT_END:
                 playSound(mSound);
                 break;
-            case 1:
+            case PLAYER_WIN:
                 break;
-            case -1:
+            case PLAYER_LOSE:
                 break;
             default:
                 break;

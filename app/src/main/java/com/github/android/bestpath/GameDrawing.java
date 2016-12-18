@@ -6,18 +6,18 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.github.android.bestpath.MainActivity;
 import com.github.android.bestpath.R;
 import com.github.android.bestpath.backend.Game;
 
 import java.util.List;
+
+import static com.github.android.bestpath.MainActivity.GAME;
 
 /**
  * Main view of the game
@@ -35,8 +35,7 @@ public class GameDrawing extends View {
     private Drawable mGameEasy;
     private Drawable mGameNormal;
     private Drawable mGameHard;
-    //probability of having edge, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes
-    private int mEdgeProb;
+
 
     //rotation direction of energy view
     private boolean mClockwise=true;
@@ -71,7 +70,7 @@ public class GameDrawing extends View {
     private onPlayerMovingListener mOnPlayerMovingListener;
 
     public interface onPlayerMovingListener{
-        void onPlayerMoving(int gameState);
+        void onPlayerMoving(Game.GameState state);
     }
     /**
      * @param context context
@@ -80,10 +79,8 @@ public class GameDrawing extends View {
         super(context, attr);
         mContext=context;
         //mGame points to the game stored in main activity
-        mGame= MainActivity.GAME;
+        mGame= GAME;
         mLevel=mGame.getGameLevel();
-        mEdgeProb=mGame.getEdgeProbability();
-
 
 
         mPaint = new Paint();
@@ -129,7 +126,7 @@ public class GameDrawing extends View {
     public void nextLevel(int gameMode){
         if(mLevel<mMaxLevel) {
             mLevel += 1.0f;
-            mGame.init((int) mLevel, mEdgeProb,gameMode);
+            mGame.init((int) mLevel, gameMode);
             //not ready to draw, need to re-calculate drawing parameters in canvas method
             notReadToDraw();
             invalidate();
@@ -139,7 +136,7 @@ public class GameDrawing extends View {
     public void previousLevel(int gameMode){
         if(mLevel>mMinLevel) {
             mLevel -= 1.0f;
-            mGame.init((int) mLevel, mEdgeProb,gameMode);
+            mGame.init((int) mLevel, gameMode);
             notReadToDraw();
             invalidate();
         }
@@ -327,9 +324,9 @@ public class GameDrawing extends View {
             mPaint.setColor(0xff3fff00);
             float startX = mGameRouteOffsetX +(mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
             float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
-            if (mGame.gameOver(i)==-1) {
+            if (mGame.gameOver()==Game.GameState.PLAYER_LOSE) {
                 drawDrawable(canvas, mPlayerNotWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
-            } else if (mGame.gameOver(i)==1) {
+            } else if (mGame.gameOver()==Game.GameState.PLAYER_WIN) {
                 drawDrawable(canvas, mPlayerWin, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
             } else if (currentEnergyPercent > 50) {
                 drawDrawable(canvas, mPlayerNormal, (int) startX, (int) startY, (int) (startX + mNodeLength), (int) (startY + mNodeLength));
@@ -340,7 +337,7 @@ public class GameDrawing extends View {
             }
         }
         //show one of the possible shortest paths if player not win
-        if(mGame.gameOver(mGame.getPlayerPosition())==-1){
+        if(mGame.gameOver()==Game.GameState.PLAYER_LOSE){
             List<Integer> shortestPath=mGame.getShortestList();
             mPaint.setColor(0xff919191);
             float circleCenterOffset=mNodeLength/2.0f;
@@ -464,7 +461,7 @@ public class GameDrawing extends View {
         float toleranceY=mEdgeLengthY*0.4f;
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
-                if(mGame.gameOver(mGame.getPlayerPosition())==0) {//disallow player to move once game over
+                if(mGame.gameOver()==Game.GameState.GAME_NOT_END) {//disallow player to move once game over
                     float x = event.getX();
                     float y = event.getY();
                     for (int i = 0; i < mGame.getNodeNum(); ++i) {
@@ -478,7 +475,7 @@ public class GameDrawing extends View {
                                     break;
                                 case Game.setPlayer:
                                     //check if game over so we know which sound to play
-                                    mOnPlayerMovingListener.onPlayerMoving(mGame.gameOver(i));
+                                    mOnPlayerMovingListener.onPlayerMoving(mGame.gameOver());
                                     break;
                                 default:
                                     break;

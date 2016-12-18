@@ -19,52 +19,62 @@ import java.util.Set;
 public class Game {
     private final String TAG="Game";
     //total number of node
-    private int nodeNum;
+    private int mNodeNum;
     //num of node in one row/column
     private int mGameLevel;
-
+    //0 to 2, easy to hard
     private int mGameMode;
-    private int edgeProbability;
+
     //adjacentArray has all cost of nodes
     private List<ArrayList<Integer>> adjacentArray;
+    //list of all nodes
     private List<Node> nodeList;
+    //list of all edges
     private List<Edge> edgeList;
-    //char 'S' means no diagonal edges, otherwise enable diagonal edges
+    //char 'S' means no diagonal edges
     private final char edgeLevel;
     //max edgeCost is 3, we will add 1 to exclusive 0 and inclusive 3 in rand method
     private static final int edgeCostMax=3;
     //player on this map
     private Player mPlayer;
+    //energy assigned to player in game
     private int mPlayerEnergy;
-    private List<Integer> mShortestList=new ArrayList<>();
-
-    private List<Integer> mShortestListCandidate1=new ArrayList<>();
-    private List<Integer> mShortestListCandidate2=new ArrayList<>();
-    //Important that this value is less than Integer.MAX_VALUE for a compare in shortest path
-    public static final int noEdge=Integer.MAX_VALUE-1;
-    public static final int setPlayer=1;
-
-    private int endNode;
-
-    private int quadrantPosBound;
-    private int quadrantNegBound;
-    private List<Node> quadrant1NodeList=new ArrayList<>();
-    private List<Node> quadrant3NodeList=new ArrayList<>();
-
+    //ID of last node(destination)
+    private int endNodeID;
+    //random number generator
     private Random RNG=new Random();
 
-
-    public static final int CodeShortestList=0;
-    public static final int CodeShortestListCandidate1=1;
-    public static final int CodeShortestListCandidate2=2;
-    public static final int CodeNoList=-1;
-
+    //hard mode: nodeID of the node needs to be visited in quadrant 1
     private int q1NodeIndex;
+    //hard mode: nodeID of the node needs to be visited in quadrant 3
     private int q3NodeIndex;
+    //candidate nodes in quadrant 1/3
+    private List<Node> quadrant1NodeList=new ArrayList<>();
+    private List<Node> quadrant3NodeList=new ArrayList<>();
+    //quadrant boundaries, equal when number of node in a row is even
+    private int quadrantPosBound;
+    private int quadrantNegBound;
+    //list contains all nodes of a potential(probably have more than one path) shortest path
+    private List<Integer> mShortestList=new ArrayList<>();
+    //potential shortest path in hard mode
+    private List<Integer> mShortestListCandidate1=new ArrayList<>();
+    private List<Integer> mShortestListCandidate2=new ArrayList<>();
+
+    //edge probability in easy mode, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes
+    private final int edgeProbability=30;
+    //which nodeList to put the path in
+    private enum PathList{ShortestList, ShortestListCandidate1, ShortestListCandidate2, NoList};
+    //game state
+    public enum GameState{PLAYER_WIN,PLAYER_LOSE,GAME_NOT_END}
+
+    //means no edge between two nodes, important that this value is less than Integer.MAX_VALUE for a compare in shortest path
+    public static final int noEdge=Integer.MAX_VALUE-1;
+    //return to this value if we successfully set the player here
+    public static final int setPlayer=10;
 
     /**
      *
-     * @param edgeLevel options are S for Simple, M for Medium or H for Hard
+     * @param edgeLevel options are S for Simple(no diagonal), M for Medium(has diagonal)
      */
 
     public Game(char edgeLevel){
@@ -81,31 +91,29 @@ public class Game {
 
     /**
      *
-     * @param routeSize number of node in a single dimension
-     * @param edgeProbability edge probability
+     * @param gameLevel number of node in a row/column
      */
-    public void init(int routeSize,int edgeProbability,int gameMode){
+    public void init(int gameLevel,int gameMode){
         setGameMode(gameMode);
-        if(routeSize>1) {
-            this.mGameLevel = routeSize;
+        if(gameLevel>1) {
+            mGameLevel = gameLevel;
         } else
             throw new IllegalArgumentException("mGameLevel must greater than 1");
-        this.edgeProbability=edgeProbability;
-        this.nodeNum=routeSize*routeSize;
-        this.endNode=nodeNum-1;
+        mNodeNum =gameLevel*gameLevel;
+        endNodeID = mNodeNum -1;
         nodeList.clear();
         edgeList.clear();
         adjacentArray.clear();
 
 
-        quadrantPosBound=routeSize/2+routeSize%2;
-        quadrantNegBound=routeSize/2-routeSize%2;
+        quadrantPosBound=gameLevel/2+gameLevel%2;
+        quadrantNegBound=gameLevel/2-gameLevel%2;
 
         //put all nodes in the nodeList
-        for (int i=0;i<nodeNum;++i){
-            nodeList.add(new Node(i,this.mGameLevel));
+        for (int i = 0; i< mNodeNum; ++i){
+            nodeList.add(new Node(i,mGameLevel));
         }
-        this.createPath(this.nodeList, this.edgeList, this.edgeProbability, this.adjacentArray);
+        createPath(nodeList, edgeList, edgeProbability, adjacentArray);
 
         for(Node n: nodeList){
             n.setVisited(false);
@@ -129,15 +137,15 @@ public class Game {
             Log.d(TAG,"quadrant3NodeList.size()"+quadrant3NodeList.size());
             q1NodeIndex=quadrant1NodeList.get(RNG.nextInt(quadrant1NodeList.size())).setNeedToBeHere(true);
             q3NodeIndex=quadrant3NodeList.get(RNG.nextInt(quadrant3NodeList.size())).setNeedToBeHere(true);
-            nodeList.get(endNode).setNeedToBeHere(true);
+            nodeList.get(endNodeID).setNeedToBeHere(true);
 
-            int energy1=shortestPath(0, q1NodeIndex, this.adjacentArray,true,true,Game.CodeShortestListCandidate1);
-            energy1+=shortestPath(q1NodeIndex, q3NodeIndex, this.adjacentArray,true,false,Game.CodeShortestListCandidate1);
-            energy1+=shortestPath(q3NodeIndex, endNode, this.adjacentArray,true,false,Game.CodeShortestListCandidate1);
+            int energy1=shortestPath(0, q1NodeIndex, this.adjacentArray,true,true,PathList.ShortestListCandidate1);
+            energy1+=shortestPath(q1NodeIndex, q3NodeIndex, this.adjacentArray,true,false,PathList.ShortestListCandidate1);
+            energy1+=shortestPath(q3NodeIndex, endNodeID, this.adjacentArray,true,false,PathList.ShortestListCandidate1);
 
-            int energy2=shortestPath(0, q3NodeIndex, this.adjacentArray,true,true,Game.CodeShortestListCandidate2);
-            energy2+=shortestPath(q3NodeIndex, q1NodeIndex, this.adjacentArray,true,false,Game.CodeShortestListCandidate2);
-            energy2+=shortestPath(q1NodeIndex, endNode, this.adjacentArray,true,false,Game.CodeShortestListCandidate2);
+            int energy2=shortestPath(0, q3NodeIndex, this.adjacentArray,true,true,PathList.ShortestListCandidate2);
+            energy2+=shortestPath(q3NodeIndex, q1NodeIndex, this.adjacentArray,true,false,PathList.ShortestListCandidate2);
+            energy2+=shortestPath(q1NodeIndex, endNodeID, this.adjacentArray,true,false,PathList.ShortestListCandidate2);
 
             mShortestList.clear();
             if(energy1<energy2){
@@ -152,12 +160,12 @@ public class Game {
 
         //end of test
         else {//original code
-            nodeList.get(endNode).setNeedToBeHere(true);
-            mPlayerEnergy = shortestPath(0, endNode, this.adjacentArray,true,true,Game.CodeShortestList);
+            nodeList.get(endNodeID).setNeedToBeHere(true);
+            mPlayerEnergy = shortestPath(0, endNodeID, this.adjacentArray,true,true,PathList.ShortestList);
 
         }
 
-        mPlayer = new Player(0, endNode, mPlayerEnergy);
+        mPlayer = new Player(0, endNodeID, mPlayerEnergy);
     }
 
     public boolean getNodeNeedVisit(int nodeIndex){
@@ -170,7 +178,7 @@ public class Game {
      */
     private void createPath(List<Node> nodeList, List<Edge> edgeList, int edgeProbability, List<ArrayList<Integer>> adjacentArray){
 
-        randomConnectNodes(nodeList,edgeList,edgeProbability, adjacentArray);
+        randomConnectNodes(nodeList,edgeList,adjacentArray);
         //keep track on all adjacent nodes of this node
         for(Node n : nodeList){
             n.clearAdjacentNodeID();
@@ -183,14 +191,11 @@ public class Game {
     }
     /**
      * @param nodeList
-     * @param probability
      * @param m
      */
-    private void randomConnectNodes(List<Node> nodeList, List<Edge> edgeList, int probability, List<ArrayList<Integer>> m){
-        int upperBound=nodeNum;
+    private void randomConnectNodes(List<Node> nodeList, List<Edge> edgeList, List<ArrayList<Integer>> m){
+        int upperBound= mNodeNum;
         int yPositionScale= mGameLevel;
-        Random randEdge = new Random();
-        Random randCost = new Random();
         Node startNode, endNode;
         int dx,dy;
 
@@ -214,11 +219,11 @@ public class Game {
                     dy = endNode.getYCord() - startNode.getYCord();
                     //only if the distance between two nodes <= 1 in all of x, y, z direction, will we consider connect the nodes.
                     if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1 ) {
-                        int prob=randEdge.nextInt(100);
+                        int prob=RNG.nextInt(100);
                         //Graph is not bi-direct, so m[i][j] = m[j][i]
                         if (m.get(startIndex).get(endIndex)==noEdge) {
                             if( dy==0  || dx==0) {
-                                //Case 1: endNode and startNode are in a line that is parallel to one of the Cartesian axis, nothing special
+                                //Case 1: endNodeID and startNode are in a line that is parallel to one of the Cartesian axis, nothing special
                                 if(prob>50) {
                                     m.get(startIndex).set(endIndex, edgeCostMax);
                                 }else{
@@ -227,7 +232,7 @@ public class Game {
 
 
                             } else if(edgeLevel!='S'){
-                                //Case 2: endNode and startNode forms an diagonal of a square on the x-y plane
+                                //Case 2: endNodeID and startNode forms an diagonal of a square on the x-y plane
                                 //Only if the other diagonal of the square is not connected, will we try to connect THIS diagonal
                                 if(m.get(startIndex+dx).get(startIndex+(dy*yPositionScale))==noEdge){
                                     if(endIndex<startIndex) {
@@ -290,17 +295,10 @@ public class Game {
                 }
         }
     }
-    private boolean nodeHasEdge(int startIndex, List<ArrayList<Integer>> m){
-        for(int endIndex=0; endIndex<nodeNum; ++endIndex){
-            if(m.get(startIndex).get(endIndex)!=noEdge){
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     public int getNodeNum(){
-        return nodeNum;
+        return mNodeNum;
     }
 
     public int getEdgeNum(){
@@ -344,27 +342,27 @@ public class Game {
      *
      * @return state of game
      */
-    public int gameOver(int nodeIndex){
+    public GameState gameOver(){
         switch(mGameMode){
             case 2:
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()&&nodeList.get(q1NodeIndex).getVisited()&&nodeList.get(q3NodeIndex).getVisited()){
-                    return 1;
+                    return GameState.PLAYER_WIN;
                 }else{
                     if(mPlayer.getEnergy()>0){
-                        return 0;
+                        return GameState.GAME_NOT_END;
                     }else{
-                        return -1;
+                        return GameState.PLAYER_LOSE;
                     }
                 }
             default:
                 //player win
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
-                    return 1;
+                    return GameState.PLAYER_WIN;
                 } else{
-                    //minimum energy required to reach endNode
-                    int minEnergy = this.shortestPath(mPlayer.getCurrentPosition(), endNode, adjacentArray, false, false,  Game.CodeNoList);
+                    //minimum energy required to reach endNodeID
+                    int minEnergy = this.shortestPath(mPlayer.getCurrentPosition(), endNodeID, adjacentArray, false, false,  PathList.NoList);
                     //-1 means player loss, 0 means game not end
-                    return minEnergy > mPlayer.getEnergy() ? -1 : 0;
+                    return minEnergy > mPlayer.getEnergy() ? GameState.PLAYER_LOSE : GameState.GAME_NOT_END;
                 }
         }
 
@@ -373,7 +371,7 @@ public class Game {
     public void resetGame(int gameMode){
         setGameMode(gameMode);
         createPath(nodeList, edgeList, edgeProbability, adjacentArray);
-        //mPlayerEnergy=shortestPath(0,nodeNum-1,adjacentArray);
+        //mPlayerEnergy=shortestPath(0,mNodeNum-1,adjacentArray);
         for(Node n: nodeList){
             n.setNeedToBeHere(false);
             n.setVisited(false);
@@ -396,18 +394,19 @@ public class Game {
             Log.d(TAG,"quadrant3NodeList.size()"+quadrant3NodeList.size());
             q1NodeIndex=quadrant1NodeList.get(RNG.nextInt(quadrant1NodeList.size())).setNeedToBeHere(true);
             q3NodeIndex=quadrant3NodeList.get(RNG.nextInt(quadrant3NodeList.size())).setNeedToBeHere(true);
-            nodeList.get(endNode).setNeedToBeHere(true);
+            nodeList.get(endNodeID).setNeedToBeHere(true);
 
-            int energy1=shortestPath(0, q1NodeIndex, this.adjacentArray,true,true,Game.CodeShortestListCandidate1);
-            energy1+=shortestPath(q1NodeIndex, q3NodeIndex, this.adjacentArray,true,false,Game.CodeShortestListCandidate1);
-            energy1+=shortestPath(q3NodeIndex, endNode, this.adjacentArray,true,false,Game.CodeShortestListCandidate1);
+            int energy1=shortestPath(0, q1NodeIndex, this.adjacentArray,true,true,PathList.ShortestListCandidate1);
+            energy1+=shortestPath(q1NodeIndex, q3NodeIndex, this.adjacentArray,true,false,PathList.ShortestListCandidate1);
+            energy1+=shortestPath(q3NodeIndex, endNodeID, this.adjacentArray,true,false,PathList.ShortestListCandidate1);
 
-            int energy2=shortestPath(0, q3NodeIndex, this.adjacentArray,true,true,Game.CodeShortestListCandidate2);
-            energy2+=shortestPath(q3NodeIndex, q1NodeIndex, this.adjacentArray,true,false,Game.CodeShortestListCandidate2);
-            energy2+=shortestPath(q1NodeIndex, endNode, this.adjacentArray,true,false,Game.CodeShortestListCandidate2);
+            int energy2=shortestPath(0, q3NodeIndex, this.adjacentArray,true,true,PathList.ShortestListCandidate2);
+            energy2+=shortestPath(q3NodeIndex, q1NodeIndex, this.adjacentArray,true,false,PathList.ShortestListCandidate2);
+            energy2+=shortestPath(q1NodeIndex, endNodeID, this.adjacentArray,true,false,PathList.ShortestListCandidate2);
 
-            Log.d(TAG,"energy1"+energy1);
-            Log.d(TAG,"energy2"+energy2);
+
+            Log.d(TAG,"energy1 "+energy1);
+            Log.d(TAG,"energy2 "+energy2);
 
             mShortestList.clear();
             if(energy1<energy2){
@@ -418,11 +417,11 @@ public class Game {
                 mPlayerEnergy=energy2;
             }
             mShortestList.add(0);
-            Log.d(TAG,"shortestList"+mShortestList);
-            Log.d(TAG,"mPlayerEnergy"+mPlayerEnergy);
+            Log.d(TAG,"shortestList "+mShortestList);
+            Log.d(TAG,"mPlayerEnergy "+mPlayerEnergy);
         }else{
-            nodeList.get(endNode).setNeedToBeHere(true);
-            mPlayerEnergy=shortestPath(0,endNode,adjacentArray,true,true,Game.CodeShortestList);
+            nodeList.get(endNodeID).setNeedToBeHere(true);
+            mPlayerEnergy=shortestPath(0, endNodeID,adjacentArray,true,true,PathList.ShortestList);
         }
 
         mPlayer.setCurrentPosition(0);
@@ -473,12 +472,12 @@ public class Game {
     }
     /**
      *Dijkstra's Algorithm
-     * PreCondition:startNode and endNode >=0
-     *              startNode!=endNode
+     * PreCondition:startNode and endNodeID >=0
+     *              startNode!=endNodeID
      * PostCondition:return the cost of best path
-     *               save one possible shortestPath in mShortestPath, from endNode to startNode.
+     *               save one possible shortestPath in mShortestPath, from endNodeID to startNode.
      */
-    private int shortestPath(int startNode, int endNode, List<ArrayList<Integer>> adjacentArray, boolean save, boolean cleanListBeforeSave, int pathCode){
+    private int shortestPath(int startNode, int endNode, List<ArrayList<Integer>> adjacentArray, boolean save, boolean cleanListBeforeSave, PathList pathCode){
         //A list of node ID that shows shortest path from start to end
         List<Integer> shortestPath=new ArrayList<>();
         //map node to cost
@@ -490,7 +489,7 @@ public class Game {
         //track all unvisited nodes by nodeID
         Set<Integer> unvisitedNodes=new HashSet<>();
         //initialize path and cost for each node, if no path to startNode
-        for(int i=0;i<nodeNum;++i){
+        for(int i = 0; i< mNodeNum; ++i){
             int cost=(adjacentArray.get(startNode).get(i)==noEdge)?noEdge:adjacentArray.get(startNode).get(i);
             nodeCost.put(nodeList.get(i),cost);
             if(cost!=noEdge){
@@ -555,26 +554,27 @@ public class Game {
     }
 
 
-    private void setPath(List pathList,int pathCode, boolean cleanListBeforeSave){
+    private void setPath(List pathList,PathList pathCode, boolean cleanListBeforeSave){
         switch (pathCode){
-            case Game.CodeShortestList:
+            case ShortestList:
                 if(cleanListBeforeSave){
                     mShortestList.clear();
                 }
                 mShortestList.addAll(pathList);
                 break;
-            case Game.CodeShortestListCandidate1:
+            case ShortestListCandidate1:
                 if(cleanListBeforeSave){
                     mShortestListCandidate1.clear();
                 }
                 mShortestListCandidate1.addAll(pathList);
                 Log.d(TAG,"shortestListCandidate1 "+ mShortestListCandidate1);
                 break;
-            case Game.CodeShortestListCandidate2:
+            case ShortestListCandidate2:
                 if(cleanListBeforeSave) {
                     mShortestListCandidate2.clear();
                 }
                 mShortestListCandidate2.addAll(pathList);
+                Log.d(TAG,"shortestListCandidate2 "+ mShortestListCandidate2);
                 break;
             default:
                 break;
@@ -584,8 +584,5 @@ public class Game {
 
     public int getGameLevel(){
         return mGameLevel;
-    }
-    public int getEdgeProbability(){
-        return edgeProbability;
     }
 }
