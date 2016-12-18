@@ -308,7 +308,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
      */
     private void playSound(boolean enable){
         if(enable) {
-            Log.d(TAG,"play sound");
+            //Log.d(TAG,"play sound");
             //prevent from unexpected null pointer
             if(mMP !=null) {
                 if (mMP.isPlaying()) {
