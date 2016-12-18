@@ -2,6 +2,7 @@ package com.github.android.bestpath.backend;
 
 
 import android.util.Log;
+import android.util.SparseIntArray;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,7 +64,7 @@ public class Game {
     //edge probability in easy mode, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes
     private final int edgeProbability=30;
     //which nodeList to put the path in
-    private enum PathList{ShortestList, ShortestListCandidate1, ShortestListCandidate2, NoList};
+    private enum PathList{ShortestList, ShortestListCandidate1, ShortestListCandidate2, NoList}
     //game state
     public enum GameState{PLAYER_WIN,PLAYER_LOSE,GAME_NOT_END}
 
@@ -485,7 +486,7 @@ public class Game {
         Map<Node,Integer> nodeCost=new HashMap<>();
         //track previous node of this node
         //Map<this,previous>
-        Map<Integer,Integer> nodePrev=new HashMap<>();
+        SparseIntArray nodePrev=new SparseIntArray();
         //track all unvisited nodes by nodeID
         Set<Integer> unvisitedNodes=new HashSet<>();
         //initialize path and cost for each node, if no path to startNode
