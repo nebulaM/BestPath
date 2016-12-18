@@ -10,6 +10,8 @@ public class Node {
     private int nodeID;
     private int xCord;
     private int yCord;
+
+    private boolean needToBeHere=false;
     //Node id of adjacent nodes that have connection to this node
     private List<Integer> adjacentNodeID=new ArrayList<>();
 
@@ -65,6 +67,14 @@ public class Node {
     }
     public void addAdjacentNodeID(int nodeID){
         adjacentNodeID.add(nodeID);
+    }
+
+    public int setNeedToBeHere(boolean needToBeHere){
+        this.needToBeHere=needToBeHere;
+        return nodeID;
+    }
+    public boolean getNeedToBeHere(){
+        return needToBeHere;
     }
 
 }

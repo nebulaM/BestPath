@@ -264,8 +264,14 @@ public class GameDrawing extends View {
 
 
         //draw nodes
-        mPaint.setColor(mNodeColor);
+
         for (int i = 0; i < mGame.getNodeNum(); ++i) {
+            if(mGame.getNodeNeedVisit(i)){
+                mPaint.setColor(0xffffe45a);
+            }else{
+                mPaint.setColor(mNodeColor);
+            }
+
             /*int startX = (int) (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
             int startY = (int) (mGameRouteOffsetY +mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
             drawDrawable(canvas, mNode, startX,startY,(int)(startX + mNodeLength),(int)(startY + mNodeLength));*/
