@@ -117,7 +117,7 @@ public class GameDrawing extends View {
 
     public void restart(int gameMode){
         if(mGame!=null) {
-            mGame.resetGame(gameMode);
+            mGame.init((int)mLevel,gameMode);
             notReadToDraw();
             invalidate();
         }

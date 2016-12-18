@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Stores information on whether a node is used or not, and node coordinates
  */
-public class Node {
+ class Node {
     private int nodeID;
     private int xCord;
     private int yCord;
@@ -29,7 +29,7 @@ public class Node {
      * | 6  7  8
      * Y
      */
-    public Node(int nodeID,int mapSize){
+    Node(int nodeID,int mapSize){
         if(mapSize<2) {
             throw new IllegalArgumentException("minimum mapSize is 2");
         }
@@ -49,40 +49,40 @@ public class Node {
 
     }
 
-    public int getXCord(){
+    int getXCord(){
         return xCord;
     }
 
-    public int getYCord(){
+    int getYCord(){
         return yCord;
     }
 
-    public int getNodeID(){
+    int getNodeID(){
         return nodeID;
     }
 
-    public void clearAdjacentNodeID(){
+    void clearAdjacentNodeID(){
         adjacentNodeID.clear();
     }
-    public List<Integer> getAdjacentNodeID(){
+    List<Integer> getAdjacentNodeID(){
         return adjacentNodeID;
     }
-    public void addAdjacentNodeID(int nodeID){
+    void addAdjacentNodeID(int nodeID){
         adjacentNodeID.add(nodeID);
     }
 
-    public int setNeedToBeHere(boolean needToBeHere){
+    int setNeedToBeHere(boolean needToBeHere){
         this.needToBeHere=needToBeHere;
         return nodeID;
     }
-    public boolean getNeedToBeHere(){
+    boolean getNeedToBeHere(){
         return needToBeHere;
     }
 
-    public void setVisited(boolean visit){
+    void setVisited(boolean visit){
         visited=visit;
     }
-    public boolean getVisited(){
+    boolean getVisited(){
         return visited;
     }
 

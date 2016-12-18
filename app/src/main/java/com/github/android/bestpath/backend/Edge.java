@@ -1,26 +1,26 @@
 package com.github.android.bestpath.backend;
 
-public class Edge {
+class Edge {
     private final int startNodeIndex;
     private final int endNodeIndex;
     private final int edgeCost;
 
-    public Edge(int startNodeIndex, int endNodeIndex, int edgeCost){
+    Edge(int startNodeIndex, int endNodeIndex, int edgeCost){
         this.startNodeIndex=startNodeIndex;
         this.endNodeIndex=endNodeIndex;
         this.edgeCost=edgeCost;
 
     }
 
-    public int getStartNodeIndex(){
+    int getStartNodeIndex(){
         return startNodeIndex;
     }
 
-    public int getEndNodeIndex(){
+    int getEndNodeIndex(){
         return endNodeIndex;
     }
 
-    public  int getEdgeCost(){
+    int getEdgeCost(){
         return edgeCost;
     }
 }
