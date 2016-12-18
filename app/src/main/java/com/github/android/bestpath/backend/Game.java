@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+
 /**
  * Create a new 2D game
  *
@@ -23,8 +24,10 @@ public class Game {
     private int mNodeNum;
     //num of node in one row/column
     private int mGameLevel=0;
+
+    enum GameMode{EASY,NORMAL,HARD}
     //0 to 2, easy to hard
-    private int mGameMode;
+    private GameMode mGameMode;
 
     //adjacentArray has all cost of nodes
     private List<ArrayList<Integer>> adjacentArray;
@@ -64,7 +67,7 @@ public class Game {
     private List<Integer> mShortestListCandidate2;
 
     //edge probability in easy mode, due to the way of implementation, 40 actually = ~80% probability of having an edge between two nodes
-    private final int edgeProbability=30;
+    private int edgeProbability=30;
     //which nodeList to put the path in
     private enum PathList{ShortestList, ShortestListCandidate1, ShortestListCandidate2, NoList}
     //game state
@@ -104,10 +107,10 @@ public class Game {
      *
      * @param gameLevel number of node in a row/column
      */
-    public void init(int gameLevel,int gameMode){
+    public void init(int gameLevel,int gameMode) {
         setGameMode(gameMode);
         //first time start the game or change to a new level
-        if(mGameLevel==0||mGameLevel!=gameLevel) {
+        if (mGameLevel == 0 || mGameLevel != gameLevel) {
             if (gameLevel > 1) {
                 mGameLevel = gameLevel;
             } else
@@ -126,58 +129,57 @@ public class Game {
         }
         createPath(nodeList, edgeList, edgeProbability, adjacentArray);
 
-        for(Node n: nodeList){
+        for (Node n : nodeList) {
             n.setNeedToBeHere(false);
             n.setVisited(false);
         }
 
-        if(mGameMode==2){
-            quadrant1NodeList.clear();
-            quadrant3NodeList.clear();
-            mShortestListCandidate1.clear();
-            mShortestListCandidate2.clear();
-            for(Node n : nodeList){
-                if(n.getXCord()>=quadrantPosBound && n.getYCord()<=quadrantNegBound){
-                    quadrant1NodeList.add(n);
+        switch (mGameMode) {
+            case HARD:
+                quadrant1NodeList.clear();
+                quadrant3NodeList.clear();
+                mShortestListCandidate1.clear();
+                mShortestListCandidate2.clear();
+                for (Node n : nodeList) {
+                    if (n.getXCord() >= quadrantPosBound && n.getYCord() <= quadrantNegBound) {
+                        quadrant1NodeList.add(n);
+                    } else if (n.getXCord() <= quadrantNegBound && n.getYCord() >= quadrantPosBound) {
+                        quadrant3NodeList.add(n);
+                    }
                 }
-                else if(n.getXCord()<=quadrantNegBound && n.getYCord()>=quadrantPosBound){
-                    quadrant3NodeList.add(n);
+                Log.d(TAG, "quadrant1NodeList.size()" + quadrant1NodeList.size());
+                Log.d(TAG, "quadrant3NodeList.size()" + quadrant3NodeList.size());
+                q1NodeIndex = quadrant1NodeList.get(RNG.nextInt(quadrant1NodeList.size())).setNeedToBeHere(true);
+                q3NodeIndex = quadrant3NodeList.get(RNG.nextInt(quadrant3NodeList.size())).setNeedToBeHere(true);
+                nodeList.get(endNodeID).setNeedToBeHere(true);
+
+                int energy1 = shortestPath(startNodeID, q1NodeIndex, adjacentArray, true, true, PathList.ShortestListCandidate1);
+                energy1 += shortestPath(q1NodeIndex, q3NodeIndex, adjacentArray, true, false, PathList.ShortestListCandidate1);
+                energy1 += shortestPath(q3NodeIndex, endNodeID, adjacentArray, true, false, PathList.ShortestListCandidate1);
+
+                int energy2 = shortestPath(startNodeID, q3NodeIndex, adjacentArray, true, true, PathList.ShortestListCandidate2);
+                energy2 += shortestPath(q3NodeIndex, q1NodeIndex, adjacentArray, true, false, PathList.ShortestListCandidate2);
+                energy2 += shortestPath(q1NodeIndex, endNodeID, adjacentArray, true, false, PathList.ShortestListCandidate2);
+                Log.d(TAG, "energy1 " + energy1);
+                Log.d(TAG, "energy2 " + energy2);
+                mShortestList.clear();
+                if (energy1 < energy2) {
+                    mShortestList.addAll(mShortestListCandidate1);
+                    mPlayerEnergy = energy1;
+                } else {
+                    mShortestList.addAll(mShortestListCandidate2);
+                    mPlayerEnergy = energy2;
                 }
-            }
-            Log.d(TAG,"quadrant1NodeList.size()"+quadrant1NodeList.size());
-            Log.d(TAG,"quadrant3NodeList.size()"+quadrant3NodeList.size());
-            q1NodeIndex=quadrant1NodeList.get(RNG.nextInt(quadrant1NodeList.size())).setNeedToBeHere(true);
-            q3NodeIndex=quadrant3NodeList.get(RNG.nextInt(quadrant3NodeList.size())).setNeedToBeHere(true);
+                Log.d(TAG, "shortestList " + mShortestList);
+                Log.d(TAG, "mPlayerEnergy " + mPlayerEnergy);
+                mShortestList.add(startNodeID);
+                break;
+        default:
             nodeList.get(endNodeID).setNeedToBeHere(true);
-
-            int energy1=shortestPath(startNodeID, q1NodeIndex, adjacentArray,true,true,PathList.ShortestListCandidate1);
-            energy1+=shortestPath(q1NodeIndex, q3NodeIndex, adjacentArray,true,false,PathList.ShortestListCandidate1);
-            energy1+=shortestPath(q3NodeIndex, endNodeID, adjacentArray,true,false,PathList.ShortestListCandidate1);
-
-            int energy2=shortestPath(startNodeID, q3NodeIndex, adjacentArray,true,true,PathList.ShortestListCandidate2);
-            energy2+=shortestPath(q3NodeIndex, q1NodeIndex, adjacentArray,true,false,PathList.ShortestListCandidate2);
-            energy2+=shortestPath(q1NodeIndex, endNodeID, adjacentArray,true,false,PathList.ShortestListCandidate2);
-            Log.d(TAG,"energy1 "+energy1);
-            Log.d(TAG,"energy2 "+energy2);
-            mShortestList.clear();
-            if(energy1<energy2){
-                mShortestList.addAll(mShortestListCandidate1);
-                mPlayerEnergy=energy1;
-            }else {
-                mShortestList.addAll(mShortestListCandidate2);
-                mPlayerEnergy=energy2;
-            }
-            Log.d(TAG,"shortestList "+mShortestList);
-            Log.d(TAG,"mPlayerEnergy "+mPlayerEnergy);
-            mShortestList.add(startNodeID);
-        }
-
-        else {//original code
-            nodeList.get(endNodeID).setNeedToBeHere(true);
-            mPlayerEnergy = shortestPath(startNodeID, endNodeID, this.adjacentArray,true,true,PathList.ShortestList);
+            mPlayerEnergy = shortestPath(startNodeID, endNodeID, this.adjacentArray, true, true, PathList.ShortestList);
+            break;
 
         }
-
         mPlayer.setCurrentPosition(startNodeID);
         mPlayer.setFinalPosition(endNodeID);
         mPlayer.setEnergy(mPlayerEnergy);
@@ -192,11 +194,31 @@ public class Game {
         mPlayer.setEnergy(mPlayerEnergy);
     }
 
+    public int getGameMode(){
+        switch(mGameMode){
+            case EASY:
+                return 0;
+            case NORMAL:
+                return 1;
+            case HARD:
+                return 2;
+            default:
+                throw new IllegalArgumentException("Unknown game mode");
+        }
+    }
     private void setGameMode(int gameMode){
-        if(gameMode>=0&&gameMode<3) {
-            mGameMode = gameMode;
-        }else {
-            throw new IllegalArgumentException("Game Mode must between 0-2");
+        switch (gameMode) {
+            case 0:
+                mGameMode = GameMode.EASY;
+                break;
+            case 1:
+                mGameMode=GameMode.NORMAL;
+                break;
+            case 2:
+                mGameMode=GameMode.HARD;
+                break;
+            default:
+                throw new IllegalArgumentException("Game Mode must between 0-2");
         }
     }
 
@@ -238,80 +260,153 @@ public class Game {
             }
         }
         //start to put connection information in adjacentMatrix
-        for(int startIndex=0;startIndex<upperBound;++startIndex) {
-            startNode = nodeList.get(startIndex);
-            for (int endIndex = 0; endIndex < upperBound; ++endIndex) {
-                // a node does not connect to itself
-                if (startIndex != endIndex) {
-                    endNode = nodeList.get(endIndex);
-                    dx = endNode.getXCord() - startNode.getXCord();
-                    dy = endNode.getYCord() - startNode.getYCord();
-                    //only if the distance between two nodes <= 1 in all of x, y, z direction, will we consider connect the nodes.
-                    if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1 ) {
-                        int prob=RNG.nextInt(100);
-                        //Graph is not bi-direct, so m[i][j] = m[j][i]
-                        if (m.get(startIndex).get(endIndex)==noEdge) {
-                            if( dy==0  || dx==0) {
-                                //Case 1: endNodeID and startNode are in a line that is parallel to one of the Cartesian axis, nothing special
-                                if(prob>50) {
-                                    m.get(startIndex).set(endIndex, edgeCostMax);
-                                }else{
-                                    m.get(startIndex).set(endIndex, edgeCostMax-1);
-                                }
-                            } else if(edgeLevel!='S'){
-                                //Case 2: endNodeID and startNode forms an diagonal of a square on the x-y plane
-                                //Only if the other diagonal of the square is not connected, will we try to connect THIS diagonal
-                                if(m.get(startIndex+dx).get(startIndex+(dy*yPositionScale))==noEdge){
-                                    if(endIndex<startIndex) {
-                                        //endIndex<startIndex, dx0<0: means edge "/", high probability w/ low cost
-                                        if (dx >0) {
-                                            if ( prob<= 60) {
-                                                if(prob<=40) {
-                                                    m.get(startIndex).set(endIndex, 1);
-                                                } else{
-                                                    m.get(startIndex).set(endIndex, 2);
-                                                }
-                                            }
-                                        } else {//edge "\", low prob w/ high cost
-                                            if ( prob<= 20) {
-                                                if(prob<=10){
-                                                    m.get(startIndex).set(endIndex, 2);
-                                                }else{
-                                                    m.get(startIndex).set(endIndex, 3);
-                                                }
-                                            }
+        /*switch (mGameMode) {
+            case EASY:
+                for (int startIndex = 0; startIndex < upperBound; ++startIndex) {
+                    startNode = nodeList.get(startIndex);
+                    for (int endIndex = 0; endIndex < upperBound; ++endIndex) {
+                        // a node does not connect to itself
+                        if (startIndex != endIndex) {
+                            endNode = nodeList.get(endIndex);
+                            dx = endNode.getXCord() - startNode.getXCord();
+                            dy = endNode.getYCord() - startNode.getYCord();
+                            //only if the distance between two nodes <= 1 in all of x, y, z direction, will we consider connect the nodes.
+                            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) {
+                                int prob = RNG.nextInt(100);
+                                //Graph is not bi-direct, so m[i][j] = m[j][i]
+                                int otherWay=m.get(endIndex).get(startIndex);
+                                if (otherWay==noEdge) {
+                                    if (dy == 0 || dx == 0) {
+                                        //Case 1: endNodeID and startNode are in a line that is parallel to one of the Cartesian axis, nothing special
+                                        if (prob > 50) {
+                                            m.get(startIndex).set(endIndex, edgeCostMax);
+                                        } else {
+                                            m.get(startIndex).set(endIndex, edgeCostMax - 1);
                                         }
-                                    }else{//endIndex>startIndex
-                                        if(dx<0){
-                                            if ( prob<= 55) {
-                                                if (prob <= 40) {
-                                                    m.get(startIndex).set(endIndex, 1);
-                                                } else {
-                                                    m.get(startIndex).set(endIndex, 2);
+                                    } else if (edgeLevel != 'S') {
+                                        //Case 2: endNodeID and startNode forms an diagonal of a square on the x-y plane
+                                        //Only if the other diagonal of the square is not connected, will we try to connect THIS diagonal
+                                        if (m.get(startIndex + dx).get(startIndex + (dy * yPositionScale)) == noEdge) {
+                                            if (endIndex < startIndex) {
+                                                //endIndex<startIndex, dx0<0: means edge "/", high probability w/ low cost
+                                                if (dx > 0) {
+                                                    if (prob <= 60) {
+                                                        if (prob <= 40) {
+                                                            m.get(startIndex).set(endIndex, 1);
+                                                        } else {
+                                                            m.get(startIndex).set(endIndex, 2);
+                                                        }
+                                                    }
+                                                } else {//edge "\", low prob w/ high cost
+                                                    if (prob <= 20) {
+                                                        if (prob <= 10) {
+                                                            m.get(startIndex).set(endIndex, 2);
+                                                        } else {
+                                                            m.get(startIndex).set(endIndex, 3);
+                                                        }
+                                                    }
                                                 }
-                                            }
-                                        }else{
-                                            if ( prob<= 35) {
-                                                if(prob<=10){
-                                                    m.get(startIndex).set(endIndex, 1);
-                                                }else if(prob<=20){
-                                                    m.get(startIndex).set(endIndex, 2);
-                                                }else{
-                                                    m.get(startIndex).set(endIndex, 3);
+                                            } else {//endIndex>startIndex
+                                                if (dx < 0) {
+                                                    if (prob <= 55) {
+                                                        if (prob <= 40) {
+                                                            m.get(startIndex).set(endIndex, 1);
+                                                        } else {
+                                                            m.get(startIndex).set(endIndex, 2);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (prob <= 35) {
+                                                        if (prob <= 10) {
+                                                            m.get(startIndex).set(endIndex, 1);
+                                                        } else if (prob <= 20) {
+                                                            m.get(startIndex).set(endIndex, 2);
+                                                        } else {
+                                                            m.get(startIndex).set(endIndex, 3);
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
                                     }
+                                    int thisWay=m.get(startIndex).get(endIndex);
+                                    if(thisWay!=noEdge) {
+                                        m.get(endIndex).set(startIndex, thisWay);
+                                    }
+                                } else {
+                                    m.get(startIndex).set(endIndex, otherWay);
                                 }
                             }
-                            m.get(endIndex).set(startIndex,m.get(startIndex).get(endIndex));
-                        } else {
-                            m.get(endIndex).set(startIndex,m.get(startIndex).get(endIndex));
                         }
                     }
                 }
+                break;
+            default:*/
+            switch (mGameMode){
+                case HARD:
+                    edgeProbability=30;
+                    break;
+                case NORMAL:
+                    edgeProbability=35;
+                    break;
+                case EASY:
+                    edgeProbability=25;
+                    break;
+                default:
+                    edgeProbability=30;
+                    break;
             }
-        }
+                for(int startIndex=0;startIndex<upperBound;++startIndex) {
+                    startNode = nodeList.get(startIndex);
+                    for (int endIndex = 0; endIndex < upperBound; ++endIndex) {
+                        // a node does not connect to itself
+                        if (startIndex != endIndex) {
+                            endNode = nodeList.get(endIndex);
+                            dx = endNode.getXCord() - startNode.getXCord();
+                            dy = endNode.getYCord() - startNode.getYCord();
+                            //only if the distance between two nodes <= 1 in all of x, y, z direction, will we consider connect the nodes.
+                            if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1 ) {
+                                //Graph is not bi-direct, so m[i][j] = m[j][i]
+                                int otherWay=m.get(endIndex).get(startIndex);
+                                if (otherWay==noEdge) {
+                                    if (dy == 0 || dx == 0) {
+                                        //Case 1: endNode and startNode are in a line that is parallel to one of the Cartesian axis, nothing special
+                                        if(startIndex==endNodeID) {
+                                            m.get(startIndex).set(endIndex,1+RNG.nextInt(edgeCostMax));
+                                        }
+                                        else if(!nodeHasEdge(startIndex,m)){
+                                            m.get(startIndex).set(endIndex,1+RNG.nextInt(edgeCostMax));
+                                        } else {
+                                            if (RNG.nextInt(100) <= edgeProbability) {//m[startIndex][endIndex]=true, so does m[endIndex][startIndex]
+                                                m.get(startIndex).set(endIndex,1+RNG.nextInt(edgeCostMax));
+                                            }
+                                        }
+                                    } else if(edgeLevel!='S'){
+                                        //Case 2: endNode and startNode forms an diagonal of a square on the x-y plane
+                                        //Only if the other diagonal of the square is not connected, will we try to connect THIS diagonal
+                                        if(m.get(startIndex+dx).get(startIndex+(dy*yPositionScale))==noEdge){
+                                            if(startIndex==endNodeID) {
+                                                m.get(startIndex).set(endIndex,1+RNG.nextInt(edgeCostMax));
+                                            }
+                                            else if (RNG.nextInt(100) <= edgeProbability) {
+
+                                                m.get(startIndex).set(endIndex,1 + RNG.nextInt(edgeCostMax));
+                                            }
+                                        }
+                                    }
+                                    int thisWay=m.get(startIndex).get(endIndex);
+                                    if(thisWay!=noEdge) {
+                                        m.get(endIndex).set(startIndex, thisWay);
+                                    }
+                                } else {
+                                    m.get(startIndex).set(endIndex,otherWay);
+                                }
+                            }
+                        }
+                    }
+                }
+                //break;}
+
         //Not bi-direction, so endIndex is always bigger than startIndex
         //startIndex always < endIndex
         for(int startIndex=0;startIndex<upperBound;++startIndex) {
@@ -322,7 +417,14 @@ public class Game {
                 }
         }
     }
-
+    private boolean nodeHasEdge(int startIndex, List<ArrayList<Integer>> m){
+        for(int endIndex=0; endIndex<mNodeNum; ++endIndex){
+            if(m.get(startIndex).get(endIndex)!=noEdge){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public int getNodeNum(){
         return mNodeNum;
@@ -371,7 +473,7 @@ public class Game {
      */
     public GameState gameOver(){
         switch(mGameMode){
-            case 2:
+            case HARD:
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()&&nodeList.get(q1NodeIndex).getVisited()&&nodeList.get(q3NodeIndex).getVisited()){
                     return GameState.PLAYER_WIN;
                 }else{
@@ -381,6 +483,17 @@ public class Game {
                         return GameState.PLAYER_LOSE;
                     }
                 }
+            case NORMAL:
+                if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
+                    return GameState.PLAYER_WIN;
+                }else{
+                    if(mPlayer.getEnergy()>0){
+                        return GameState.GAME_NOT_END;
+                    }else{
+                        return GameState.PLAYER_LOSE;
+                    }
+                }
+
             default:
                 //player win
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
@@ -395,10 +508,6 @@ public class Game {
 
     }
 
-
-    public int getGameMode(){
-        return mGameMode;
-    }
     public int getPlayerPosition() {
         return mPlayer.getCurrentPosition();
     }
@@ -491,7 +600,7 @@ public class Game {
         }
         //save shortest path
         if(save) {
-            if(mGameMode!=2) {
+            if(mGameMode!=GameMode.HARD) {
                 shortestPath.add(startNode);
                 setPath(shortestPath,pathCode,true);
 
