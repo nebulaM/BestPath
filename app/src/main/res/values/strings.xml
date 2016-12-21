@@ -27,4 +27,10 @@
     <string name="hard">Hard</string>
     <string name="medium">Medium</string>
     <string name="easy">Easy</string>
+
+    <string name="show_game_mode">Show Game Mode Icon</string>
+    <string name="hide_game_mode">Hide Game Mode Icon</string>
+
+
+
 </resources>

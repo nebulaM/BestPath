@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity{
     protected static Game GAME;
     private int mGameLevel;
 
+    protected final static float GAME_LEVEL_MAX=8.0f;
+
     //sound from http://www.freesfx.co.uk
     protected static MediaPlayer mMPClick = MediaPlayerSingleton.getInstance();
     public static MediaPlayer mMPSwitch;

@@ -8,11 +8,10 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
-import com.github.android.bestpath.R;
 import com.github.android.bestpath.backend.Game;
 
 import java.util.List;
@@ -26,7 +25,7 @@ public class GameDrawing extends View {
     private final String TAG="GameDrawing";
     private Game mGame;
     //max level has 10*10 nodes
-    private final float mMaxLevel=10.0f;
+    private final float mMaxLevel=MainActivity.GAME_LEVEL_MAX;
     //min level has 2*2 nodes
     private final float mMinLevel=MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
     //current game level
@@ -69,6 +68,9 @@ public class GameDrawing extends View {
 
     private onPlayerMovingListener mOnPlayerMovingListener;
 
+    private boolean mShowGameMode =true;
+    private Toast mToastMode;
+
     public interface onPlayerMovingListener{
         void onPlayerMoving(Game.GameState state);
     }
@@ -81,7 +83,7 @@ public class GameDrawing extends View {
         //mGame points to the game stored in main activity
         mGame= GAME;
         mLevel=mGame.getGameLevel();
-
+        mToastMode= Toast.makeText(context.getApplicationContext(),"",Toast.LENGTH_SHORT);
 
         mPaint = new Paint();
         mPaint.setDither(true);
@@ -192,18 +194,20 @@ public class GameDrawing extends View {
         //}
         mDrawingParametersReady=true;
         //draw mode icon
-        switch (mGame.getGameMode()){
-            case 0:
-                drawDrawable(canvas,mGameEasy,0,0,(int)mDiameter,(int)mDiameter);
-                break;
-            case 1:
-                drawDrawable(canvas,mGameNormal,0,0,(int)mDiameter,(int)mDiameter);
-                break;
-            case 2:
-                drawDrawable(canvas,mGameHard,0,0,(int)mDiameter,(int)mDiameter);
-                break;
-            default:
-                break;
+        if(mShowGameMode) {
+            switch (mGame.getGameMode()) {
+                case 0:
+                    drawDrawable(canvas, mGameEasy, 0, 0, (int) mDiameter, (int) mDiameter);
+                    break;
+                case 1:
+                    drawDrawable(canvas, mGameNormal, 0, 0, (int) mDiameter, (int) mDiameter);
+                    break;
+                case 2:
+                    drawDrawable(canvas, mGameHard, 0, 0, (int) mDiameter, (int) mDiameter);
+                    break;
+                default:
+                    break;
+            }
         }
 
         //draw energy view
@@ -461,9 +465,20 @@ public class GameDrawing extends View {
         float toleranceY=mEdgeLengthY*0.4f;
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
-                if(mGame.gameOver()==Game.GameState.GAME_NOT_END) {//disallow player to move once game over
-                    float x = event.getX();
-                    float y = event.getY();
+                float x = event.getX();
+                float y = event.getY();
+                if(x<mDiameter &x>0 && y<mDiameter && y>0){
+                    mShowGameMode=!mShowGameMode;
+                    if(mShowGameMode){
+                        mToastMode.setText(R.string.show_game_mode);
+                    }else{
+                        mToastMode.setText(R.string.hide_game_mode);
+                    }
+                    mToastMode.show();
+                    invalidate();
+                }
+
+                else if(mGame.gameOver()==Game.GameState.GAME_NOT_END) {//disallow player to move once game over
                     for (int i = 0; i < mGame.getNodeNum(); ++i) {
                         float startX = mGameRouteOffsetX +(mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
                         float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
