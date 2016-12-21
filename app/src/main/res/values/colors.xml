@@ -32,6 +32,9 @@
     <color name="mode_card_medium">#ebe840</color>
     <color name="mode_card_hard">#92000d</color>
 
+    <color name="path_green">#41d925</color>
+    <color name="path_white">#f8f8ff</color>
+    <color name="path_orange">#ff8c00</color>
 
 
 
@@ -45,7 +48,7 @@
     <color name="purple_dark">#311B92</color>
     <color name="purple_trans">#99673AB7</color>
 
-    <color name="green">#4CAF50</color>
+
     <color name="green_dark">#2E7D32</color>
     <color name="green_trans">#994CAF50</color>
 

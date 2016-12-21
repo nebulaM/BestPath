@@ -1,7 +1,6 @@
 package com.github.android.bestpath;
 
 
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -136,19 +135,19 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         switch (theme){
             case 0:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_dark);
-                mGameDrawing.setNodeColor(R.color.theme_red);
+                mGameDrawing.setThemeColor(R.color.theme_red,R.color.path_white);
                 break;
             case 1:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_red);
-                mGameDrawing.setNodeColor(R.color.theme_dark);
+                mGameDrawing.setThemeColor(R.color.theme_dark,R.color.path_green);
                 break;
             case 2:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_grey);
-                mGameDrawing.setNodeColor(R.color.theme_blue);
+                mGameDrawing.setThemeColor(R.color.theme_blue,R.color.path_white);
                 break;
             case 3:
-                mGameFragmentContainer.setBackgroundResource(R.color.theme_blue);
-                mGameDrawing.setNodeColor(R.color.theme_grey);
+                mGameFragmentContainer.setBackgroundResource(R.color.theme_blue_trans);
+                mGameDrawing.setThemeColor(R.color.theme_grey,R.color.path_orange);
                 break;
             default:
                 break;

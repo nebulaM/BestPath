@@ -65,6 +65,7 @@ public class GameDrawing extends View {
 
     private Context mContext;
     private int mNodeColor=0x000000;
+    private int mPathColor=0xffffff;
 
     private onPlayerMovingListener mOnPlayerMovingListener;
 
@@ -144,8 +145,9 @@ public class GameDrawing extends View {
         }
     }
 
-    public void setNodeColor(int RColorId){
-        mNodeColor=ContextCompat.getColor(mContext, RColorId);
+    public void setThemeColor(int nodeColor,int pathColor){
+        mNodeColor=ContextCompat.getColor(mContext, nodeColor);
+        mPathColor=ContextCompat.getColor(mContext, pathColor);
         invalidate();
     }
 
@@ -343,7 +345,7 @@ public class GameDrawing extends View {
         //show one of the possible shortest paths if player not win
         if(mGame.gameOver()==Game.GameState.PLAYER_LOSE){
             List<Integer> shortestPath=mGame.getShortestList();
-            mPaint.setColor(0xff919191);
+            mPaint.setColor(mPathColor);
             float circleCenterOffset=mNodeLength/2.0f;
             for(int i=0;i<shortestPath.size();++i){
                 float startX = mGameRouteOffsetX +(mGame.getNodeXCord(shortestPath.get(i)) * (mEdgeLengthX + mNodeLength));
