@@ -85,15 +85,17 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
         mDisableResetPlayerButton=(ImageView)view.findViewById(R.id.DisableResetButton);
 
-        if(MainActivity.GAME.getGameMode()==1){
+        if(MainActivity.GAME.getGameMode()!=0){
             mDisableResetPlayerButton.setVisibility(View.VISIBLE);
         }else{
             mDisableResetPlayerButton.setVisibility(View.INVISIBLE);
         }
 
-        if(mGameMode==1|| MainActivity.GAME.getGameMode()==1&&(mGameMode!=MainActivity.GAME.getGameMode())){
-            mCheckDisableMask=true;
-        }
+        //enable the flag to check if we should disable "reset player" after the user press one of the buttons:
+        // new map, prev level, next level
+        //this check should be performed once only, so disable this flag at the end of checkDisableButton();
+        mCheckDisableMask=true;
+
         setGameTheme(mTheme);
         return view;
     }
@@ -104,7 +106,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         mResetPlayerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(MainActivity.GAME.getGameMode()==1) {
+                if(MainActivity.GAME.getGameMode()!=0) {
                     mGameDrawing.resetPlayer(false);
                 }else{
                     playSound(mSound);
@@ -156,10 +158,10 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
     void checkDisableButton(){
         if(mCheckDisableMask){
-            if(mGameMode==1) {
-                mDisableResetPlayerButton.setVisibility(View.VISIBLE);
-            }else{
+            if(mGameMode==0) {
                 mDisableResetPlayerButton.setVisibility(View.INVISIBLE);
+            }else{
+                mDisableResetPlayerButton.setVisibility(View.VISIBLE);
             }
             mCheckDisableMask=false;
         }
