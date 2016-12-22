@@ -474,6 +474,7 @@ public class Game {
     public GameState gameOver(){
         switch(mGameMode){
             case HARD:
+                //not check energy every step
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()&&nodeList.get(q1NodeIndex).getVisited()&&nodeList.get(q3NodeIndex).getVisited()){
                     return GameState.PLAYER_WIN;
                 }else{
@@ -483,7 +484,8 @@ public class Game {
                         return GameState.PLAYER_LOSE;
                     }
                 }
-            case NORMAL:
+            case EASY:
+                //not check energy every step
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
                     return GameState.PLAYER_WIN;
                 }else{
@@ -494,7 +496,8 @@ public class Game {
                     }
                 }
 
-            default:
+            case NORMAL:
+                //check energy every step
                 //player win
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
                     return GameState.PLAYER_WIN;
@@ -504,8 +507,9 @@ public class Game {
                     //-1 means player loss, 0 means game not end
                     return minEnergy > mPlayer.getEnergy() ? GameState.PLAYER_LOSE : GameState.GAME_NOT_END;
                 }
+            default:
+                throw new IllegalArgumentException(TAG+" @gameOver unknown GameState");
         }
-
     }
 
     public int getPlayerPosition() {

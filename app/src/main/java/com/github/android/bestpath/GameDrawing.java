@@ -70,7 +70,7 @@ public class GameDrawing extends View {
     private onPlayerMovingListener mOnPlayerMovingListener;
 
     private boolean mShowGameMode =true;
-    private Toast mToastMode;
+    private Toast mToastMSG;
 
     public interface onPlayerMovingListener{
         void onPlayerMoving(Game.GameState state);
@@ -84,7 +84,7 @@ public class GameDrawing extends View {
         //mGame points to the game stored in main activity
         mGame= GAME;
         mLevel=mGame.getGameLevel();
-        mToastMode= Toast.makeText(context.getApplicationContext(),"",Toast.LENGTH_SHORT);
+        mToastMSG = Toast.makeText(context.getApplicationContext(),"",Toast.LENGTH_SHORT);
 
         mPaint = new Paint();
         mPaint.setDither(true);
@@ -110,17 +110,26 @@ public class GameDrawing extends View {
         innerCircle = new RectF();
         notReadToDraw();
     }
-    public void reset(){
-        if(mGame!=null) {
-            mGame.resetPlayer();
-            notReadToDraw();
-            invalidate();
+    public void resetPlayer(boolean enable){
+        if(enable) {
+            if (mGame != null) {
+                mGame.resetPlayer();
+                mToastMSG.setText(R.string.reset_player);
+                mToastMSG.show();
+                notReadToDraw();
+                invalidate();
+            }
+        }else{
+            mToastMSG.setText(R.string.cannot_reset_player);
+            mToastMSG.show();
         }
     }
 
     public void restart(int gameMode){
         if(mGame!=null) {
             mGame.init((int)mLevel,gameMode);
+            mToastMSG.setText(R.string.reset_game);
+            mToastMSG.show();
             notReadToDraw();
             invalidate();
         }
@@ -130,9 +139,14 @@ public class GameDrawing extends View {
         if(mLevel<mMaxLevel) {
             mLevel += 1.0f;
             mGame.init((int) mLevel, gameMode);
+            mToastMSG.setText("Lv "+String.valueOf((int)(mLevel-MainActivity.SP_KEY_GAME_LEVEL_DEFAULT+1.0f)));
+            mToastMSG.show();
             //not ready to draw, need to re-calculate drawing parameters in canvas method
             notReadToDraw();
             invalidate();
+        }else{
+            mToastMSG.setText(R.string.max_level);
+            mToastMSG.show();
         }
     }
 
@@ -140,8 +154,13 @@ public class GameDrawing extends View {
         if(mLevel>mMinLevel) {
             mLevel -= 1.0f;
             mGame.init((int) mLevel, gameMode);
+            mToastMSG.setText("Lv "+String.valueOf((int)(mLevel-MainActivity.SP_KEY_GAME_LEVEL_DEFAULT+1.0f)));
+            mToastMSG.show();
             notReadToDraw();
             invalidate();
+        }else{
+            mToastMSG.setText(R.string.min_level);
+            mToastMSG.show();
         }
     }
 
@@ -270,7 +289,7 @@ public class GameDrawing extends View {
 
         for (int i = 0; i < mGame.getNodeNum(); ++i) {
             if(mGame.getNodeNeedVisit(i)){
-                mPaint.setColor(0xffffe45a);
+                mPaint.setColor(0xffffdf00);
             }else{
                 mPaint.setColor(mNodeColor);
             }
@@ -472,11 +491,11 @@ public class GameDrawing extends View {
                 if(x<mDiameter &x>0 && y<mDiameter && y>0){
                     mShowGameMode=!mShowGameMode;
                     if(mShowGameMode){
-                        mToastMode.setText(R.string.show_game_mode);
+                        mToastMSG.setText(R.string.show_game_mode);
                     }else{
-                        mToastMode.setText(R.string.hide_game_mode);
+                        mToastMSG.setText(R.string.hide_game_mode);
                     }
-                    mToastMode.show();
+                    mToastMSG.show();
                     invalidate();
                 }
 
@@ -491,8 +510,21 @@ public class GameDrawing extends View {
                                 case Game.noEdge:
                                     break;
                                 case Game.setPlayer:
+                                    Game.GameState state= mGame.gameOver();
+                                    switch (state){
+                                        case PLAYER_WIN:
+                                            mToastMSG.setText(R.string.player_win);
+                                            mToastMSG.show();
+                                            break;
+                                        case PLAYER_LOSE:
+                                            mToastMSG.setText(R.string.player_lose);
+                                            mToastMSG.show();
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                     //check if game over so we know which sound to play
-                                    mOnPlayerMovingListener.onPlayerMoving(mGame.gameOver());
+                                    mOnPlayerMovingListener.onPlayerMoving(state);
                                     break;
                                 default:
                                     break;

@@ -25,16 +25,20 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
     private LinearLayout mGameFragmentContainer;
 
-    private ImageView mResetButton;
+    private ImageView mResetPlayerButton;
     private ImageView mRestartButton;
     private ImageView mNextLevelButton;
     private ImageView mPreviousLevelButton;
     private ImageView mSettingsButton;
 
+    private ImageView mDisableResetPlayerButton;
+
     private int mTheme;
     private Boolean mSound;
     private String mLanguage;
     private int mGameMode;
+
+    private boolean mCheckDisableMask=false;
 
     private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
 
@@ -73,23 +77,39 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         mGameDrawing=(GameDrawing)view.findViewById(R.id.GameDrawing);
 
         mGameFragmentContainer=(LinearLayout) view.findViewById(R.id.GameFragmentContainer);
-        mResetButton=(ImageView)view.findViewById(R.id.ResetButton);
+        mResetPlayerButton =(ImageView)view.findViewById(R.id.ResetButton);
         mRestartButton=(ImageView)view.findViewById(R.id.RestartButton);
         mNextLevelButton=(ImageView)view.findViewById(R.id.NextLevelButton);
         mPreviousLevelButton=(ImageView)view.findViewById(R.id.PreviousLevelButton);
         mSettingsButton=(ImageView)view.findViewById(R.id.SettingButton);
-        init();
+
+        mDisableResetPlayerButton=(ImageView)view.findViewById(R.id.DisableResetButton);
+
+        if(MainActivity.GAME.getGameMode()==1){
+            mDisableResetPlayerButton.setVisibility(View.VISIBLE);
+        }else{
+            mDisableResetPlayerButton.setVisibility(View.INVISIBLE);
+        }
+
+        if(mGameMode==1|| MainActivity.GAME.getGameMode()==1&&(mGameMode!=MainActivity.GAME.getGameMode())){
+            mCheckDisableMask=true;
+        }
+        setGameTheme(mTheme);
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mResetButton.setOnClickListener(new View.OnClickListener() {
+        mResetPlayerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSound(mSound);
-                mGameDrawing.reset();
+                if(MainActivity.GAME.getGameMode()==1) {
+                    mGameDrawing.resetPlayer(false);
+                }else{
+                    playSound(mSound);
+                    mGameDrawing.resetPlayer(true);
+                }
             }
         });
 
@@ -98,6 +118,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
             public void onClick(View v) {
                 playSound(mSound);
                 mGameDrawing.restart(mGameMode);
+                checkDisableButton();
             }
         });
         mNextLevelButton.setOnClickListener(new View.OnClickListener() {
@@ -105,6 +126,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
             public void onClick(View v) {
                 playSound(mSound);
                 mGameDrawing.nextLevel(mGameMode);
+                checkDisableButton();
             }
         });
 
@@ -113,6 +135,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
             public void onClick(View v) {
                 playSound(mSound);
                 mGameDrawing.previousLevel(mGameMode);
+                checkDisableButton();
 
             }
         });
@@ -131,6 +154,17 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
     }
 
+    void checkDisableButton(){
+        if(mCheckDisableMask){
+            if(mGameMode==1) {
+                mDisableResetPlayerButton.setVisibility(View.VISIBLE);
+            }else{
+                mDisableResetPlayerButton.setVisibility(View.INVISIBLE);
+            }
+            mCheckDisableMask=false;
+        }
+    }
+
     public void setGameTheme(int theme){
         switch (theme){
             case 0:
@@ -146,17 +180,12 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 mGameDrawing.setThemeColor(R.color.theme_blue,R.color.path_white);
                 break;
             case 3:
-                mGameFragmentContainer.setBackgroundResource(R.color.theme_blue_trans);
+                mGameFragmentContainer.setBackgroundResource(R.color.theme_blue);
                 mGameDrawing.setThemeColor(R.color.theme_grey,R.color.path_orange);
                 break;
             default:
                 break;
         }
-    }
-
-
-    private void init() {
-        setGameTheme(mTheme);
     }
 
 

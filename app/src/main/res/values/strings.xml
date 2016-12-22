@@ -31,6 +31,14 @@
     <string name="show_game_mode">Show Game Mode Icon</string>
     <string name="hide_game_mode">Hide Game Mode Icon</string>
 
+    <string name="reset_player">Restart</string>
 
+    <string name="reset_game">Try a new map</string>
+    <string name="level">Level</string>
+    <string name="max_level">This is the highest level</string>
+    <string name="min_level">This is the lowest level</string>
 
+    <string name="player_win">You Win</string>
+    <string name="player_lose">Try Again</string>
+    <string name="cannot_reset_player">Cannot restart in this mode</string>
 </resources>
