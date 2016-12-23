@@ -39,4 +39,7 @@
     <string name="player_win">You Win</string>
     <string name="player_lose">Try Again</string>
     <string name="cannot_reset_player">Cannot restart in this mode</string>
+
+    <string name="stage_clear">Stage Clear</string>
+
 </resources>

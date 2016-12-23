@@ -64,8 +64,12 @@ public class GameDrawing extends View {
     private float mDiameter;
 
     private Context mContext;
-    private int mNodeColor=0x000000;
-    private int mPathColor=0xffffff;
+    private int mNodeColor=0xff000000;
+    private int mPathColor=0xffffffff;
+    private int mTextColor=0xffffffff;
+
+    private final int mGoldColor=0xffffdf00;
+    private final int mGreyColor=0xffa2a2a2;
 
     private onPlayerMovingListener mOnPlayerMovingListener;
 
@@ -73,6 +77,13 @@ public class GameDrawing extends View {
     private Toast mToastMSG;
 
     private int mStageCleared;
+
+    private float mEnergyTextLt10X;
+    private float mEnergyTextGt10X;
+    private float mEnergyTextY;
+    private float mStageX;
+    private float mStageTextY;
+    private float mStageNumberTextY;
 
     public interface onPlayerMovingListener{
         void onPlayerMoving(Game.GameState state);
@@ -176,6 +187,7 @@ public class GameDrawing extends View {
     public void setThemeColor(int nodeColor,int pathColor){
         mNodeColor=ContextCompat.getColor(mContext, nodeColor);
         mPathColor=ContextCompat.getColor(mContext, pathColor);
+        mTextColor=ContextCompat.getColor(mContext, pathColor);
         invalidate();
     }
 
@@ -204,6 +216,14 @@ public class GameDrawing extends View {
 
                 mGameRouteOffsetY = mDiameter * 1.2f;
                 mGameRouteOffsetX = (getWidth() - (mNodeLength * (mLevel) + mEdgeLengthX * (mLevel - 1))) / 2;
+
+                mEnergyTextLt10X= getWidth() / 2 - mRadius * 0.4f;
+                mEnergyTextGt10X=getWidth() / 2 - mRadius * 0.2f;
+                mEnergyTextY=mRadius * 1.2f;
+
+                mStageX=getWidth()-mDiameter*1.6f;
+                mStageTextY=mDiameter*0.4f;
+                mStageNumberTextY=mDiameter*0.8f;
             }else{
                 mRadius = getWidth() / 16.0f;
                 mDiameter = mRadius * 2;
@@ -220,6 +240,14 @@ public class GameDrawing extends View {
                 mEdgeLengthX = mEdgeLengthY;
                 mGameRouteOffsetY = 0;
                 mGameRouteOffsetX = (getWidth() - (mNodeLength * (mLevel) + mEdgeLengthX * (mLevel - 1))) / 2;
+
+                mEnergyTextLt10X=mRadius*0.6f;
+                mEnergyTextGt10X=mRadius*0.8f;
+                mEnergyTextY=getHeight() / 2+mRadius * 0.2f;
+
+                mStageX=0;
+                mStageTextY=getHeight()-mDiameter*0.8f;
+                mStageNumberTextY=getHeight()-mDiameter*0.4f;
             }
         //}
         mDrawingParametersReady=true;
@@ -258,53 +286,56 @@ public class GameDrawing extends View {
             if(currentEnergyPercent==100.0f){
                 drawDonut(canvas, mPaint, mPath,0.0f, 359.99f);
             } else if(currentEnergyPercent==0.0f){
-                mPaint.setColor(0xffa2a2a2);
+                mPaint.setColor(mGreyColor);
                 drawDonut(canvas, mPaint, mPath, 0.0f, 359.99f);
             } else {
                 drawDonut(canvas, mPaint, mPath, 270.0f - currentEnergyPercent * 3.60f, currentEnergyPercent * 3.60f);
-                mPaint.setColor(0xffa2a2a2);
+                mPaint.setColor(mGreyColor);
                 drawDonut(canvas, mPaint, mPath, 270.0f, (100-currentEnergyPercent) * 3.60f);
             }
         } else{//energy decreases counterclockwise
             if(currentEnergyPercent==100.0f){
                 drawDonut(canvas, mPaint, mPath,0.0f, 359.9f);
             } else if(currentEnergyPercent==0.0f){
-                mPaint.setColor(0xffa2a2a2);
+                mPaint.setColor(mGreyColor);
                 drawDonut(canvas, mPaint, mPath,0.0f, 359.99f);
             } else {
                 drawDonut(canvas, mPaint, mPath, 270.0f, currentEnergyPercent * 3.60f);
-                mPaint.setColor(0xffa2a2a2);
+                mPaint.setColor(mGreyColor);
                 drawDonut(canvas, mPaint, mPath, 270.0f+currentEnergyPercent * 3.60f, (100.0f-currentEnergyPercent) * 3.60f);
             }
         }
-        mPaint.setColor(0xffa2a2a2);
+        //draw energy text
+        mPaint.setColor(mTextColor);
         mPaint.setTextSize(mRadius*0.6f );
         if(mGame.getPlayerEnergy()>9) {
-            if(getWidth()<getHeight()) {//vertical
-                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
-            }else{
-                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mRadius*0.6f,getHeight() / 2+mRadius * 0.2f,  mPaint);
-            }
+                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mEnergyTextLt10X, mEnergyTextY, mPaint);
         } else{
-            if(getWidth()<getHeight()) {
-                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.2f, mRadius * 1.2f, mPaint);
-            }else{
-                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mRadius*0.8f,getHeight() / 2+mRadius * 0.2f ,  mPaint);
-            }
+                canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mEnergyTextGt10X,mEnergyTextY ,  mPaint);
         }
-        //draw stage clearance
+        //draw stage clearance text
+        mPaint.setColor(mTextColor);
+        canvas.drawText(getResources().getString(R.string.stage_clear),mStageX,mStageTextY,mPaint);
         if(mStageCleared!=Game.NOT_SHOW_GAME_STAGE) {
-            if(getWidth()<getHeight()) {//vertical
-                canvas.drawText(Integer.toString(mStageCleared),getWidth()-mDiameter,mDiameter/2.0f,mPaint);
-            }else{
-                canvas.drawText(Integer.toString(mStageCleared),0,getHeight()-mDiameter,mPaint);
+            String space="        ";//8 space
+            int temp=mStageCleared;
+            while(temp>9){
+                if(!space.isEmpty()) {
+                    space = space.substring(1);
+                }else{
+                    break;
+                }
+                temp=temp/10;
             }
+            canvas.drawText(space+Integer.toString(mStageCleared),mStageX,mStageNumberTextY,mPaint);
+        }else{
+            canvas.drawText("         -",mStageX,mStageNumberTextY,mPaint);
         }
 
         //draw nodes
         for (int i = 0; i < mGame.getNodeNum(); ++i) {
             if(mGame.getNodeNeedVisit(i)){
-                mPaint.setColor(0xffffdf00);
+                mPaint.setColor(mGoldColor);
             }else{
                 mPaint.setColor(mNodeColor);
             }
@@ -562,6 +593,5 @@ public class GameDrawing extends View {
     public void setOnPlayerMovingListener(onPlayerMovingListener listener){
         mOnPlayerMovingListener=listener;
     }
-
 }
 
