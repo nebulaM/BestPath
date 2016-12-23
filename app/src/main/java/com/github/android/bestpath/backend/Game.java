@@ -4,6 +4,8 @@ package com.github.android.bestpath.backend;
 import android.util.Log;
 import android.util.SparseIntArray;
 
+import com.github.android.bestpath.MainActivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,7 +27,7 @@ public class Game {
     //num of node in one row/column
     private int mGameLevel=0;
 
-    enum GameMode{EASY,NORMAL,HARD}
+    private enum GameMode{EASY,NORMAL,HARD}
     //0 to 2, easy to hard
     private GameMode mGameMode;
 
@@ -78,6 +80,15 @@ public class Game {
     //return to this value if we successfully set the player here
     public static final int setPlayer=10;
 
+    public static final int NOT_SHOW_GAME_STAGE=-2;
+    private int mStageCleared;
+
+    private boolean mGameRecordWriteFlag=false;
+    //location 0-5 contains clear times in normal mode, from lv1 to lv6
+    //location 6-11 contains clear times in hard mode, from lv1 to lv6
+    private List<Integer> mGameRecord;
+
+
     /**
      *
      * @param edgeLevel options are S for Simple(no diagonal), M for Medium(has diagonal)
@@ -99,6 +110,7 @@ public class Game {
         mShortestList=new ArrayList<>();
         mShortestListCandidate1=new ArrayList<>();
         mShortestListCandidate2=new ArrayList<>();
+        mGameRecord=new ArrayList<>();
 
         mPlayer = new Player();
     }
@@ -107,7 +119,7 @@ public class Game {
      *
      * @param gameLevel number of node in a row/column
      */
-    public void init(int gameLevel,int gameMode) {
+    public void init(int gameLevel,int gameMode, List gameRecord) {
         setGameMode(gameMode);
         //first time start the game or change to a new level
         if (mGameLevel == 0 || mGameLevel != gameLevel) {
@@ -127,6 +139,13 @@ public class Game {
                 nodeList.add(new Node(i, mGameLevel));
             }
         }
+
+        if(gameRecord!=null){
+            mGameRecord.addAll(gameRecord);
+            Log.d(TAG,"@init: mGameRecord is "+mGameRecord);
+        }
+        setStageCleared();
+
         createPath(nodeList, edgeList, edgeProbability, adjacentArray);
 
         for (Node n : nodeList) {
@@ -147,8 +166,8 @@ public class Game {
                         quadrant3NodeList.add(n);
                     }
                 }
-                Log.d(TAG, "quadrant1NodeList.size()" + quadrant1NodeList.size());
-                Log.d(TAG, "quadrant3NodeList.size()" + quadrant3NodeList.size());
+                //Log.d(TAG, "quadrant1NodeList.size()" + quadrant1NodeList.size());
+                //Log.d(TAG, "quadrant3NodeList.size()" + quadrant3NodeList.size());
                 q1NodeIndex = quadrant1NodeList.get(RNG.nextInt(quadrant1NodeList.size())).setNeedToBeHere(true);
                 q3NodeIndex = quadrant3NodeList.get(RNG.nextInt(quadrant3NodeList.size())).setNeedToBeHere(true);
                 nodeList.get(endNodeID).setNeedToBeHere(true);
@@ -160,8 +179,8 @@ public class Game {
                 int energy2 = shortestPath(startNodeID, q3NodeIndex, adjacentArray, true, true, PathList.ShortestListCandidate2);
                 energy2 += shortestPath(q3NodeIndex, q1NodeIndex, adjacentArray, true, false, PathList.ShortestListCandidate2);
                 energy2 += shortestPath(q1NodeIndex, endNodeID, adjacentArray, true, false, PathList.ShortestListCandidate2);
-                Log.d(TAG, "energy1 " + energy1);
-                Log.d(TAG, "energy2 " + energy2);
+                //Log.d(TAG, "energy1 " + energy1);
+               // Log.d(TAG, "energy2 " + energy2);
                 mShortestList.clear();
                 if (energy1 < energy2) {
                     mShortestList.addAll(mShortestListCandidate1);
@@ -170,8 +189,8 @@ public class Game {
                     mShortestList.addAll(mShortestListCandidate2);
                     mPlayerEnergy = energy2;
                 }
-                Log.d(TAG, "shortestList " + mShortestList);
-                Log.d(TAG, "mPlayerEnergy " + mPlayerEnergy);
+                //Log.d(TAG, "shortestList " + mShortestList);
+                //Log.d(TAG, "mPlayerEnergy " + mPlayerEnergy);
                 mShortestList.add(startNodeID);
                 break;
         default:
@@ -192,6 +211,7 @@ public class Game {
         }
         mPlayer.setCurrentPosition(0);
         mPlayer.setEnergy(mPlayerEnergy);
+        setStageCleared();
     }
 
     public int getGameMode(){
@@ -476,6 +496,10 @@ public class Game {
             case HARD:
                 //not check energy every step
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()&&nodeList.get(q1NodeIndex).getVisited()&&nodeList.get(q3NodeIndex).getVisited()){
+                    //update clearance
+                    int normalized_game_level=mGameLevel- MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
+                    mGameRecord.set(normalized_game_level+mGameRecord.size()/2,mStageCleared+1);
+                    mGameRecordWriteFlag=true;
                     return GameState.PLAYER_WIN;
                 }else{
                     if(mPlayer.getEnergy()>0){
@@ -500,6 +524,10 @@ public class Game {
                 //check energy every step
                 //player win
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
+                    //update clearance
+                    int normalized_game_level=mGameLevel- MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
+                    mGameRecord.set(normalized_game_level,mStageCleared+1);
+                    mGameRecordWriteFlag=true;
                     return GameState.PLAYER_WIN;
                 } else{
                     //minimum energy required to reach endNodeID
@@ -630,14 +658,14 @@ public class Game {
                     mShortestListCandidate1.clear();
                 }
                 mShortestListCandidate1.addAll(pathList);
-                Log.d(TAG,"shortestListCandidate1 "+ mShortestListCandidate1);
+                //Log.d(TAG,"shortestListCandidate1 "+ mShortestListCandidate1);
                 break;
             case ShortestListCandidate2:
                 if(cleanListBeforeSave) {
                     mShortestListCandidate2.clear();
                 }
                 mShortestListCandidate2.addAll(pathList);
-                Log.d(TAG,"shortestListCandidate2 "+ mShortestListCandidate2);
+                //Log.d(TAG,"shortestListCandidate2 "+ mShortestListCandidate2);
                 break;
             default:
                 break;
@@ -648,4 +676,43 @@ public class Game {
     public int getGameLevel(){
         return mGameLevel;
     }
+
+
+    private void setStageCleared(){
+        int normalized_game_level=mGameLevel- MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
+        switch (mGameMode){
+            case HARD:
+                mStageCleared=mGameRecord.get(normalized_game_level+mGameRecord.size()/2);
+                break;
+            case NORMAL:
+                mStageCleared=mGameRecord.get(normalized_game_level);
+                break;
+            default:
+                mStageCleared=NOT_SHOW_GAME_STAGE;
+                break;
+        }
+    }
+
+
+    public int getStageCleared(){
+        return mStageCleared;
+    }
+
+    /**
+     *
+     * @param checkIfNeedWrite if true, the method will check if mGameRecordWriteFlag is dirty
+     *                         dirty means we need write back to shared preference
+     * @return either the updated game record list or null
+     */
+    public List getGameRecord(boolean checkIfNeedWrite) {
+        if(!checkIfNeedWrite){
+            return mGameRecord;
+        }
+        else if(mGameRecordWriteFlag) {
+            return mGameRecord;
+        }else{
+            return null;
+        }
+    }
+
 }

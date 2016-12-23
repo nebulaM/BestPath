@@ -72,6 +72,8 @@ public class GameDrawing extends View {
     private boolean mShowGameMode =true;
     private Toast mToastMSG;
 
+    private int mStageCleared;
+
     public interface onPlayerMovingListener{
         void onPlayerMoving(Game.GameState state);
     }
@@ -85,6 +87,9 @@ public class GameDrawing extends View {
         mGame= GAME;
         mLevel=mGame.getGameLevel();
         mToastMSG = Toast.makeText(context.getApplicationContext(),"",Toast.LENGTH_SHORT);
+
+        mStageCleared=mGame.getStageCleared();
+
 
         mPaint = new Paint();
         mPaint.setDither(true);
@@ -114,6 +119,7 @@ public class GameDrawing extends View {
         if(enable) {
             if (mGame != null) {
                 mGame.resetPlayer();
+                mStageCleared=mGame.getStageCleared();
                 mToastMSG.setText(R.string.reset_player);
                 mToastMSG.show();
                 notReadToDraw();
@@ -127,7 +133,8 @@ public class GameDrawing extends View {
 
     public void restart(int gameMode){
         if(mGame!=null) {
-            mGame.init((int)mLevel,gameMode);
+            mGame.init((int)mLevel,gameMode,null);
+            mStageCleared=mGame.getStageCleared();
             mToastMSG.setText(R.string.reset_game);
             mToastMSG.show();
             notReadToDraw();
@@ -138,7 +145,8 @@ public class GameDrawing extends View {
     public void nextLevel(int gameMode){
         if(mLevel<mMaxLevel) {
             mLevel += 1.0f;
-            mGame.init((int) mLevel, gameMode);
+            mGame.init((int) mLevel, gameMode,null);
+            mStageCleared=mGame.getStageCleared();
             mToastMSG.setText("Lv "+String.valueOf((int)(mLevel-MainActivity.SP_KEY_GAME_LEVEL_DEFAULT+1.0f)));
             mToastMSG.show();
             //not ready to draw, need to re-calculate drawing parameters in canvas method
@@ -153,7 +161,8 @@ public class GameDrawing extends View {
     public void previousLevel(int gameMode){
         if(mLevel>mMinLevel) {
             mLevel -= 1.0f;
-            mGame.init((int) mLevel, gameMode);
+            mGame.init((int) mLevel, gameMode,null);
+            mStageCleared=mGame.getStageCleared();
             mToastMSG.setText("Lv "+String.valueOf((int)(mLevel-MainActivity.SP_KEY_GAME_LEVEL_DEFAULT+1.0f)));
             mToastMSG.show();
             notReadToDraw();
@@ -271,7 +280,7 @@ public class GameDrawing extends View {
         mPaint.setColor(0xffa2a2a2);
         mPaint.setTextSize(mRadius*0.6f );
         if(mGame.getPlayerEnergy()>9) {
-            if(getWidth()<getHeight()) {
+            if(getWidth()<getHeight()) {//vertical
                 canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), getWidth() / 2 - mRadius * 0.4f, mRadius * 1.2f, mPaint);
             }else{
                 canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mRadius*0.6f,getHeight() / 2+mRadius * 0.2f,  mPaint);
@@ -283,10 +292,16 @@ public class GameDrawing extends View {
                 canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mRadius*0.8f,getHeight() / 2+mRadius * 0.2f ,  mPaint);
             }
         }
-
+        //draw stage clearance
+        if(mStageCleared!=Game.NOT_SHOW_GAME_STAGE) {
+            if(getWidth()<getHeight()) {//vertical
+                canvas.drawText(Integer.toString(mStageCleared),getWidth()-mDiameter,mDiameter/2.0f,mPaint);
+            }else{
+                canvas.drawText(Integer.toString(mStageCleared),0,getHeight()-mDiameter,mPaint);
+            }
+        }
 
         //draw nodes
-
         for (int i = 0; i < mGame.getNodeNum(); ++i) {
             if(mGame.getNodeNeedVisit(i)){
                 mPaint.setColor(0xffffdf00);
@@ -513,6 +528,10 @@ public class GameDrawing extends View {
                                     Game.GameState state= mGame.gameOver();
                                     switch (state){
                                         case PLAYER_WIN:
+                                            //okay to increase it here async wrt GAME because mStageCleared will be overwritten next time
+                                            if(mStageCleared!=Game.NOT_SHOW_GAME_STAGE) {
+                                                mStageCleared++;
+                                            }
                                             mToastMSG.setText(R.string.player_win);
                                             mToastMSG.show();
                                             break;
@@ -543,5 +562,6 @@ public class GameDrawing extends View {
     public void setOnPlayerMovingListener(onPlayerMovingListener listener){
         mOnPlayerMovingListener=listener;
     }
+
 }
 
