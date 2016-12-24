@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity{
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)
         getFragmentManager().beginTransaction().add(R.id.frag_container, new GameFragment()).commit();
+        //rate the app
+        AppRater.appLaunched(this);
     }
 
     /**

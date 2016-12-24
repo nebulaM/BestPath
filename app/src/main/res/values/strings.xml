@@ -6,7 +6,7 @@
     <string name="mode">Mode</string>
      <string name="theme">Theme</string>
     <string name="sound">Sound</string>
-    <!--change to Record-->
+    <!--effect is refactored to Record-->
     <string name="effect">Record</string>
     <string name="language">Language</string>
     <string name="help">Help</string>
@@ -23,7 +23,7 @@
     <!--For game-->
     <string name="selectModeNotify">mode is selected</string>
     <string name="hard">Hard</string>
-    <string name="medium">Medium</string>
+    <string name="medium">Normal</string>
     <string name="easy">Easy</string>
 
     <string name="show_game_mode">Show Game Mode Icon</string>
@@ -36,12 +36,20 @@
     <string name="max_level">This is the highest level</string>
     <string name="min_level">This is the lowest level</string>
 
-    <string name="player_win">You Win</string>
+    <string name="player_win">You Win!</string>
     <string name="player_lose">Try Again</string>
     <string name="cannot_reset_player">Cannot restart in this mode</string>
 
     <string name="stage_clear">Stage Clear</string>
     <string name="show_stage_clear">Show Stage Clear Count</string>
     <string name="hide_stage_clear">Hide Stage Clear Count</string>
+
+
+    <!--for rate app dialog-->
+    <string name="rate_app_dialog_title"><font fgcolor="#ff25b1e3">Rate this App</font></string>
+    <string name="rate_app_dialog_text">If you like this app, please take a moment to rate it. Thank you for your support!</string>
+    <string name="rate_app_yes">Rate it</string>
+    <string name="rate_app_later">Remind me later</string>
+    <string name="rate_app_no">No</string>
 
 </resources>
