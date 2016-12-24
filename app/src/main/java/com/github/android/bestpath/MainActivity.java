@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity{
         //read from shared preference
         checkSP(false);
 
-        GAME =new Game('M');
+        GAME =new Game();
         GAME.init( mGameLevel,mSP.getInt(SP_KEY_GAME_MODE,SP_KEY_GAME_MODE_DEFAULT),
                 parseGameRecordString(TAG,mSP.getString(SP_KEY_GAME_RECORD,SP_KEY_GAME_RECORD_DEFAULT)));
 
