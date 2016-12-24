@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/record_animation_5"
+    android:oneshot="true">
+    <item android:drawable="@drawable/record_0" android:duration="500" />
+    <item android:drawable="@drawable/record_1" android:duration="500" />
+    <item android:drawable="@drawable/record_2" android:duration="500" />
+    <item android:drawable="@drawable/record_3" android:duration="500" />
+    <item android:drawable="@drawable/record_4" android:duration="500" />
+    <item android:drawable="@drawable/record_5" android:duration="500" />
+</animation-list>
