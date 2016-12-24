@@ -41,5 +41,7 @@
     <string name="cannot_reset_player">Cannot restart in this mode</string>
 
     <string name="stage_clear">Stage Clear</string>
+    <string name="show_stage_clear">Show Stage Clear Count</string>
+    <string name="hide_stage_clear">Hide Stage Clear Count</string>
 
 </resources>

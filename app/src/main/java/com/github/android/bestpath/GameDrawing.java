@@ -77,6 +77,7 @@ public class GameDrawing extends View {
     private Toast mToastMSG;
 
     private int mStageCleared;
+    private boolean mShowStageCleared=true;
 
     private float mEnergyTextLt10X;
     private float mEnergyTextGt10X;
@@ -187,7 +188,7 @@ public class GameDrawing extends View {
     public void setThemeColor(int nodeColor,int pathColor){
         mNodeColor=ContextCompat.getColor(mContext, nodeColor);
         mPathColor=ContextCompat.getColor(mContext, pathColor);
-        mTextColor=ContextCompat.getColor(mContext, pathColor);
+
         invalidate();
     }
 
@@ -313,25 +314,26 @@ public class GameDrawing extends View {
         } else{
                 canvas.drawText(Integer.toString(mGame.getPlayerEnergy()), mEnergyTextGt10X,mEnergyTextY ,  mPaint);
         }
-        //draw stage clearance text
-        mPaint.setColor(mTextColor);
-        canvas.drawText(getResources().getString(R.string.stage_clear),mStageX,mStageTextY,mPaint);
-        if(mStageCleared!=Game.NOT_SHOW_GAME_STAGE) {
-            String space="        ";//8 space
-            int temp=mStageCleared;
-            while(temp>9){
-                if(!space.isEmpty()) {
-                    space = space.substring(1);
-                }else{
-                    break;
+        //draw stage clear
+        if(mShowStageCleared) {
+            mPaint.setColor(mTextColor);
+            canvas.drawText(getResources().getString(R.string.stage_clear), mStageX, mStageTextY, mPaint);
+            if (mStageCleared != Game.NOT_SHOW_GAME_STAGE) {
+                String space = "        ";//8 space
+                int temp = mStageCleared;
+                while (temp > 9) {
+                    if (!space.isEmpty()) {
+                        space = space.substring(1);
+                    } else {
+                        break;
+                    }
+                    temp = temp / 10;
                 }
-                temp=temp/10;
+                canvas.drawText(space + Integer.toString(mStageCleared), mStageX, mStageNumberTextY, mPaint);
+            } else {
+                canvas.drawText("         -", mStageX, mStageNumberTextY, mPaint);
             }
-            canvas.drawText(space+Integer.toString(mStageCleared),mStageX,mStageNumberTextY,mPaint);
-        }else{
-            canvas.drawText("         -",mStageX,mStageNumberTextY,mPaint);
         }
-
         //draw nodes
         for (int i = 0; i < mGame.getNodeNum(); ++i) {
             if(mGame.getNodeNeedVisit(i)){
@@ -540,6 +542,15 @@ public class GameDrawing extends View {
                         mToastMSG.setText(R.string.show_game_mode);
                     }else{
                         mToastMSG.setText(R.string.hide_game_mode);
+                    }
+                    mToastMSG.show();
+                    invalidate();
+                }else if(x>mStageX&&y>mStageTextY&&y<mStageNumberTextY*1.5f){
+                    mShowStageCleared=!mShowStageCleared;
+                    if(mShowStageCleared){
+                        mToastMSG.setText(R.string.show_stage_clear);
+                    }else{
+                        mToastMSG.setText(R.string.hide_stage_clear);
                     }
                     mToastMSG.show();
                     invalidate();
