@@ -146,7 +146,7 @@ public class Game {
         }
         setStageCleared();
 
-        createPath(nodeList, edgeList, edgeProbability, adjacentArray);
+        createPath(nodeList, edgeList, adjacentArray);
 
         for (Node n : nodeList) {
             n.setNeedToBeHere(false);
@@ -250,7 +250,7 @@ public class Game {
      * in total there are 3*mGameLevel different small adjacent matrices
      * the small adjacent matrices in "createPath" have a size of m[mGameLevel][mGameLevel], they will be mapped to a this.adjacentArray in the end
      */
-    private void createPath(List<Node> nodeList, List<Edge> edgeList, int edgeProbability, List<ArrayList<Integer>> adjacentArray){
+    private void createPath(List<Node> nodeList, List<Edge> edgeList, List<ArrayList<Integer>> adjacentArray){
 
         randomConnectNodes(nodeList,edgeList,adjacentArray);
         //keep track on all adjacent nodes of this node
