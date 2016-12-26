@@ -45,6 +45,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private TextView mThemeText;
     private TextView mSoundText;
     private TextView mRecordText;
+    private TextView mHelpText;
 
     private SharedPreferences mSP;
     private int mTheme;
@@ -97,7 +98,8 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mModeText=(TextView)view.findViewById(R.id.ModeText);
         mThemeText=(TextView)view.findViewById(R.id.ThemeColorText);
         mSoundText=(TextView)view.findViewById(R.id.SoundText);
-        mRecordText=(TextView)view.findViewById(R.id.Record);
+        mRecordText=(TextView)view.findViewById(R.id.RecordText);
+        mHelpText=(TextView)view.findViewById(R.id.HelpText);
 
         //set color for each sector in this setting fragment
         mSettingsSector1=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L1);
@@ -108,6 +110,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mThemeText.setOnClickListener(this);
         mSoundText.setOnClickListener(this);
         mRecordText.setOnClickListener(this);
+        mHelpText.setOnClickListener(this);
         //share image, not text
         mShareImage.setOnClickListener(this);
 
@@ -151,13 +154,19 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 modeDialog.setOnCloseListener (this);
                 modeDialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
                 break;
-            case R.id.Record:
+            case R.id.RecordText:
                 mRecordImage.setVisibility(View.VISIBLE);
                 Log.d(TAG,"MainActivity.GAME.getGameRecord(): "+MainActivity.GAME.getGameRecord(false));
                 RecordDialog recordDialog=RecordDialog.newInstance(MainActivity.GAME.getGameRecord(false));
                 recordDialog.setOnCloseListener(this);
                 recordDialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
                 break;
+
+            case R.id.HelpText:
+                mHelpImage.setVisibility(View.VISIBLE);
+                getFragmentManager().beginTransaction().replace(R.id.frag_container, new HelpFragment()).addToBackStack(TAG).commit();
+                break;
+
             case R.id.ShareImage:
                 //TODO:custom share windows
                 Uri uriToImage=Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + R.raw.share);

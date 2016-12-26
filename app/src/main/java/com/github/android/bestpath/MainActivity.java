@@ -13,6 +13,7 @@ import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity{
     public static final String TAG="MainActivity";
@@ -44,7 +45,10 @@ public class MainActivity extends AppCompatActivity{
     protected static MediaPlayer mMPClick = MediaPlayerSingleton.getInstance();
     public static MediaPlayer mMPSwitch;
 
-
+    protected static int DISPLAY_LANGUAGE=0;
+    protected static final int LANGUAGE_ZH_PRC=30;
+    protected static final int LANGUAGE_ZH_TW=31;
+    protected static final int LANGUAGE_JA=32;
 
 
     @Override
@@ -62,6 +66,21 @@ public class MainActivity extends AppCompatActivity{
         GAME =new Game('M');
         GAME.init( mGameLevel,mSP.getInt(SP_KEY_GAME_MODE,SP_KEY_GAME_MODE_DEFAULT),
                 parseGameRecordString(TAG,mSP.getString(SP_KEY_GAME_RECORD,SP_KEY_GAME_RECORD_DEFAULT)));
+        //get display language
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+            if (Locale.getDefault().getDisplayLanguage().equals(Locale.JAPANESE.getDisplayName())) {
+                DISPLAY_LANGUAGE=LANGUAGE_JA;
+            }else if(Locale.getDefault().getDisplayLanguage().equals(Locale.CHINESE.getDisplayName())) {
+                if(Locale.getDefault().getDisplayCountry().equals(Locale.PRC.getDisplayCountry())) {
+                    DISPLAY_LANGUAGE=LANGUAGE_ZH_PRC;
+                }else {
+                    DISPLAY_LANGUAGE=LANGUAGE_ZH_TW;
+                }
+            } }
+        }).start();
+
 
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)

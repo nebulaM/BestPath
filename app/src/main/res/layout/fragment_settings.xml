@@ -156,7 +156,7 @@
                     android:visibility="invisible"
                     android:src="@mipmap/ic_select_1_cyan" />
                 <TextView
-                    android:id="@+id/Record"
+                    android:id="@+id/RecordText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@id/RecordImage"
