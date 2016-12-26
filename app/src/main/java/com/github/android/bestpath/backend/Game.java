@@ -521,6 +521,17 @@ public class Game {
                 }
 
             case NORMAL:
+                //not check energy every step
+                if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
+                    return GameState.PLAYER_WIN;
+                }else{
+                    if(mPlayer.getEnergy()>0){
+                        return GameState.GAME_NOT_END;
+                    }else{
+                        return GameState.PLAYER_LOSE;
+                    }
+                }
+                /*
                 //check energy every step
                 //player win
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
@@ -534,7 +545,7 @@ public class Game {
                     int minEnergy = this.shortestPath(mPlayer.getCurrentPosition(), endNodeID, adjacentArray, false, false,  PathList.NoList);
                     //-1 means player loss, 0 means game not end
                     return minEnergy > mPlayer.getEnergy() ? GameState.PLAYER_LOSE : GameState.GAME_NOT_END;
-                }
+                }*/
             default:
                 throw new IllegalArgumentException(TAG+" @gameOver unknown GameState");
         }
