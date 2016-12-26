@@ -2,8 +2,10 @@ package com.github.android.bestpath;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.util.Log;
@@ -20,6 +22,9 @@ import com.github.android.bestpath.dialog.MyDialog;
 import com.github.android.bestpath.dialog.RecordDialog;
 import com.github.android.bestpath.dialog.ThemeDialog;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
+
+import java.io.File;
+import java.util.Locale;
 
 public class SettingsFragment extends PreferenceFragment implements View.OnClickListener,MyDialog.onCloseListener{
     public static final String TAG="SettingsFragment";
@@ -109,6 +114,10 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mThemeText.setOnClickListener(this);
         mSoundText.setOnClickListener(this);
         mRecordText.setOnClickListener(this);
+        //share image, not text
+        mShareImage.setOnClickListener(this);
+
+
         mToastSound=Toast.makeText(getActivity().getApplicationContext(),"",Toast.LENGTH_SHORT);
         //IMPORTANT, initialize relevant things in this fragment
         init();
@@ -155,6 +164,15 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 RecordDialog recordDialog=RecordDialog.newInstance(MainActivity.GAME.getGameRecord(false));
                 recordDialog.setOnCloseListener(this);
                 recordDialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
+                break;
+            case R.id.ShareImage:
+                //TODO:custom share windows
+                Uri uriToImage=Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + R.raw.share);
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+                sendIntent.setType("image/png");
+                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_app)));
                 break;
             default:
                 break;
@@ -222,7 +240,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mRecordImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
-                mShareImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
             case 1:
@@ -235,7 +252,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mRecordImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
-                mShareImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
             case 2:
@@ -248,7 +264,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mRecordImage.setImageResource(R.mipmap.ic_select_3_green);
                 mLanguageImage.setImageResource(R.mipmap.ic_select_3_green);
                 mHelpImage.setImageResource(R.mipmap.ic_select_3_green);
-                mShareImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
             case 3:
@@ -261,7 +276,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mRecordImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
-                mShareImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
             default:
@@ -274,7 +288,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mRecordImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
-                mShareImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
         }

@@ -52,4 +52,6 @@
     <string name="rate_app_later">Remind me later</string>
     <string name="rate_app_no">No</string>
 
+    <string name="share_app">Share this App</string>
+
 </resources>

@@ -259,41 +259,6 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         android:background="@color/theme_dark">
         <RelativeLayout
-            android:id="@+id/SettingsSectorContainer_L3_1"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/ShareImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:visibility="invisible"
-                android:src="@mipmap/ic_select_1_cyan" />
-            <TextView
-                android:id="@+id/ShareText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/ShareImage"
-                android:layout_alignTop="@id/ShareImage"
-                android:layout_alignRight="@id/ShareImage"
-                android:layout_alignBottom="@id/ShareImage"
-                android:gravity="center"
-                android:text="@string/share"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_extra_large"
-                android:fontFamily="sans-serif-thin"
-                />
-        </RelativeLayout>
-        <View
-            android:id="@+id/SettingsSectorContainer_L3_Middle"
-            android:layout_width="@dimen/settings_divider_thickness"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:background="@android:color/white"/>
-        <RelativeLayout
             android:id="@+id/SettingsSectorContainer_L3_2"
             android:layout_weight="1"
             android:layout_width="0dp"
@@ -321,5 +286,33 @@
                 android:fontFamily="sans-serif-thin"
                 />
         </RelativeLayout>
+        <View
+            android:id="@+id/SettingsSectorContainer_L3_Middle"
+            android:layout_width="@dimen/settings_divider_thickness"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="@dimen/activity_vertical_margin"
+            android:background="@android:color/white"/>
+        <LinearLayout
+            android:id="@+id/SettingsSectorContainer_L3_1"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:weightSum="3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                />
+            <ImageView
+                android:id="@+id/ShareImage"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:src="@drawable/share_button"
+                />
+        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>
