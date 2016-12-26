@@ -20,14 +20,12 @@ public class MainActivity extends AppCompatActivity{
     public static final String SP_KEY_First_Time_READ ="SP_KEY_First_Time_READ";
     public static final String SP_KEY_THEME ="SP_KEY_THEME";
     public static final String SP_KEY_SOUND ="SP_KEY_SOUND";
-    public static final String SP_KEY_LANG="SP_KEY_LANG";
     public static final String SP_KEY_GAME_RECORD="SP_KEY_GAME_RECORD";
 
     public static final String SP_KEY_GAME_LEVEL="SP_KEY_GAME_LEVEL";
     public static final String SP_KEY_GAME_MODE="SP_KEY_GAME_MODE";
     public static final int SP_KEY_THEME_DEFAULT=0;
     public static final boolean SP_KEY_SOUND_DEFAULT=true;
-    public static final String[] SP_KEY_LANG_PACKAGE={"en","ch", "jp"};
     public static final String SP_KEY_GAME_RECORD_DEFAULT ="LV1{0,0};LV2{0,0};LV3{0,0};LV4{0,0};LV5{0,0};LV6{0,0}";
 
     public static final int SP_KEY_GAME_LEVEL_DEFAULT=3;
@@ -85,7 +83,6 @@ public class MainActivity extends AppCompatActivity{
             mSPEditor.putBoolean(SP_KEY_First_Time_READ,false);
             mSPEditor.putInt(SP_KEY_THEME,SP_KEY_THEME_DEFAULT);
             mSPEditor.putBoolean(SP_KEY_SOUND,SP_KEY_SOUND_DEFAULT);
-            mSPEditor.putString(SP_KEY_LANG,SP_KEY_LANG_PACKAGE[0]);
             mSPEditor.putInt(SP_KEY_GAME_LEVEL,SP_KEY_GAME_LEVEL_DEFAULT);
             mSPEditor.putInt(SP_KEY_GAME_MODE,SP_KEY_GAME_MODE_DEFAULT);
             mSPEditor.putString(SP_KEY_GAME_RECORD, SP_KEY_GAME_RECORD_DEFAULT);

@@ -150,7 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
                 <ImageView
-                    android:id="@+id/EffectImage"
+                    android:id="@+id/RecordImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
@@ -158,15 +158,15 @@
                     android:visibility="invisible"
                     android:src="@mipmap/ic_select_3_green" />
                 <TextView
-                    android:id="@+id/EffectText"
+                    android:id="@+id/Record"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/EffectImage"
-                    android:layout_alignTop="@id/EffectImage"
-                    android:layout_alignRight="@id/EffectImage"
-                    android:layout_alignBottom="@id/EffectImage"
+                    android:layout_alignLeft="@id/RecordImage"
+                    android:layout_alignTop="@id/RecordImage"
+                    android:layout_alignRight="@id/RecordImage"
+                    android:layout_alignBottom="@id/RecordImage"
                     android:gravity="center"
-                    android:text="@string/effect"
+                    android:text="@string/record"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/text_size_large"
                     android:fontFamily="sans-serif-thin"/>
@@ -184,7 +184,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
                 <ImageView
-                    android:id="@+id/LanguageImage"
+                    android:id="@+id/ThankImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
@@ -195,12 +195,12 @@
                     android:id="@+id/LanguageText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/LanguageImage"
-                    android:layout_alignTop="@id/LanguageImage"
-                    android:layout_alignRight="@id/LanguageImage"
-                    android:layout_alignBottom="@id/LanguageImage"
+                    android:layout_alignLeft="@id/ThankImage"
+                    android:layout_alignTop="@id/ThankImage"
+                    android:layout_alignRight="@id/ThankImage"
+                    android:layout_alignBottom="@id/ThankImage"
                     android:gravity="center"
-                    android:text="@string/language"
+                    android:text="@string/thank"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/text_size_large"
                     android:fontFamily="sans-serif-thin"/>

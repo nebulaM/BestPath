@@ -35,7 +35,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
     private int mTheme;
     private Boolean mSound;
-    private String mLanguage;
     private int mGameMode;
 
     private boolean mCheckDisableMask=false;
@@ -70,7 +69,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
         mTheme = mSP.getInt(MainActivity.SP_KEY_THEME, MainActivity.SP_KEY_THEME_DEFAULT);
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
-        mLanguage = mSP.getString(MainActivity.SP_KEY_LANG, MainActivity.SP_KEY_LANG_PACKAGE[0]);
         mGameMode=mSP.getInt(MainActivity.SP_KEY_GAME_MODE,MainActivity.SP_KEY_GAME_MODE_DEFAULT);
         Log.d(TAG, "@onCreateView: args Theme "+mTheme+" Sound "+mSound+" Game Mode "+mGameMode);
 

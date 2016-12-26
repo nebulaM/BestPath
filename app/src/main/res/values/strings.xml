@@ -6,9 +6,8 @@
     <string name="mode">Mode</string>
      <string name="theme">Theme</string>
     <string name="sound">Sound</string>
-    <!--effect is refactored to Record-->
-    <string name="effect">Record</string>
-    <string name="language">Language</string>
+    <string name="record">Record</string>
+    <string name="thank">Thank</string>
     <string name="help">Help</string>
     <string name="share">Share</string>
     <string name="removeAdds">Remove Adds</string>

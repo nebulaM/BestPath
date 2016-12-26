@@ -23,9 +23,6 @@ import com.github.android.bestpath.dialog.RecordDialog;
 import com.github.android.bestpath.dialog.ThemeDialog;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 
-import java.io.File;
-import java.util.Locale;
-
 public class SettingsFragment extends PreferenceFragment implements View.OnClickListener,MyDialog.onCloseListener{
     public static final String TAG="SettingsFragment";
     public static final String TAG_DIALOG_ON_BACK_STACK="dialog";
@@ -39,7 +36,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private ImageView mModeImage;
     private ImageView mSoundImage;
     private ImageView mRecordImage;
-    private ImageView mLanguageImage;
+    private ImageView mThankImage;
     private ImageView mHelpImage;
     private ImageView mShareImage;
     private ImageView mRemoveAddsImage;
@@ -52,7 +49,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private SharedPreferences mSP;
     private int mTheme;
     private Boolean mSound;
-    private String mLanguage;
     private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
     private Toast mToastSound;
 
@@ -62,12 +58,11 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         void onPreferenceChange(String tag, int parameter);
     }
 
-    public static SettingsFragment newInstance(int theme, boolean sound, String language) {
+    public static SettingsFragment newInstance(int theme, boolean sound) {
         SettingsFragment myFragment = new SettingsFragment();
         Bundle args = new Bundle();
         args.putInt("theme", theme);
         args.putBoolean("sound", sound);
-        args.putString("language", language);
         myFragment.setArguments(args);
         return myFragment;
     }
@@ -87,15 +82,14 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         mTheme = mSP.getInt(MainActivity.SP_KEY_THEME, MainActivity.SP_KEY_THEME_DEFAULT);
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
-        mLanguage = mSP.getString(MainActivity.SP_KEY_LANG, MainActivity.SP_KEY_LANG_PACKAGE[0]);
         mGameMode =mSP.getInt(MainActivity.SP_KEY_GAME_MODE,MainActivity.SP_KEY_GAME_MODE_DEFAULT);
 
-        Log.d(TAG, "@onCreateView: args theme "+mTheme+" sound "+mSound+" language "+mLanguage+" gameMode "+mGameMode);
+        Log.d(TAG, "@onCreateView: args theme "+mTheme+" sound "+mSound+ "gameMode "+mGameMode);
         mModeImage=(ImageView)view.findViewById(R.id.ModeImage);
         mThemeImage=(ImageView)view.findViewById(R.id.ThemeColorImage);
         mSoundImage=(ImageView)view.findViewById(R.id.SoundImage);
-        mRecordImage =(ImageView)view.findViewById(R.id.EffectImage);
-        mLanguageImage=(ImageView)view.findViewById(R.id.LanguageImage);
+        mRecordImage =(ImageView)view.findViewById(R.id.RecordImage);
+        mThankImage =(ImageView)view.findViewById(R.id.ThankImage);
         mHelpImage=(ImageView)view.findViewById(R.id.HelpImage);
         mShareImage=(ImageView)view.findViewById(R.id.ShareImage);
         mRemoveAddsImage=(ImageView)view.findViewById(R.id.RemoveAddsImage);
@@ -103,7 +97,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mModeText=(TextView)view.findViewById(R.id.ModeText);
         mThemeText=(TextView)view.findViewById(R.id.ThemeColorText);
         mSoundText=(TextView)view.findViewById(R.id.SoundText);
-        mRecordText=(TextView)view.findViewById(R.id.EffectText);
+        mRecordText=(TextView)view.findViewById(R.id.Record);
 
         //set color for each sector in this setting fragment
         mSettingsSector1=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L1);
@@ -157,8 +151,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 modeDialog.setOnCloseListener (this);
                 modeDialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
                 break;
-            //effect is renamed to record
-            case R.id.EffectText:
+            case R.id.Record:
                 mRecordImage.setVisibility(View.VISIBLE);
                 Log.d(TAG,"MainActivity.GAME.getGameRecord(): "+MainActivity.GAME.getGameRecord(false));
                 RecordDialog recordDialog=RecordDialog.newInstance(MainActivity.GAME.getGameRecord(false));
@@ -238,7 +231,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mThemeImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mSoundImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRecordImage.setImageResource(R.mipmap.ic_select_1_cyan);
-                mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mThankImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
@@ -250,7 +243,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mThemeImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mSoundImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRecordImage.setImageResource(R.mipmap.ic_select_1_cyan);
-                mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mThankImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
@@ -262,7 +255,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mThemeImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mSoundImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRecordImage.setImageResource(R.mipmap.ic_select_3_green);
-                mLanguageImage.setImageResource(R.mipmap.ic_select_3_green);
+                mThankImage.setImageResource(R.mipmap.ic_select_3_green);
                 mHelpImage.setImageResource(R.mipmap.ic_select_3_green);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
@@ -274,7 +267,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mThemeImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mSoundImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRecordImage.setImageResource(R.mipmap.ic_select_1_cyan);
-                mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mThankImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
@@ -286,16 +279,13 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 mThemeImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mSoundImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRecordImage.setImageResource(R.mipmap.ic_select_1_cyan);
-                mLanguageImage.setImageResource(R.mipmap.ic_select_1_cyan);
+                mThankImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mHelpImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 mRemoveAddsImage.setImageResource(R.mipmap.ic_select_1_cyan);
                 break;
         }
     }
 
-    private void setLanguage(String language){
-
-    }
 
     /**
      *
@@ -325,7 +315,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private void init(){
         setSettingsTheme(mTheme);
         setSound(mSound,true);
-        setLanguage(mLanguage);
     }
 
     /**
