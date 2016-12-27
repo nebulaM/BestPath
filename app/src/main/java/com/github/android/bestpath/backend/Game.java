@@ -83,6 +83,9 @@ public class Game {
     public static final int NOT_SHOW_GAME_STAGE=-2;
     private int mStageCleared;
 
+    //can only increment stage clear once when check gameOver
+    private boolean mGameRecordLocked =false;
+
     private boolean mGameRecordWriteFlag=false;
     //location 0-5 contains clear times in normal mode, from lv1 to lv6
     //location 6-11 contains clear times in hard mode, from lv1 to lv6
@@ -121,6 +124,7 @@ public class Game {
      */
     public void init(int gameLevel,int gameMode, List gameRecord) {
         setGameMode(gameMode);
+        unlockGameRecord();
         //first time start the game or change to a new level
         if (mGameLevel == 0 || mGameLevel != gameLevel) {
             if (gameLevel > 1) {
@@ -240,6 +244,13 @@ public class Game {
             default:
                 throw new IllegalArgumentException("Game Mode must between 0-2");
         }
+    }
+
+    private void unlockGameRecord(){
+        mGameRecordLocked =false;
+    }
+    private void lockGameRecord(){
+        mGameRecordLocked =true;
     }
 
     public boolean getNodeNeedVisit(int nodeIndex){
@@ -496,10 +507,13 @@ public class Game {
             case HARD:
                 //not check energy every step
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()&&nodeList.get(q1NodeIndex).getVisited()&&nodeList.get(q3NodeIndex).getVisited()){
-                    //update clearance
-                    int normalized_game_level=mGameLevel- MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
-                    mGameRecord.set(normalized_game_level+mGameRecord.size()/2,mStageCleared+1);
-                    mGameRecordWriteFlag=true;
+                    if(!mGameRecordLocked) {//update record
+                        int normalized_game_level = mGameLevel - MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
+                        mStageCleared++;
+                        mGameRecord.set(normalized_game_level + mGameRecord.size() / 2, mStageCleared);
+                        mGameRecordWriteFlag = true;
+                        lockGameRecord();
+                    }
                     return GameState.PLAYER_WIN;
                 }else{
                     if(mPlayer.getEnergy()>0){
@@ -523,6 +537,13 @@ public class Game {
             case NORMAL:
                 //not check energy every step
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
+                    if(!mGameRecordLocked) {//update record
+                        int normalized_game_level = mGameLevel - MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
+                        mStageCleared++;
+                        mGameRecord.set(normalized_game_level, mStageCleared);
+                        mGameRecordWriteFlag = true;
+                        lockGameRecord();
+                    }
                     return GameState.PLAYER_WIN;
                 }else{
                     if(mPlayer.getEnergy()>0){
@@ -535,10 +556,13 @@ public class Game {
                 //check energy every step
                 //player win
                 if(mPlayer.getCurrentPosition()==mPlayer.getFinalPosition()){
-                    //update clearance
-                    int normalized_game_level=mGameLevel- MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
-                    mGameRecord.set(normalized_game_level,mStageCleared+1);
-                    mGameRecordWriteFlag=true;
+                    if(!mGameRecordLocked) {//update record
+                        int normalized_game_level=mGameLevel- MainActivity.SP_KEY_GAME_LEVEL_DEFAULT;
+                        mStageCleared++;
+                        mGameRecord.set(normalized_game_level,mStageCleared);
+                        mGameRecordWriteFlag=true;
+                        lockGameRecord();
+                    }
                     return GameState.PLAYER_WIN;
                 } else{
                     //minimum energy required to reach endNodeID

@@ -572,7 +572,7 @@ public class GameDrawing extends View {
                                         case PLAYER_WIN:
                                             //okay to increase it here async wrt GAME because mStageCleared will be overwritten next time
                                             if(mStageCleared!=Game.NOT_SHOW_GAME_STAGE) {
-                                                mStageCleared++;
+                                                mStageCleared=mGame.getStageCleared();
                                             }
                                             mToastMSG.setText(R.string.player_win);
                                             mToastMSG.show();
