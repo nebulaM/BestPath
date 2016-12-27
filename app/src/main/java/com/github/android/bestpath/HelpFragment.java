@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class HelpFragment extends Fragment implements View.OnClickListener{
     public static final String TAG="HelpFragment";
@@ -18,6 +19,7 @@ public class HelpFragment extends Fragment implements View.OnClickListener{
     private ImageView mPageContent;
     private ImageView mClose;
     private int currentPageNumber=0;
+    private Toast mToast;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,7 +35,7 @@ public class HelpFragment extends Fragment implements View.OnClickListener{
         mNextPage.setOnClickListener(this);
         mLastPage.setOnClickListener(this);
         mClose.setOnClickListener(this);
-
+        mToast= Toast.makeText(getActivity().getApplicationContext(),"",Toast.LENGTH_SHORT);
         return view;
     }
 
@@ -60,12 +62,16 @@ public class HelpFragment extends Fragment implements View.OnClickListener{
             if (currentPageNumber < 4){
                 currentPageNumber++;
             }else {
+                mToast.setText(R.string.last_page);
+                mToast.show();
                 return;
             }
         }else {
             if (currentPageNumber > 1){
                 currentPageNumber--;
             }else {
+                mToast.setText(R.string.first_page);
+                mToast.show();
                 return;
             }
         }

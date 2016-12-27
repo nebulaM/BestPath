@@ -53,4 +53,7 @@
 
     <string name="share_app">Share this App</string>
 
+    <string name="last_page">This is the last page</string>
+    <string name="first_page">This is the first page</string>
+
 </resources>
