@@ -142,10 +142,16 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
         mSettingsButton.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 playSound(mSound);
-                while(mMP.isPlaying());
-                getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_right,R.animator.slide_out_left,R.animator.slide_in_left,R.animator.slide_out_right).replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
+                while (mMP.isPlaying()) ;
+                if (getView().getHeight() > getView().getWidth()) {
+                    getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_in_left, R.animator.slide_out_right).replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
+
+                }else {
+                    getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_top, R.animator.slide_out_bottom, R.animator.slide_in_bottom, R.animator.slide_out_top).replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
+
+                }
             }
 
         });

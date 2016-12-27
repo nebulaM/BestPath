@@ -164,7 +164,11 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
 
             case R.id.HelpText:
                 mHelpImage.setVisibility(View.VISIBLE);
-                getFragmentManager().beginTransaction().replace(R.id.frag_container, new HelpFragment()).addToBackStack(TAG).commit();
+                if(getView().getHeight()>getView().getWidth()) {
+                    getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_in_left, R.animator.slide_out_right).replace(R.id.frag_container, new HelpFragment()).addToBackStack(TAG).commit();
+                }else {
+                    getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_top, R.animator.slide_out_bottom, R.animator.slide_in_bottom, R.animator.slide_out_top).replace(R.id.frag_container, new HelpFragment()).addToBackStack(TAG).commit();
+                }
                 break;
 
             case R.id.ShareImage:
