@@ -40,8 +40,8 @@
     <string name="cannot_reset_player">Cannot restart in this mode</string>
 
     <string name="stage_clear">Stage Clear</string>
-    <string name="show_stage_clear">Show Count for Stage Clear</string>
-    <string name="hide_stage_clear">Hide Count for Stage Clear</string>
+    <string name="show_stage_clear">Show the Count for Stage Clear</string>
+    <string name="hide_stage_clear">Hide the Count for Stage Clear</string>
 
 
     <!--for rate app dialog-->

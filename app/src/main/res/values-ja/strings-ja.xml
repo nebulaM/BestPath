@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">Best Path</string>
+
+    <!--For settings-->
+    <string name="settings">設定</string>
+    <string name="mode">モード</string>
+    <string name="theme">テーマ</string>
+    <string name="sound">音</string>
+    <string name="record">記録</string>
+    <string name="thank">感謝する</string>
+    <string name="help">説明</string>
+    <string name="share">共有</string>
+    <string name="removeAdds">広告を消す</string>
+    <string name="select">Ok</string>
+    <string name="cancel">キャンセル</string>
+    <string name="dismiss">閉じる</string>
+    <string name="soundOn">音をつける</string>
+    <string name="soundOff">音を消す</string>
+
+    <string name="detail">詳細</string>
+
+    <!--For game-->
+    <string name="selectModeNotify">モードを選んだ</string>
+    <string name="hard">ハード</string>
+    <string name="medium">ノームル</string>
+    <string name="easy">イージー</string>
+
+    <string name="show_game_mode">ゲームモードのアイコンを現れて</string>
+    <string name="hide_game_mode">ゲームモードのアイコンを隠して</string>
+
+    <string name="reset_player">リスタート</string>
+
+    <string name="reset_game">新しい地図</string>
+    <string name="level">レベル</string>
+    <string name="max_level">これは最も高いレベルです</string>
+    <string name="min_level">これは最も低いレベルです</string>
+
+    <string name="player_win">やった!</string>
+    <string name="player_lose">今度は絶対に負けないんだよ</string>
+    <string name="cannot_reset_player">リスタートできません</string>
+
+    <string name="stage_clear">　クリア</string>
+    <string name="show_stage_clear">ステージクリアを現れて</string>
+    <string name="hide_stage_clear">ステージクリアを隠して</string>
+
+
+    <!--for rate app dialog-->
+    <string name="rate_app_dialog_title"><font fgcolor="#ff25b1e3">レビュー</font></string>
+    <string name="rate_app_dialog_text">このアプリを気に入っていただいたら、ぜひレビューしてください。ありがとうございます～</string>
+    <string name="rate_app_yes">はい</string>
+    <string name="rate_app_later">あとで</string>
+    <string name="rate_app_no">いいえ</string>
+
+    <string name="share_app">共有する</string>
+
+    <string name="last_page">これは最後のページです</string>
+    <string name="first_page">これはページ１です</string>
+
+</resources>
