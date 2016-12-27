@@ -1,9 +1,11 @@
 package com.github.android.bestpath;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -62,12 +64,13 @@ public class MainActivity extends AppCompatActivity{
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //read from shared preference
         checkSP(false);
-
-        GAME =new Game('M');
-        GAME.init( mGameLevel,mSP.getInt(SP_KEY_GAME_MODE,SP_KEY_GAME_MODE_DEFAULT),
-                parseGameRecordString(TAG,mSP.getString(SP_KEY_GAME_RECORD,SP_KEY_GAME_RECORD_DEFAULT)));
+        if(GAME==null) {
+            GAME = new Game('M');
+            GAME.init(mGameLevel, mSP.getInt(SP_KEY_GAME_MODE, SP_KEY_GAME_MODE_DEFAULT),
+                    parseGameRecordString(TAG, mSP.getString(SP_KEY_GAME_RECORD, SP_KEY_GAME_RECORD_DEFAULT)));
+        }
         //get display language
-        new Thread(new Runnable() {
+        Thread t=new Thread(new Runnable() {
             @Override
             public void run() {
             if (Locale.getDefault().getDisplayLanguage().equals(Locale.JAPANESE.getDisplayName())) {
@@ -79,14 +82,21 @@ public class MainActivity extends AppCompatActivity{
                     DISPLAY_LANGUAGE=LANGUAGE_ZH_TW;
                 }
             } }
-        }).start();
+        });
+        t.start();
 
-
+        int count=getFragmentManager().getBackStackEntryCount();
+        for(int i=0;i<count;++i) {
+            int backStackId = getFragmentManager().getBackStackEntryAt(i).getId();
+            getFragmentManager().popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            Log.d(TAG,"@onCreate clean "+backStackId+" on back stack");
+        }
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)
         getFragmentManager().beginTransaction().add(R.id.frag_container, new GameFragment()).commit();
         //rate the app
         AppRater.appLaunched(this);
+        try{t.join();}catch (InterruptedException e){e.printStackTrace();}
     }
 
     /**
@@ -117,6 +127,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
+
         if(mMPClick ==null){
             Log.d(TAG,"@onResume: Create media player");
             mMPClick =MediaPlayer.create(getApplicationContext(), R.raw.click_1);
@@ -124,6 +135,7 @@ public class MainActivity extends AppCompatActivity{
         if(mMPSwitch==null){
             mMPSwitch= MediaPlayer.create(getApplicationContext(),R.raw.switch_sound);
         }
+
     }
 
     @Override

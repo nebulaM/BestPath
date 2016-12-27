@@ -2,8 +2,10 @@ package com.github.android.bestpath;
 
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +47,7 @@ public class HelpFragment extends Fragment implements View.OnClickListener{
                 setPageContent(false);
                 break;
             case R.id.close:
+                //TODO:BUG the first time change language
                 getFragmentManager().popBackStack();
                 break;
             default:

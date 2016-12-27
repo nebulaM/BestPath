@@ -17,7 +17,8 @@
             android:id="@+id/page_content"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:src="@drawable/help_en_2"/>
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/help_en_1"/>
         <ImageView
             android:id="@+id/close"
             android:layout_width="wrap_content"
