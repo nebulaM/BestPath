@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"
-            android:src="@mipmap/ic_select_1_cyan" />
+            android:src="@drawable/ic_select_1_cyan" />
             <TextView
             android:id="@+id/ModeText"
             android:layout_width="wrap_content"
@@ -67,7 +67,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:visibility="invisible"
-                android:src="@mipmap/ic_select_1_cyan" />
+                android:src="@drawable/ic_select_1_cyan" />
             <TextView
                 android:id="@+id/ThemeColorText"
                 android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:visibility="invisible"
-                    android:src="@mipmap/ic_select_1_cyan" />
+                    android:src="@drawable/ic_select_1_cyan" />
                 <TextView
                     android:id="@+id/SoundText"
                     android:layout_width="wrap_content"
@@ -154,7 +154,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:visibility="invisible"
-                    android:src="@mipmap/ic_select_1_cyan" />
+                    android:src="@drawable/ic_select_1_cyan" />
                 <TextView
                     android:id="@+id/RecordText"
                     android:layout_width="wrap_content"
@@ -188,7 +188,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:visibility="invisible"
-                    android:src="@mipmap/ic_select_1_cyan" />
+                    android:src="@drawable/ic_select_1_cyan" />
                 <TextView
                     android:id="@+id/ThankText"
                     android:layout_width="wrap_content"
@@ -224,7 +224,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:visibility="invisible"
-                android:src="@mipmap/ic_select_1_cyan" />
+                android:src="@drawable/ic_select_1_cyan" />
             <TextView
                 android:id="@+id/HelpText"
                 android:layout_width="wrap_content"
@@ -270,7 +270,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:visibility="invisible"
-                android:src="@mipmap/ic_select_1_cyan" />
+                android:src="@drawable/ic_select_1_cyan" />
             <TextView
                 android:id="@+id/RemoveAddsText"
                 android:layout_width="wrap_content"
