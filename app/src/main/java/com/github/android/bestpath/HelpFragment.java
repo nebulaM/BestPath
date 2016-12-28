@@ -3,6 +3,7 @@ package com.github.android.bestpath;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -20,9 +21,19 @@ public class HelpFragment extends Fragment implements View.OnClickListener{
     private ImageView mClose;
     private int currentPageNumber=0;
     private Toast mToast;
+    private Boolean mSound;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Thread t=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mSound=getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE).getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
+            }
+        });
+
+        t.start();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_help, container, false);
         mNextPage=(ImageView)view.findViewById(R.id.next_page);
@@ -36,11 +47,13 @@ public class HelpFragment extends Fragment implements View.OnClickListener{
         mLastPage.setOnClickListener(this);
         mClose.setOnClickListener(this);
         mToast= Toast.makeText(getActivity().getApplicationContext(),"",Toast.LENGTH_SHORT);
+        try{t.join();}catch (InterruptedException e){e.printStackTrace();};
         return view;
     }
 
     @Override
     public void onClick(View v) {
+        MainActivity.playSound(TAG,mSound,"click");
         switch (v.getId()) {
             case R.id.next_page:
                 setPageContent(true);

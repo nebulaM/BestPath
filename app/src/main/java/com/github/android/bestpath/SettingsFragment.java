@@ -50,7 +50,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private SharedPreferences mSP;
     private int mTheme;
     private Boolean mSound;
-    private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
     private Toast mToastSound;
 
     private int mGameMode;
@@ -73,7 +72,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
         Log.d(TAG,"@onCreate: obtain media player from parent activity");
-        mMP=MainActivity.mMPClick;
     }
 
     @Override
@@ -183,7 +181,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
             default:
                 break;
         }
-        playSound(mSound);
+        MainActivity.playSound(TAG,mSound,"click");
     }
 
     /**
@@ -195,7 +193,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     public void onDialogClose(String tag, int parameter){
         //parameter == -1 means close the dialog without clicking on any option
         if(parameter!=-1) {
-            playSound(mSound);
+            MainActivity.playSound(TAG,mSound,"click");
         }
         switch (tag) {
             case ThemeDialog.TAG:
@@ -328,38 +326,6 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private void init(){
         setSettingsTheme(mTheme);
         setSound(mSound,true);
-    }
-
-    /**
-     * sound effect method
-     * @param enable play sound if enable == true
-     */
-    private void playSound(boolean enable){
-        if(enable) {
-            //Log.d(TAG,"play sound");
-            //prevent from unexpected null pointer
-            if(mMP !=null) {
-                if (mMP.isPlaying()) {
-                    mMP.stop();
-                }
-                mMP.start();
-            }
-        }
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        Log.d(TAG,"@onResume: obtain pointer to media player from parent activity");
-        mMP=MainActivity.mMPClick;
-
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG,"@onPause: release pointer to media player");
-        mMP=null;
     }
 
 }

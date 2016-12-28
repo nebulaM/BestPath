@@ -1,7 +1,6 @@
 package com.github.android.bestpath;
 
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.github.android.bestpath.backend.Game;
-import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +41,11 @@ public class MainActivity extends AppCompatActivity{
 
     protected final static float GAME_LEVEL_MAX=8.0f;
 
-    //sound from http://www.freesfx.co.uk
-    protected static MediaPlayer mMPClick = MediaPlayerSingleton.getInstance();
-    public static MediaPlayer mMPSwitch;
+    public static MediaPlayer mMPClick;
+    public static MediaPlayer mMPStep;
+    public static MediaPlayer mMPLose;
+    public static MediaPlayer mMPWin;
+
 
     protected static int DISPLAY_LANGUAGE=0;
     protected static final int LANGUAGE_ZH_PRC=30;
@@ -57,8 +57,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mMPClick = MediaPlayer.create(getApplicationContext(),R.raw.click_1);
-        mMPSwitch= MediaPlayer.create(getApplicationContext(),R.raw.switch_sound);
+        getMediaPlayers();
         Log.d(TAG,"@onCreate: Create media player");
         //use hardware volume key to control audio volume for all fragments under this activity
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -127,15 +126,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
-
-        if(mMPClick ==null){
-            Log.d(TAG,"@onResume: Create media player");
-            mMPClick =MediaPlayer.create(getApplicationContext(), R.raw.click_1);
-        }
-        if(mMPSwitch==null){
-            mMPSwitch= MediaPlayer.create(getApplicationContext(),R.raw.switch_sound);
-        }
-
+        getMediaPlayers();
     }
 
     @Override
@@ -147,20 +138,50 @@ public class MainActivity extends AppCompatActivity{
             mSPEditor.putInt(SP_KEY_GAME_LEVEL, GAME.getGameLevel()).apply();
         }
         super.onPause();
-        //release media player
-        if (mMPClick != null) {
-            Log.d(TAG, "@onPause: Release media player");
-            mMPClick.release();
-            mMPClick = null;
-        }
-        if (mMPSwitch != null) {
-            mMPSwitch.release();
-            mMPSwitch = null;
-        }
+        releaseMediaPlayers();
 
         if (MainActivity.GAME.getGameRecord(true)!=null){
             Log.d(TAG, "@onPause: write game record "+MainActivity.GAME.getGameRecord(true));
             mSP.edit().putString(MainActivity.SP_KEY_GAME_RECORD, MainActivity.parseGameRecordList(TAG, MainActivity.GAME.getGameRecord(true))).apply();
+        }
+    }
+
+
+    private void getMediaPlayers(){
+        Log.d(TAG,"Create media players");
+        if(mMPClick ==null){
+
+            mMPClick =MediaPlayer.create(getApplicationContext(), R.raw.click);
+        }
+        if(mMPStep==null){
+            mMPStep= MediaPlayer.create(getApplicationContext(),R.raw.step);
+        }
+        if(mMPLose ==null){
+            mMPLose =MediaPlayer.create(getApplicationContext(),R.raw.lose);
+        }
+        if(mMPWin==null){
+            mMPWin=MediaPlayer.create(getApplicationContext(),R.raw.win);
+        }
+    }
+
+    private void releaseMediaPlayers(){
+        Log.d(TAG, "Release media player");
+        //release media player
+        if (mMPClick != null) {
+            mMPClick.release();
+            mMPClick = null;
+        }
+        if (mMPStep != null) {
+            mMPStep.release();
+            mMPStep = null;
+        }
+        if(mMPLose !=null){
+            mMPLose.release();
+            mMPLose =null;
+        }
+        if(mMPWin!=null) {
+            mMPWin.release();
+            mMPWin=null;
         }
     }
 
@@ -204,6 +225,49 @@ public class MainActivity extends AppCompatActivity{
         }
         Log.d(tag,"@parseGameRecordList: new Game Record is "+newRawGameRecord);
         return newRawGameRecord;
+    }
+
+
+    /**
+     *
+     * @param tag of the activity request this method
+     * @param enable play sound if enable is true
+     * @param soundName sound name to play
+     */
+    public static void playSound(final String tag, final boolean enable,final String soundName) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (enable) {
+                    Log.d(tag,"play sound");
+                    MediaPlayer mMP;
+                    switch (soundName) {
+                        case "click":
+                            mMP = mMPClick;
+                            break;
+                        case "step":
+                            mMP = mMPStep;
+                            break;
+                        case "win":
+                            mMP = mMPWin;
+                            break;
+                        case "lose":
+                            mMP = mMPLose;
+                            break;
+                        default:
+                            mMP = null;
+                    }
+                    //prevent from unexpected null pointer
+                    if (mMP != null) {
+                        if (mMP.isPlaying()) {
+                            mMP.stop();
+                        }
+                        mMP.start();
+                    }
+                }
+            }
+        }
+        ).start();
     }
 
 }

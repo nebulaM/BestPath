@@ -39,8 +39,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
     private boolean mCheckDisableMask=false;
 
-    private MediaPlayer mMP = MediaPlayerSingleton.getInstance();
-
     /*public static GameFragment newInstance(int theme, boolean sound, String language) {
         GameFragment myFragment = new GameFragment();
         Bundle args = new Bundle();
@@ -55,9 +53,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
-        Log.d(TAG,"@onCreate: obtain media player from parent activity");
-        mMP =MainActivity.mMPClick;
-
     }
 
 
@@ -107,7 +102,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 if(MainActivity.GAME.getGameMode()!=0) {
                     mGameDrawing.resetPlayer(false);
                 }else{
-                    playSound(mSound);
+                    MainActivity.playSound(TAG,mSound,"click");
                     mGameDrawing.resetPlayer(true);
                 }
             }
@@ -116,7 +111,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         mRestartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSound(mSound);
+                MainActivity.playSound(TAG,mSound,"click");
                 mGameDrawing.restart(mGameMode);
                 checkDisableButton();
             }
@@ -124,7 +119,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         mNextLevelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSound(mSound);
+                MainActivity.playSound(TAG,mSound,"click");
                 mGameDrawing.nextLevel(mGameMode);
                 checkDisableButton();
             }
@@ -133,7 +128,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         mPreviousLevelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSound(mSound);
+                MainActivity.playSound(TAG,mSound,"click");
                 mGameDrawing.previousLevel(mGameMode);
                 checkDisableButton();
 
@@ -143,8 +138,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         mSettingsButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                playSound(mSound);
-                while (mMP.isPlaying()) ;
+                MainActivity.playSound(TAG,mSound,"click");
                 if (getView().getHeight() > getView().getWidth()) {
                     getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_in_left, R.animator.slide_out_right).replace(R.id.frag_container, new SettingsFragment()).addToBackStack(TAG).commit();
 
@@ -195,43 +189,18 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
     }
 
 
-    private void playSound(boolean enable){
-        if(enable) {
-            //Log.d(TAG,"play sound");
-            //prevent from unexpected null pointer
-            if(mMP !=null) {
-                if (mMP.isPlaying()) {
-                    mMP.stop();
-                }
-                mMP.start();
-            }
-        }
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        Log.d(TAG,"@onResume: obtain media player from parent activity");
-        mMP=MainActivity.mMPClick;
-
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG,"@onPause: release pointer to media player");
-        mMP=null;
-    }
 
     @Override
     public void onPlayerMoving(Game.GameState state){
         switch (state){
             case GAME_NOT_END:
-                playSound(mSound);
+                MainActivity.playSound(TAG,mSound,"step");
                 break;
             case PLAYER_WIN:
+                MainActivity.playSound(TAG,mSound,"win");
                 break;
             case PLAYER_LOSE:
+                MainActivity.playSound(TAG,mSound,"lose");
                 break;
             default:
                 break;

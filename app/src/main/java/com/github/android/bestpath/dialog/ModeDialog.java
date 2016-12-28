@@ -39,7 +39,6 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
     private int mCCWAnimStep =0;
     private int mCWAnimStep =0;
 
-    private MediaPlayer mMPSwitch;
     private boolean mSound;
     public static ModeDialog newInstance(int gameMode,boolean sound) {
         ModeDialog myFragment = new ModeDialog();
@@ -54,7 +53,6 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         mMode=getArguments().getInt("gameMode");
         mSound=getArguments().getBoolean("sound");
-        mMPSwitch= MainActivity.mMPSwitch;
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -164,7 +162,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
 
 
     private void setCWAnimation(int step) {
-        playSound(mSound);
+        MainActivity.playSound(TAG,mSound,"click");
         switch (step) {
             case 0:
                 Log.d(TAG,"@setCWAnimation: set card case 0");
@@ -239,7 +237,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
         for(int i = 0; i< mCard.length; ++i){
                 mCard[i].startAnimation(anim[i]);
         }*/
-        playSound(mSound);
+        MainActivity.playSound(TAG,mSound,"click");
         switch (step) {
             case 0:
                 mCard[0].setX(mFrontCardXY[0]);
@@ -298,32 +296,5 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
         }
     }
 
-    private void playSound(boolean enable){
-        if(enable) {
-
-            //prevent from unexpected null pointer
-            if(mMPSwitch !=null) {
-                if (mMPSwitch.isPlaying()) {
-                    mMPSwitch.stop();
-                }
-                mMPSwitch.start();
-            }
-        }
-    }
-    @Override
-    public void onResume(){
-        super.onResume();
-        if(mMPSwitch==null) {
-            mMPSwitch = MainActivity.mMPSwitch;
-        }
-    }
-
-    @Override
-    public void onPause(){
-        super.onPause();
-        if(mMPSwitch!=null) {
-            mMPSwitch = null;
-        }
-    }
 }
 
