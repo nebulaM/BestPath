@@ -59,7 +59,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
-
     }
 
 
@@ -239,19 +238,21 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
 
     @Override
-    public void onPause() {
+    public void onDestroyView() {
+        super.onDestroyView();
         if(!MainActivity.noAdd) {
             if(mInterstitial!=null) {
                 mInterstitial.destroy();
+                mInterstitial=null;
+                countB4ShowAd=0;
             }
         }
-        super.onPause();
     }
 
     private void checkAds(){
         if(!MainActivity.noAdd) {
             countB4ShowAd++;
-            if(countB4ShowAd>=3) {
+            if(countB4ShowAd>=4) {
                 countB4ShowAd=0;
                 mInterstitial.show();
             }
