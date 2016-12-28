@@ -1,7 +1,9 @@
 package com.github.android.bestpath;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -46,6 +48,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private TextView mSoundText;
     private TextView mRecordText;
     private TextView mHelpText;
+    private TextView mThankText;
 
     private SharedPreferences mSP;
     private int mTheme;
@@ -98,7 +101,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mSoundText=(TextView)view.findViewById(R.id.SoundText);
         mRecordText=(TextView)view.findViewById(R.id.RecordText);
         mHelpText=(TextView)view.findViewById(R.id.HelpText);
-
+        mThankText=(TextView)view.findViewById(R.id.ThankText);
         //set color for each sector in this setting fragment
         mSettingsSector1=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L1);
         mSettingsSector2=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L2);
@@ -109,6 +112,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mSoundText.setOnClickListener(this);
         mRecordText.setOnClickListener(this);
         mHelpText.setOnClickListener(this);
+        mThankText.setOnClickListener(this);
         //share image, not text
         mShareImage.setOnClickListener(this);
 
@@ -167,6 +171,17 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 }else {
                     getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_top, R.animator.slide_out_bottom).replace(R.id.frag_container, new HelpFragment()).addToBackStack(TAG).commit();
                 }
+                break;
+            case R.id.ThankText:
+                mThankImage.setVisibility(View.VISIBLE);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.thank_title)
+                        .setMessage(R.string.thank_text)
+                        .setPositiveButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                 break;
             default:
                 break;

@@ -56,4 +56,6 @@
     <string name="last_page">This is the last page</string>
     <string name="first_page">This is the first page</string>
 
+    <string name="thank_title"><font fgcolor="#ff25b1e3">Thank</font></string>
+    <string name="thank_text">EmojiOne and Freepik for providing free pictures. And COZIMHERE for providing the sound effect.</string>
 </resources>
