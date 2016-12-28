@@ -168,20 +168,20 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                     getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_in_top, R.animator.slide_out_bottom).replace(R.id.frag_container, new HelpFragment()).addToBackStack(TAG).commit();
                 }
                 break;
-
-            case R.id.ShareImage:
-                //TODO:custom share windows
-                Uri uriToImage=Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + R.raw.share);
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
-                sendIntent.setType("image/png");
-                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_app)));
-                break;
             default:
                 break;
         }
         MainActivity.playSound(TAG,mSound,"click");
+        //share is special because it fires another activity, do not play music
+        if(v.getId()==R.id.ShareImage){
+            //TODO:custom share windows
+            Uri uriToImage=Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + R.raw.share);
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+            sendIntent.setType("image/png");
+            startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_app)));
+        }
     }
 
     /**
