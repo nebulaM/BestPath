@@ -46,10 +46,11 @@ public class MainActivity extends AppCompatActivity{
     public static MediaPlayer mMPWin;
 
 
-    public static int DISPLAY_LANGUAGE=0;
+    public static int DISPLAY_LANGUAGE=29;
     public static final int LANGUAGE_ZH_PRC=30;
     public static final int LANGUAGE_ZH_TW=31;
     public static final int LANGUAGE_JA=32;
+    public static final int LANGUAGE_EN=29;
 
 
     @Override

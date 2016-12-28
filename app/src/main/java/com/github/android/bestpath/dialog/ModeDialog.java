@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.github.android.bestpath.MainActivity;
 import com.github.android.bestpath.R;
@@ -40,6 +41,8 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
     private int mCWAnimStep =0;
 
     private boolean mSound;
+    private Toast mToast;
+
     public static ModeDialog newInstance(int gameMode,boolean sound) {
         ModeDialog myFragment = new ModeDialog();
         Bundle args = new Bundle();
@@ -53,6 +56,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         mMode=getArguments().getInt("gameMode");
         mSound=getArguments().getBoolean("sound");
+        mToast=Toast.makeText(getActivity().getApplicationContext(),"",Toast.LENGTH_SHORT);
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -124,6 +128,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 selected=mMode;
+                toastSelectMSG(mMode);
                 dialog.dismiss();
             }});
         return builder.create();
@@ -146,6 +151,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
                 mCWAnimStep = (mCWAnimStep == 0) ? 2 : mCWAnimStep - 1;
         }
 
+        toastModeMSG(mMode);
 
         //Log.d(TAG,"click on game mode "+selected);
     }
@@ -294,6 +300,45 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
             default:
                 break;
         }
+    }
+
+    private void toastModeMSG(int mode){
+        switch (mode){
+            case 0:
+                mToast.setText(R.string.easy);
+                break;
+            case 1:
+                mToast.setText(R.string.medium);
+                break;
+            case 2:
+                mToast.setText(R.string.hard);
+                break;
+            default:
+                break;
+        }
+        mToast.show();
+    }
+    private void toastSelectMSG(int mode){
+        String selectString;
+        if(MainActivity.DISPLAY_LANGUAGE==MainActivity.LANGUAGE_EN){
+            selectString=" "+getText(R.string.selectModeNotify).toString();
+        }else{
+            selectString=getText(R.string.selectModeNotify).toString();
+        }
+        switch (mode){
+            case 0:
+                mToast.setText(getText(R.string.easy)+selectString);
+                break;
+            case 1:
+                mToast.setText(getText(R.string.medium)+selectString);
+                break;
+            case 2:
+                mToast.setText(getText(R.string.hard)+selectString);
+                break;
+            default:
+                break;
+        }
+        mToast.show();
     }
 
 }
