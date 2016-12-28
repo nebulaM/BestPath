@@ -14,6 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -116,6 +119,16 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         //share image, not text
         mShareImage.setOnClickListener(this);
 
+        //blink "help" if user never opened "help" before
+        if( mSP.getBoolean(MainActivity.SP_KEY_NEVER_OPENED_HELP,false)) {
+            //http://stackoverflow.com/questions/4852281/android-how-can-i-make-a-button-flash/4852468#4852468
+            final Animation animation = new AlphaAnimation(1.0f, 0f); // Change alpha from fully visible to invisible
+            animation.setDuration(500);
+            animation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
+            animation.setRepeatCount(Animation.INFINITE); // Repeat animation infinitely
+            animation.setRepeatMode(Animation.REVERSE); // Reverse animation at the end so the button will fade back in
+            mHelpText.setAnimation(animation);
+        }
 
         mToastSound=Toast.makeText(getActivity().getApplicationContext(),"",Toast.LENGTH_SHORT);
         //IMPORTANT, initialize relevant things in this fragment

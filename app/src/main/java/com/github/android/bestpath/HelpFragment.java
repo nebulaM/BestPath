@@ -26,14 +26,23 @@ public class HelpFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Thread t=new Thread(new Runnable() {
+        Thread t1=new Thread(new Runnable() {
             @Override
             public void run() {
                 mSound=getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE).getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
             }
         });
-
-        t.start();
+        t1.start();
+        //overwrite never opened help in SP
+        Thread t2=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE).getBoolean(MainActivity.SP_KEY_NEVER_OPENED_HELP,true)) {
+                    getActivity().getSharedPreferences(MainActivity.SP_FILE_NAME, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.SP_KEY_NEVER_OPENED_HELP, false).apply();
+                }
+            }
+        });
+        t2.start();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_help, container, false);
         mNextPage=(ImageView)view.findViewById(R.id.next_page);
@@ -47,7 +56,8 @@ public class HelpFragment extends Fragment implements View.OnClickListener{
         mLastPage.setOnClickListener(this);
         mClose.setOnClickListener(this);
         mToast= Toast.makeText(getActivity().getApplicationContext(),"",Toast.LENGTH_SHORT);
-        try{t.join();}catch (InterruptedException e){e.printStackTrace();};
+        try{t1.join();}catch (InterruptedException e){e.printStackTrace();}
+        try{t2.join();}catch (InterruptedException e){e.printStackTrace();}
         return view;
     }
 

@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity{
     public static final String SP_KEY_THEME ="SP_KEY_THEME";
     public static final String SP_KEY_SOUND ="SP_KEY_SOUND";
     public static final String SP_KEY_GAME_RECORD="SP_KEY_GAME_RECORD";
+    public static final String SP_KEY_NEVER_OPENED_HELP="SP_KEY_NEVER_OPENED_HELP";
 
     public static final String SP_KEY_GAME_LEVEL="SP_KEY_GAME_LEVEL";
     public static final String SP_KEY_GAME_MODE="SP_KEY_GAME_MODE";
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity{
             mSPEditor.putInt(SP_KEY_GAME_LEVEL,SP_KEY_GAME_LEVEL_DEFAULT);
             mSPEditor.putInt(SP_KEY_GAME_MODE,SP_KEY_GAME_MODE_DEFAULT);
             mSPEditor.putString(SP_KEY_GAME_RECORD, SP_KEY_GAME_RECORD_DEFAULT);
+            mSPEditor.putBoolean(SP_KEY_NEVER_OPENED_HELP,true);
             mSPEditor.commit();
 
             mGameLevel=SP_KEY_GAME_LEVEL_DEFAULT;
