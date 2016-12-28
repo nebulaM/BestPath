@@ -8,14 +8,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.github.android.bestpath.backend.Game;
+import com.mopub.mobileads.MoPubInterstitial;
+import com.mopub.mobileads.MoPubView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     public static final String TAG="MainActivity";
     public static final String SP_FILE_NAME ="BPSP";
     public static final String SP_KEY_First_Time_READ ="SP_KEY_First_Time_READ";
@@ -53,11 +57,24 @@ public class MainActivity extends AppCompatActivity{
     public static final int LANGUAGE_JA=32;
     public static final int LANGUAGE_EN=29;
 
+    private MoPubView moPubView;
 
+    protected static final String mAdId="eecdc43c4f9a4b8f843268c4bc1f6a2a";
+    protected static boolean noAdd=false;//for testing
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        if(noAdd) {
+            setContentView(R.layout.activity_main_no_add);
+        }else {
+            setContentView(R.layout.activity_main);
+            moPubView = (MoPubView) findViewById(R.id.adview);
+            moPubView.setAdUnitId(mAdId);
+            moPubView.loadAd();
+            //moPubView.setBannerAdListener(this);
+
+        }
+
         getMediaPlayers();
         Log.d(TAG,"@onCreate: Create media player");
         //use hardware volume key to control audio volume for all fragments under this activity
@@ -270,6 +287,13 @@ public class MainActivity extends AppCompatActivity{
             }
         }
         ).start();
+    }
+
+    protected void onDestroy() {
+        if(!noAdd) {
+            moPubView.destroy();
+        }
+        super.onDestroy();
     }
 
 }

@@ -18,10 +18,10 @@ import android.widget.LinearLayout;
 
 import com.github.android.bestpath.backend.Game;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
+import com.mopub.mobileads.MoPubInterstitial;
 
 
-
-public class GameFragment extends Fragment implements GameDrawing.onPlayerMovingListener{
+public class GameFragment extends Fragment implements GameDrawing.onPlayerMovingListener {
     public static final String TAG="GameFragment";
     private SharedPreferences mSP;
     private GameDrawing mGameDrawing;
@@ -42,6 +42,9 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
     private boolean mCheckDisableMask=false;
 
+    private MoPubInterstitial mInterstitial;
+    private int countB4ShowAd=0;
+
     /*public static GameFragment newInstance(int theme, boolean sound, String language) {
         GameFragment myFragment = new GameFragment();
         Bundle args = new Bundle();
@@ -56,6 +59,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
+
     }
 
 
@@ -64,6 +68,14 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_game, container, false);
+
+        if(!MainActivity.noAdd){
+            if(mInterstitial==null) {
+                mInterstitial = new MoPubInterstitial(getActivity(), MainActivity.mAdId);
+                //mInterstitial.setInterstitialAdListener(this);
+                mInterstitial.load();
+            }
+        }
 
         mTheme = mSP.getInt(MainActivity.SP_KEY_THEME, MainActivity.SP_KEY_THEME_DEFAULT);
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
@@ -119,6 +131,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                     MainActivity.playSound(TAG,mSound,"click");
                     mGameDrawing.resetPlayer(true);
                 }
+                checkAds();
             }
         });
 
@@ -128,6 +141,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 MainActivity.playSound(TAG,mSound,"click");
                 mGameDrawing.restart(mGameMode);
                 checkDisableButton();
+                checkAds();
             }
         });
         mNextLevelButton.setOnClickListener(new View.OnClickListener() {
@@ -136,6 +150,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 MainActivity.playSound(TAG,mSound,"click");
                 mGameDrawing.nextLevel(mGameMode);
                 checkDisableButton();
+                checkAds();
             }
         });
 
@@ -145,6 +160,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 MainActivity.playSound(TAG,mSound,"click");
                 mGameDrawing.previousLevel(mGameMode);
                 checkDisableButton();
+                checkAds();
 
             }
         });
@@ -218,6 +234,27 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 break;
             default:
                 break;
+        }
+    }
+
+
+    @Override
+    public void onPause() {
+        if(!MainActivity.noAdd) {
+            if(mInterstitial!=null) {
+                mInterstitial.destroy();
+            }
+        }
+        super.onPause();
+    }
+
+    private void checkAds(){
+        if(!MainActivity.noAdd) {
+            countB4ShowAd++;
+            if(countB4ShowAd>=3) {
+                countB4ShowAd=0;
+                mInterstitial.show();
+            }
         }
     }
 }
