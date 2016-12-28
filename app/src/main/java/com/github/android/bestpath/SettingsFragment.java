@@ -349,7 +349,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     }
 
     /**
-     * init this fragment's view w/ user preferenced settings
+     * init this fragment's view w/ user preferred settings
      */
     private void init(){
         setSettingsTheme(mTheme);
