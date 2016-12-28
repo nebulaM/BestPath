@@ -21,11 +21,11 @@
 
     <!--For game-->
     <string name="selectModeNotify">モードを選んだ</string>
-    <string name="hard">ハード</string>
+    <string name="hard">ハード </string>
     <string name="medium">ノームル</string>
     <string name="easy">イージー</string>
 
-    <string name="show_game_mode">ゲームモードのアイコンを現れて</string>
+    <string name="show_game_mode">ゲームモードのアイコンを表して</string>
     <string name="hide_game_mode">ゲームモードのアイコンを隠して</string>
 
     <string name="reset_player">リスタート</string>
@@ -36,7 +36,7 @@
     <string name="min_level">これは最も低いレベルです</string>
 
     <string name="player_win">やった!</string>
-    <string name="player_lose">今度は絶対に負けないんだよ</string>
+    <string name="player_lose">次は絶対に負けないんだよ</string>
     <string name="cannot_reset_player">リスタートできません</string>
 
     <string name="stage_clear">　クリア</string>
@@ -56,4 +56,10 @@
     <string name="last_page">これは最後のページです</string>
     <string name="first_page">これはページ１です</string>
 
+    <!--for thank app dialog-->
+    <string name="thank_title"><font fgcolor="#ff25b1e3">感謝する</font></string>
+    <string name="thank_text">絵の提供者：EmojiOne、Freepik 音の提供者：COZIMHERE。</string>
+
+    <!--for record dialog-->
+    <string name="clear">クリア </string>
 </resources>

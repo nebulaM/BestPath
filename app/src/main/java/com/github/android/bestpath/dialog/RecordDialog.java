@@ -14,8 +14,12 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.github.android.bestpath.MainActivity;
 import com.github.android.bestpath.R;
 
 import java.util.ArrayList;
@@ -27,6 +31,10 @@ public class RecordDialog extends DialogFragment {
     private MyDialog.onCloseListener mOnCloseListener;
     private ImageView mRecordImage;
 
+    private LinearLayout mRecordTextContainer;
+    private TextView mTextTitle;
+    private TextView mNormalText;
+    private TextView mHardText;
     private ArrayList<Integer> mRecordList;
 
     public static RecordDialog newInstance(List recordList) {
@@ -61,7 +69,6 @@ public class RecordDialog extends DialogFragment {
         }).setPositiveButton(R.string.detail, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                //TODO:Pop up another detailed dialog
             }});
         //http://stackoverflow.com/questions/4852281/android-how-can-i-make-a-button-flash/4852468#4852468
         final Animation animation = new AlphaAnimation(1.0f, 0.6f); // Change alpha from fully visible to invisible
@@ -70,7 +77,10 @@ public class RecordDialog extends DialogFragment {
         animation.setRepeatCount(Animation.INFINITE); // Repeat animation infinitely
         animation.setRepeatMode(Animation.REVERSE); // Reverse animation at the end so the button will fade back in
 
-
+        mRecordTextContainer=(LinearLayout) view.findViewById(R.id.text_container);
+        mTextTitle=(TextView) view.findViewById(R.id.text_title);
+        mNormalText=(TextView) view.findViewById(R.id.text_normal);
+        mHardText=(TextView)view.findViewById(R.id.text_hard);
         mRecordImage =(ImageView)view.findViewById(R.id.dialog_effect_image);
         if(setRecordAnimation()) {
             AnimationDrawable frameAnimation = (AnimationDrawable) mRecordImage.getDrawable();
@@ -88,14 +98,31 @@ public class RecordDialog extends DialogFragment {
         mRecordImage.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:Pop up another detailed dialog
                 mRecordImage.clearAnimation();
 
             }
         }));
-
-
         return builder.create();
+    }
+
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
+        final AlertDialog d = (AlertDialog)getDialog();
+        if(d != null)
+        {
+            Button positiveButton = (Button) d.getButton(Dialog.BUTTON_POSITIVE);
+            positiveButton.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    showDetails();
+                }
+            });
+        }
     }
 
     public void setOnCloseListener(MyDialog.onCloseListener onCloseListener){
@@ -113,9 +140,9 @@ public class RecordDialog extends DialogFragment {
         for(int i=mRecordList.size()/2;i<mRecordList.size();++i){
             if(mRecordList.get(i)>=3){
                 count++;
-            }else{
+            }/*else{
                 break;
-            }
+            }*/
         }
         switch (count){
             case 1:
@@ -141,5 +168,47 @@ public class RecordDialog extends DialogFragment {
                 return false;
         }
         return true;
+    }
+
+    private void showDetails(){
+        mRecordImage.setImageAlpha(20);
+        mRecordImage.clearAnimation();
+        String levelList="    LV1    LV2    LV3    LV4    LV5    LV6";
+        String normalList = " ";
+        if(MainActivity.DISPLAY_LANGUAGE==MainActivity.LANGUAGE_ZH_TW||MainActivity.DISPLAY_LANGUAGE==MainActivity.LANGUAGE_ZH_PRC) {
+            normalList = "     ";
+        }
+
+        String hardList="     ";
+
+        for(int i=0;i<mRecordList.size()/2;++i){
+            String spaceNormal="        ";
+            String spaceHard="        ";
+            int tempNormal=mRecordList.get(i);
+            int tempHard=mRecordList.get(i+mRecordList.size()/2);
+            while (tempNormal > 9) {
+                if (spaceNormal.length()>1) {
+                    spaceNormal = spaceNormal.substring(2);
+                } else {
+                    break;
+                }
+                tempNormal/= 10;
+            }
+            while (tempHard > 9) {
+                if (spaceHard.length()>1) {
+                    spaceHard = spaceHard.substring(2);
+                } else {
+                    break;
+                }
+                tempHard/= 10;
+            }
+            normalList=normalList.concat(String.valueOf(mRecordList.get(i))+spaceNormal);
+            hardList=hardList.concat(String.valueOf(mRecordList.get(i+mRecordList.size()/2))+spaceHard);
+        }
+        mTextTitle.setText(getText(R.string.clear)+levelList);
+        mNormalText.setText(getText(R.string.medium)+normalList);
+        mHardText.setText(getText(R.string.hard)+hardList);
+        mRecordTextContainer.setVisibility(View.VISIBLE);
+
     }
 }

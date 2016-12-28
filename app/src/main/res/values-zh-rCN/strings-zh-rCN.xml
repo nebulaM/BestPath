@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Best Path</string>
+
+    <!--For settings-->
+    <string name="settings">设定</string>
+    <string name="mode">模式</string>
+     <string name="theme">主题</string>
+    <string name="sound">音效</string>
+    <string name="record">记录</string>
+    <string name="thank">感谢</string>
+    <string name="help">说明</string>
+    <string name="share">分享</string>
+    <string name="removeAdds">去除广告</string>
+    <string name="select">选择</string>
+    <string name="cancel">取消</string>
+    <string name="dismiss">关闭</string>
+    <string name="soundOn">打开音效</string>
+    <string name="soundOff">关闭音效</string>
+
+    <string name="detail">详细</string>
+
+    <!--For game-->
+    <string name="selectModeNotify">模式选择</string>
+    <string name="hard">困难</string>
+    <string name="medium">普通</string>
+    <string name="easy">简单</string>
+
+    <string name="show_game_mode">显示游戏模式图标</string>
+    <string name="hide_game_mode">隐藏游戏模式图标</string>
+
+    <string name="reset_player">重新开始</string>
+
+    <string name="reset_game">新的地图</string>
+    <string name="level">等级</string>
+    <string name="max_level">这已经是最高等级了</string>
+    <string name="min_level">这已经是最低等级了</string>
+
+    <string name="player_win">耶~</string>
+    <string name="player_lose">再试一次吧</string>
+    <string name="cannot_reset_player">这个模式中不能重新开始</string>
+
+    <string name="stage_clear">通关次数</string>
+    <string name="show_stage_clear">显示通关次数</string>
+    <string name="hide_stage_clear">隐藏通关次数</string>
+
+
+    <!--for rate app dialog-->
+    <string name="rate_app_dialog_title"><font fgcolor="#ff25b1e3">评价</font></string>
+    <string name="rate_app_dialog_text">如果您喜欢这款应用，请到google store评价它。感谢您的支持！</string>
+    <string name="rate_app_yes">好的</string>
+    <string name="rate_app_later">稍后提醒</string>
+    <string name="rate_app_no">不</string>
+
+    <string name="share_app">分享</string>
+
+    <string name="last_page">这是最后一页了</string>
+    <string name="first_page">这是第一页了</string>
+    <!--for thank app dialog-->
+    <string name="thank_title"><font fgcolor="#ff25b1e3">感谢</font></string>
+    <string name="thank_text">EmojiOne和Freepik提供图片资源。COZIMHERE提供音频资源。</string>
+
+    <!--for record dialog-->
+    <string name="clear">通关</string>
+
+</resources>
