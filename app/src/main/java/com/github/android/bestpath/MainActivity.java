@@ -232,9 +232,9 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      *
-     * @param tag of the activity request this method
+     * @param tag of the activity requests this method
      * @param enable play sound if enable is true
-     * @param soundName sound name to play
+     * @param soundName sound to play
      */
     public static void playSound(final String tag, final boolean enable,final String soundName) {
         new Thread(new Runnable() {
