@@ -27,9 +27,7 @@ public class MainActivity extends AppCompatActivity{
     public static final String SP_KEY_GAME_MODE="SP_KEY_GAME_MODE";
     public static final int SP_KEY_THEME_DEFAULT=0;
     public static final boolean SP_KEY_SOUND_DEFAULT=true;
-    //public static final String SP_KEY_GAME_RECORD_DEFAULT ="LV1{9999,9990};LV2{9990,9990};LV3{9990,9990};LV4{9990,9990};LV5{9990,9990};LV6{9990,9990}";
-    //public static final String SP_KEY_GAME_RECORD_DEFAULT ="LV1{999,1};LV2{990,90};LV3{990,90};LV4{999,90};LV5{990,0};LV6{990,90}";
-    public static final String SP_KEY_GAME_RECORD_DEFAULT ="LV1{9,0};LV2{0,0};LV3{9,9};LV4{9,9};LV5{9,9};LV6{9,9}";
+    public static final String SP_KEY_GAME_RECORD_DEFAULT ="LV1{0,0};LV2{0,0};LV3{0,0};LV4{0,0};LV5{0,0};LV6{0,0}";
     public static final int SP_KEY_GAME_LEVEL_DEFAULT=3;
     public static final int SP_KEY_GAME_MODE_DEFAULT=0;
 
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity{
         //use hardware volume key to control audio volume for all fragments under this activity
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //read from shared preference
-        checkSP(true);
+        checkSP(false);
         if(GAME==null) {
             GAME = new Game('M');
             GAME.init(mGameLevel, mSP.getInt(SP_KEY_GAME_MODE, SP_KEY_GAME_MODE_DEFAULT),
