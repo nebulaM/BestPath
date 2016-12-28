@@ -201,7 +201,6 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
                 break;
         }
     }
-    //TODO:Animation
     private void setCCWAnimation(int step){
         /*float leftTOFrontX=mFrontCardXY[0]-mLeftCardXY[0];
         float rightToLeftX=mLeftCardXY[0]-mRightCardXY[0];
