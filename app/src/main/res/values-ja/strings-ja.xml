@@ -58,7 +58,7 @@
 
     <!--for thank app dialog-->
     <string name="thank_title"><font fgcolor="#ff25b1e3">感謝する</font></string>
-    <string name="thank_text">絵の提供者：EmojiOne、Freepik 音の提供者：COZIMHERE。</string>
+    <string name="thank_text">絵の提供者：EmojiOne、Freepik。 音の提供者：COZIMHERE。</string>
 
     <!--for record dialog-->
     <string name="clear">クリア </string>
