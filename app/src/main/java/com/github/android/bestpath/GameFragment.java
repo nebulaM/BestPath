@@ -18,7 +18,12 @@ import android.widget.LinearLayout;
 
 import com.github.android.bestpath.backend.Game;
 import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.mopub.mobileads.MoPubInterstitial;
+
+import java.util.Random;
 
 
 public class GameFragment extends Fragment implements GameDrawing.onPlayerMovingListener {
@@ -43,8 +48,12 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
     private boolean mCheckDisableMask=false;
 
     private MoPubInterstitial mInterstitial;
+    private InterstitialAd mInterstitialAd;
     private int countB4ShowAd=0;
 
+    private boolean showedMoPub;
+
+    private Random RNG;
     /*public static GameFragment newInstance(int theme, boolean sound, String language) {
         GameFragment myFragment = new GameFragment();
         Bundle args = new Bundle();
@@ -59,6 +68,8 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
+        RNG=new Random();
+
     }
 
 
@@ -73,6 +84,19 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 mInterstitial = new MoPubInterstitial(getActivity(), MainActivity.mAdId);
                 //mInterstitial.setInterstitialAdListener(this);
                 mInterstitial.load();
+                showedMoPub=false;
+            }
+            if(mInterstitialAd==null){
+                mInterstitialAd = new InterstitialAd(getActivity());
+                mInterstitialAd.setAdUnitId("ca-app-pub-4258429418332197/9171586468");
+                mInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdClosed() {
+                     requestNewInterstitial();
+                     }
+                    });
+
+                requestNewInterstitial();
             }
         }
 
@@ -240,22 +264,40 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(!MainActivity.noAdd) {
-            if(mInterstitial!=null) {
-                mInterstitial.destroy();
-                mInterstitial=null;
-                countB4ShowAd=0;
-            }
+
+        if(mInterstitial!=null) {
+            mInterstitial.destroy();
+            mInterstitial=null;
+            //countB4ShowAd=0;
         }
+
+
     }
 
     private void checkAds(){
         if(!MainActivity.noAdd) {
             countB4ShowAd++;
-            if(countB4ShowAd>=4) {
-                countB4ShowAd=0;
-                mInterstitial.show();
+            if(countB4ShowAd%5==0) {
+                if( !showedMoPub){
+                    showedMoPub=true;
+                    if (mInterstitial != null) {
+                        mInterstitial.show();
+                    }
+                }else{
+                    if(mInterstitialAd!=null){
+                        mInterstitialAd.show();
+                    }
+                }
             }
         }
     }
+
+    /**
+     * for AdMob
+     */
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
 }

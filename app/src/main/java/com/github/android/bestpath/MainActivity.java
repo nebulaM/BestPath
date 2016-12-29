@@ -1,9 +1,12 @@
 package com.github.android.bestpath;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.github.android.bestpath.backend.Game;
+import com.google.android.gms.ads.MobileAds;
 import com.mopub.mobileads.MoPubInterstitial;
 import com.mopub.mobileads.MoPubView;
 
@@ -60,19 +64,23 @@ public class MainActivity extends AppCompatActivity {
     private MoPubView moPubView;
 
     protected static final String mAdId="eecdc43c4f9a4b8f843268c4bc1f6a2a";
-    protected static boolean noAdd=false;//for testing
+    protected static final boolean noAdd=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(noAdd) {
             setContentView(R.layout.activity_main_no_add);
-        }else {
+        }else if(isNetworkAvailable()){
             setContentView(R.layout.activity_main);
             moPubView = (MoPubView) findViewById(R.id.adview);
             moPubView.setAdUnitId(mAdId);
             moPubView.loadAd();
             //moPubView.setBannerAdListener(this);
-
+            //for AdMob
+            MobileAds.initialize(getApplicationContext(),"ca-app-pub-4258429418332197~3823056861");
+        }else{
+            setContentView(R.layout.activity_main_no_add);
+            MobileAds.initialize(getApplicationContext(),"ca-app-pub-4258429418332197~3823056861");
         }
 
         getMediaPlayers();
@@ -290,10 +298,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void onDestroy() {
-        if(!noAdd) {
+        if(moPubView!=null) {
             moPubView.destroy();
         }
         super.onDestroy();
     }
 
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }
