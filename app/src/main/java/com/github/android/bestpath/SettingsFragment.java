@@ -52,6 +52,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     private TextView mRecordText;
     private TextView mHelpText;
     private TextView mThankText;
+    private TextView mRemoveAddsText;
 
     private SharedPreferences mSP;
     private int mTheme;
@@ -105,6 +106,8 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mRecordText=(TextView)view.findViewById(R.id.RecordText);
         mHelpText=(TextView)view.findViewById(R.id.HelpText);
         mThankText=(TextView)view.findViewById(R.id.ThankText);
+        mRemoveAddsText=(TextView)view.findViewById(R.id.RemoveAddsText);
+
         //set color for each sector in this setting fragment
         mSettingsSector1=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L1);
         mSettingsSector2=(LinearLayout)view.findViewById(R.id.SettingsSectorContainer_L2);
@@ -116,6 +119,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mRecordText.setOnClickListener(this);
         mHelpText.setOnClickListener(this);
         mThankText.setOnClickListener(this);
+        mRemoveAddsText.setOnClickListener(this);
         //share image, not text
         mShareImage.setOnClickListener(this);
 
@@ -190,6 +194,17 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle(R.string.thank_title)
                         .setMessage(R.string.thank_text)
+                        .setPositiveButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+                break;
+            case R.id.RemoveAddsText:
+                mRemoveAddsImage.setVisibility(View.VISIBLE);
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                builder2.setTitle(R.string.more_features_title)
+                        .setMessage(R.string.more_features_text)
                         .setPositiveButton(R.string.dismiss, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();

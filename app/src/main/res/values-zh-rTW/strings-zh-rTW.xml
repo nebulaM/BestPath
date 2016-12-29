@@ -62,4 +62,8 @@
     <!--for record dialog-->
     <string name="clear">勝利</string>
 
+    <string name="more_features">更多功能</string>
+    <string name="more_features_title"><font fgcolor="#ff25b1e3">更多功能</font></string>
+    <string name="more_features_text">敬請期待。</string>
+
 </resources>

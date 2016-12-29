@@ -281,7 +281,7 @@
                 android:layout_alignRight="@id/RemoveAddsImage"
                 android:layout_alignBottom="@id/RemoveAddsImage"
                 android:gravity="center"
-                android:text="@string/removeAdds"
+                android:text="@string/more_features"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/text_size_normal"
                 android:fontFamily="sans-serif-thin"

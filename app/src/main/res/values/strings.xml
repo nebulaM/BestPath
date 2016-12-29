@@ -62,4 +62,8 @@
     <!--for record dialog-->
     <string name="clear">Clear</string>
 
+    <string name="more_features">More Features</string>
+    <string name="more_features_title"><font fgcolor="#ff25b1e3">More Features</font></string>
+    <string name="more_features_text">Coming soon.</string>
+
 </resources>
