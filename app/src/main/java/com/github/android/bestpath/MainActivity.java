@@ -15,9 +15,10 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.github.android.bestpath.backend.Game;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.mopub.mobileads.MoPubInterstitial;
-import com.mopub.mobileads.MoPubView;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,9 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int LANGUAGE_JA=32;
     public static final int LANGUAGE_EN=29;
 
-    private MoPubView moPubView;
-
-    protected static final String mAdId="eecdc43c4f9a4b8f843268c4bc1f6a2a";
+    //protected static final String mAdId="eecdc43c4f9a4b8f843268c4bc1f6a2a";//mopub
     protected static final boolean noAdd=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +71,12 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.activity_main_no_add);
         }else if(isNetworkAvailable()){
             setContentView(R.layout.activity_main);
-            moPubView = (MoPubView) findViewById(R.id.adview);
-            moPubView.setAdUnitId(mAdId);
-            moPubView.loadAd();
-            //moPubView.setBannerAdListener(this);
             //for AdMob
             MobileAds.initialize(getApplicationContext(),"ca-app-pub-4258429418332197~3823056861");
+            AdView mAdView = (AdView) findViewById(R.id.adView);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+
         }else{
             setContentView(R.layout.activity_main_no_add);
             MobileAds.initialize(getApplicationContext(),"ca-app-pub-4258429418332197~3823056861");
@@ -295,13 +294,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         ).start();
-    }
-
-    protected void onDestroy() {
-        if(moPubView!=null) {
-            moPubView.destroy();
-        }
-        super.onDestroy();
     }
 
 
