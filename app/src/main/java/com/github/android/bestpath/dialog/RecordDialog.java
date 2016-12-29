@@ -49,7 +49,7 @@ public class RecordDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRecordList=getArguments().getIntegerArrayList("record");
-        Log.d(TAG,"@onCreate: mRecordList is "+mRecordList);
+        //Log.d(TAG,"@onCreate: mRecordList is "+mRecordList);
     }
 
     @Override

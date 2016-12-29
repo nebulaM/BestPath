@@ -146,7 +146,7 @@ public class Game {
 
         if(gameRecord!=null){
             mGameRecord.addAll(gameRecord);
-            Log.d(TAG,"@init: mGameRecord is "+mGameRecord);
+            //Log.d(TAG,"@init: mGameRecord is "+mGameRecord);
         }
         setStageCleared();
 

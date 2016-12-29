@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.github.android.bestpath.backend.Game;
-import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -103,7 +102,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         mTheme = mSP.getInt(MainActivity.SP_KEY_THEME, MainActivity.SP_KEY_THEME_DEFAULT);
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
         mGameMode=mSP.getInt(MainActivity.SP_KEY_GAME_MODE,MainActivity.SP_KEY_GAME_MODE_DEFAULT);
-        Log.d(TAG, "@onCreateView: args Theme "+mTheme+" Sound "+mSound+" Game Mode "+mGameMode);
+        //Log.d(TAG, "@onCreateView: args Theme "+mTheme+" Sound "+mSound+" Game Mode "+mGameMode);
 
         mGameDrawing=(GameDrawing)view.findViewById(R.id.GameDrawing);
 

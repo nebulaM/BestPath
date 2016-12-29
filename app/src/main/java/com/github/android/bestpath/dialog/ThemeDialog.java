@@ -73,7 +73,7 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener{
             default:
                 break;
         }
-        Log.d(TAG,"click on theme "+selected);
+        //Log.d(TAG,"click on theme "+selected);
         this.dismiss();
     }
 

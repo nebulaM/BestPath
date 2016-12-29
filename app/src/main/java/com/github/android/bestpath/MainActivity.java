@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         getMediaPlayers();
-        Log.d(TAG,"@onCreate: Create media player");
+        //Log.d(TAG,"@onCreate: Create media player");
         //use hardware volume key to control audio volume for all fragments under this activity
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //read from shared preference
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0;i<count;++i) {
             int backStackId = getFragmentManager().getBackStackEntryAt(i).getId();
             getFragmentManager().popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            Log.d(TAG,"@onCreate clean "+backStackId+" on back stack");
+            //Log.d(TAG,"@onCreate clean "+backStackId+" on back stack");
         }
         //Do not need to add to back stack here, because the fragment being replaced is added to the back stack
         // (so in this case R.id.frag_container will be added to back stack if we call addBackStack)
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         mSPEditor=getSharedPreferences(MainActivity. SP_FILE_NAME, MODE_PRIVATE).edit();
         boolean firstTimeAccess=mSP.getBoolean(SP_KEY_First_Time_READ,true);
         if(Overwrite||firstTimeAccess){
-            Log.d(TAG,"@checkSP: Rewrite this preference file with default values!");
+            //Log.d(TAG,"@checkSP: Rewrite this preference file with default values!");
             mSPEditor.putBoolean(SP_KEY_First_Time_READ,false);
             mSPEditor.putInt(SP_KEY_THEME,SP_KEY_THEME_DEFAULT);
             mSPEditor.putBoolean(SP_KEY_SOUND,SP_KEY_SOUND_DEFAULT);
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
             mGameLevel=SP_KEY_GAME_LEVEL_DEFAULT;
         }else{
-            Log.d(TAG,"@checkSP: get saved values from preference file");
+            //Log.d(TAG,"@checkSP: get saved values from preference file");
             mGameLevel= mSP.getInt(SP_KEY_GAME_LEVEL,SP_KEY_GAME_LEVEL_DEFAULT);
         }
     }
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     public void onPause() {
         //write user preferred game info to SP
         if (mGameLevel != GAME.getGameLevel()) {
-            Log.d(TAG, "@onPause: Save new preferred Game level");
+            //Log.d(TAG, "@onPause: Save new preferred Game level");
             mGameLevel = GAME.getGameLevel();
             mSPEditor.putInt(SP_KEY_GAME_LEVEL, GAME.getGameLevel()).apply();
         }
@@ -168,14 +168,14 @@ public class MainActivity extends AppCompatActivity {
         releaseMediaPlayers();
 
         if (MainActivity.GAME.getGameRecord(true)!=null){
-            Log.d(TAG, "@onPause: write game record "+MainActivity.GAME.getGameRecord(true));
+            //Log.d(TAG, "@onPause: write game record "+MainActivity.GAME.getGameRecord(true));
             mSP.edit().putString(MainActivity.SP_KEY_GAME_RECORD, MainActivity.parseGameRecordList(TAG, MainActivity.GAME.getGameRecord(true))).apply();
         }
     }
 
 
     private void getMediaPlayers(){
-        Log.d(TAG,"Create media players");
+        //Log.d(TAG,"Create media players");
         if(mMPClick ==null){
 
             mMPClick =MediaPlayer.create(getApplicationContext(), R.raw.click);
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void releaseMediaPlayers(){
-        Log.d(TAG, "Release media player");
+        //Log.d(TAG, "Release media player");
         //release media player
         if (mMPClick != null) {
             mMPClick.release();
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         List<Integer> hard=new ArrayList<>((eachLevel.length)/2);
         List<Integer> list=new ArrayList<>(eachLevel.length);
         for(String record : eachLevel){
-            Log.d(tag,"@parseGameRecordString record is: "+record);
+            //Log.d(tag,"@parseGameRecordString record is: "+record);
             String normal_hard=record.substring(record.indexOf("{")+1,record.indexOf("}"));
             //Log.d(tag,"@parseGameRecordString normal_hard is: "+normal_hard);
             int furtherSplit=normal_hard.indexOf(",");
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         }
         list.addAll(normal);
         list.addAll(hard);
-        Log.d(tag,"@parseGameRecordString return list of cleared time: "+list);
+        //Log.d(tag,"@parseGameRecordString return list of cleared time: "+list);
         return list;
     }
 
@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
             }
             newRawGameRecord=newRawGameRecord.concat(";");
         }
-        Log.d(tag,"@parseGameRecordList: new Game Record is "+newRawGameRecord);
+        //Log.d(tag,"@parseGameRecordList: new Game Record is "+newRawGameRecord);
         return newRawGameRecord;
     }
 
@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (enable) {
-                    Log.d(tag,"play sound");
+                    //Log.d(tag,"play sound");
                     MediaPlayer mMP;
                     switch (soundName) {
                         case "click":

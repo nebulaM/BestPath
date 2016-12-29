@@ -26,7 +26,6 @@ import com.github.android.bestpath.dialog.ModeDialog;
 import com.github.android.bestpath.dialog.MyDialog;
 import com.github.android.bestpath.dialog.RecordDialog;
 import com.github.android.bestpath.dialog.ThemeDialog;
-import com.github.android.bestpath.mediaPlayer.MediaPlayerSingleton;
 
 public class SettingsFragment extends PreferenceFragment implements View.OnClickListener,MyDialog.onCloseListener{
     public static final String TAG="SettingsFragment";
@@ -78,7 +77,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSP = getActivity().getSharedPreferences(MainActivity. SP_FILE_NAME, Context.MODE_PRIVATE);
-        Log.d(TAG,"@onCreate: obtain media player from parent activity");
+        //Log.d(TAG,"@onCreate: obtain media player from parent activity");
     }
 
     @Override
@@ -90,7 +89,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
         mGameMode =mSP.getInt(MainActivity.SP_KEY_GAME_MODE,MainActivity.SP_KEY_GAME_MODE_DEFAULT);
 
-        Log.d(TAG, "@onCreateView: args theme "+mTheme+" sound "+mSound+ "gameMode "+mGameMode);
+        //Log.d(TAG, "@onCreateView: args theme "+mTheme+" sound "+mSound+ "gameMode "+mGameMode);
         mModeImage=(ImageView)view.findViewById(R.id.ModeImage);
         mThemeImage=(ImageView)view.findViewById(R.id.ThemeColorImage);
         mSoundImage=(ImageView)view.findViewById(R.id.SoundImage);
@@ -175,7 +174,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 break;
             case R.id.RecordText:
                 mRecordImage.setVisibility(View.VISIBLE);
-                Log.d(TAG,"MainActivity.GAME.getGameRecord(): "+MainActivity.GAME.getGameRecord(false));
+                //Log.d(TAG,"MainActivity.GAME.getGameRecord(): "+MainActivity.GAME.getGameRecord(false));
                 RecordDialog recordDialog=RecordDialog.newInstance(MainActivity.GAME.getGameRecord(false));
                 recordDialog.setOnCloseListener(this);
                 recordDialog.show(getFragmentManager(), TAG_DIALOG_ON_BACK_STACK);
@@ -241,7 +240,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         switch (tag) {
             case ThemeDialog.TAG:
                 if(parameter!=-1) {
-                    Log.d(TAG, "@onDialogClose new theme is " + parameter);
+                    //Log.d(TAG, "@onDialogClose new theme is " + parameter);
                     if (parameter != mTheme) {
                         mTheme = parameter;
                         mSP.edit().putInt(MainActivity.SP_KEY_THEME,parameter).apply();
@@ -254,7 +253,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
                 if(parameter!=-1) {
                     if (parameter != mGameMode) {
                         mGameMode = parameter;
-                        Log.d(TAG, "@onDialogClose new game mode is " + parameter);
+                        //Log.d(TAG, "@onDialogClose new game mode is " + parameter);
                         mSP.edit().putInt(MainActivity.SP_KEY_GAME_MODE,parameter).apply();
                     }
                 }

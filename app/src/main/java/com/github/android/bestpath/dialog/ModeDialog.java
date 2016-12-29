@@ -171,7 +171,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
         MainActivity.playSound(TAG,mSound,"click");
         switch (step) {
             case 0:
-                Log.d(TAG,"@setCWAnimation: set card case 0");
+                //Log.d(TAG,"@setCWAnimation: set card case 0");
                 mCard[1].setX(mFrontCardXY[0]);
                 mCard[1].setY(mFrontCardXY[1]);
                 mCard[2].setX(mLeftCardXY[0]);
@@ -180,7 +180,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
                 mCard[0].setY(mRightCardXY[1]);
                 break;
             case 1:
-                Log.d(TAG,"@setCWAnimation: set card case 1");
+                //Log.d(TAG,"@setCWAnimation: set card case 1");
                 mCard[0].setX(mFrontCardXY[0]);
                 mCard[0].setY(mFrontCardXY[1]);
                 mCard[1].setX(mLeftCardXY[0]);
@@ -189,7 +189,7 @@ public class ModeDialog extends DialogFragment implements View.OnClickListener{
                 mCard[2].setY(mRightCardXY[1]);
                 break;
             case 2:
-                Log.d(TAG,"@setCWAnimation: set card case 2");
+                //Log.d(TAG,"@setCWAnimation: set card case 2");
                 mCard[2].setX(mFrontCardXY[0]);
                 mCard[2].setY(mFrontCardXY[1]);
                 mCard[0].setX(mLeftCardXY[0]);
