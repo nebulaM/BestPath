@@ -10,9 +10,6 @@ import android.net.NetworkInfo;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.FrameLayout;
 
 import com.github.android.bestpath.backend.Game;
 import com.google.android.gms.ads.AdRequest;

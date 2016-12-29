@@ -1,7 +1,6 @@
 package com.github.android.bestpath.backend;
 
 
-import android.util.Log;
 import android.util.SparseIntArray;
 
 import com.github.android.bestpath.MainActivity;

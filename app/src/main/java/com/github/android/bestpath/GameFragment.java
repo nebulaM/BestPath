@@ -4,9 +4,7 @@ package com.github.android.bestpath;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +18,6 @@ import com.github.android.bestpath.backend.Game;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;;
-
-import java.util.Random;
 
 
 public class GameFragment extends Fragment implements GameDrawing.onPlayerMovingListener {
