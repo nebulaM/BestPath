@@ -31,10 +31,10 @@ import java.util.List;
      */
     Node(int nodeID,int mapSize){
         if(mapSize<2) {
-            throw new IllegalArgumentException("minimum mapSize is 2");
+            throw new IllegalArgumentException();
         }
         if(nodeID>=(mapSize*mapSize)){
-            throw new IllegalArgumentException("maximum nodeID is "+mapSize*mapSize);
+            throw new IllegalArgumentException();
         }
 
         this.nodeID=nodeID;

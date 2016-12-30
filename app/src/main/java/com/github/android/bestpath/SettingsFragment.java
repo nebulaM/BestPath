@@ -153,7 +153,7 @@ public class SettingsFragment extends PreferenceFragment implements View.OnClick
         switch (v.getId()){
             case R.id.ThemeColorText:
                 mThemeImage.setVisibility(View.VISIBLE);
-                //getFragmentManager().popBackStack("GameFragment",POP_BACK_STACK_INCLUSIVE);<--this is a test on how back stack works
+                //getFragmentManager().popBackStack("tsb",POP_BACK_STACK_INCLUSIVE);<--this is a test on how back stack works
                 //for some reason previously "new ThemeDialog()" was not working, had to use "ThemeDialog.newInstance()" instead
                 ThemeDialog  dialog=new ThemeDialog();
                 dialog.setOnCloseListener (this);

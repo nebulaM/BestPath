@@ -22,7 +22,7 @@ import static com.github.android.bestpath.MainActivity.GAME;
  * Main view of the game
  */
 public class cgs extends View {
-    private final String TAG="GameDrawing";
+    //private final String TAG="GameDrawing";
     private Game mGame;
     //max level has 10*10 nodes
     private final float mMaxLevel=MainActivity.GAME_LEVEL_MAX;

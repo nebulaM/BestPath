@@ -20,7 +20,7 @@ import java.util.Set;
  *
  */
 public class Game {
-    private final String TAG="Game";
+    //private final String TAG="Game";
     //total number of node
     private int mNodeNum;
     //num of node in one row/column
@@ -101,7 +101,7 @@ public class Game {
         if(edgeLevel=='S' || edgeLevel=='M') {
             this.edgeLevel = edgeLevel;
         } else {
-            throw new IllegalArgumentException("choose edgeLevel from one of the following letters: S, M");
+            throw new IllegalArgumentException();
         }
 
         nodeList=Collections.synchronizedList(new ArrayList()) ;
@@ -129,7 +129,7 @@ public class Game {
             if (gameLevel > 1) {
                 mGameLevel = gameLevel;
             } else
-                throw new IllegalArgumentException("mGameLevel must greater than 1");
+                throw new IllegalArgumentException();
             mNodeNum = gameLevel * gameLevel;
             endNodeID = mNodeNum - 1;
             nodeList.clear();
@@ -226,7 +226,7 @@ public class Game {
             case HARD:
                 return 2;
             default:
-                throw new IllegalArgumentException("Unknown game mode");
+                throw new IllegalArgumentException();
         }
     }
     private void setGameMode(int gameMode){
@@ -241,7 +241,7 @@ public class Game {
                 mGameMode=GameMode.HARD;
                 break;
             default:
-                throw new IllegalArgumentException("Game Mode must between 0-2");
+                throw new IllegalArgumentException();
         }
     }
 
@@ -570,7 +570,7 @@ public class Game {
                     return minEnergy > mPlayer.getEnergy() ? GameState.PLAYER_LOSE : GameState.GAME_NOT_END;
                 }*/
             default:
-                throw new IllegalArgumentException(TAG+" @gameOver unknown GameState");
+                throw new IllegalArgumentException();
         }
     }
 

@@ -14,7 +14,7 @@ class Player {
         if(position>=0)
             currentPosition=position;
         else
-            throw new IllegalArgumentException("nodeIndex must >0");
+            throw new IllegalArgumentException();
     }
 
      int getCurrentPosition(){
