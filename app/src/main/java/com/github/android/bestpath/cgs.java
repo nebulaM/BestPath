@@ -21,7 +21,7 @@ import static com.github.android.bestpath.MainActivity.GAME;
 /**
  * Main view of the game
  */
-public class GameDrawing extends View {
+public class cgs extends View {
     private final String TAG="GameDrawing";
     private Game mGame;
     //max level has 10*10 nodes
@@ -92,7 +92,7 @@ public class GameDrawing extends View {
     /**
      * @param context context
      */
-    public GameDrawing(Context context, AttributeSet attr) {
+    public cgs(Context context, AttributeSet attr) {
         super(context, attr);
         mContext=context;
         //mGame points to the game stored in main activity

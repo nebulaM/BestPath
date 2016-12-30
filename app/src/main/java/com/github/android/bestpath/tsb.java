@@ -20,10 +20,10 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;;
 
 
-public class GameFragment extends Fragment implements GameDrawing.onPlayerMovingListener {
-    public static final String TAG="GameFragment";
+public class tsb extends Fragment implements cgs.onPlayerMovingListener {
+    public static final String TAG="tsb";
     private SharedPreferences mSP;
-    private GameDrawing mGameDrawing;
+    private cgs mCgs;
 
     private LinearLayout mGameFragmentContainer;
 
@@ -44,8 +44,8 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
     private InterstitialAd mInterstitialAd;
     private int countB4ShowAd=0;
 
-    /*public static GameFragment newInstance(int theme, boolean sound, String language) {
-        GameFragment myFragment = new GameFragment();
+    /*public static tsb newInstance(int theme, boolean sound, String language) {
+        tsb myFragment = new tsb();
         Bundle args = new Bundle();
         args.putInt("theme", theme);
         args.putBoolean("sound", sound);
@@ -88,7 +88,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         mGameMode=mSP.getInt(MainActivity.SP_KEY_GAME_MODE,MainActivity.SP_KEY_GAME_MODE_DEFAULT);
         //Log.d(TAG, "@onCreateView: args Theme "+mTheme+" Sound "+mSound+" Game Mode "+mGameMode);
 
-        mGameDrawing=(GameDrawing)view.findViewById(R.id.GameDrawing);
+        mCgs =(cgs)view.findViewById(R.id.GameDrawing);
 
         mGameFragmentContainer=(LinearLayout) view.findViewById(R.id.GameFragmentContainer);
         mResetPlayerButton =(ImageView)view.findViewById(R.id.ResetButton);
@@ -132,10 +132,10 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
             @Override
             public void onClick(View v) {
                 if(MainActivity.GAME.getGameMode()!=0) {
-                    mGameDrawing.resetPlayer(false);
+                    mCgs.resetPlayer(false);
                 }else{
                     MainActivity.playSound(TAG,mSound,"click");
-                    mGameDrawing.resetPlayer(true);
+                    mCgs.resetPlayer(true);
                 }
                 checkAds();
             }
@@ -145,7 +145,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
             @Override
             public void onClick(View v) {
                 MainActivity.playSound(TAG,mSound,"click");
-                mGameDrawing.restart(mGameMode);
+                mCgs.restart(mGameMode);
                 checkDisableButton();
                 checkAds();
             }
@@ -154,7 +154,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
             @Override
             public void onClick(View v) {
                 MainActivity.playSound(TAG,mSound,"click");
-                mGameDrawing.nextLevel(mGameMode);
+                mCgs.nextLevel(mGameMode);
                 checkDisableButton();
                 checkAds();
             }
@@ -164,7 +164,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
             @Override
             public void onClick(View v) {
                 MainActivity.playSound(TAG,mSound,"click");
-                mGameDrawing.previousLevel(mGameMode);
+                mCgs.previousLevel(mGameMode);
                 checkDisableButton();
                 checkAds();
 
@@ -186,7 +186,7 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
         });
 
-        mGameDrawing.setOnPlayerMovingListener(this);
+        mCgs.setOnPlayerMovingListener(this);
 
     }
 
@@ -205,19 +205,19 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
         switch (theme){
             case 0:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_dark);
-                mGameDrawing.setThemeColor(R.color.theme_red,R.color.path_white);
+                mCgs.setThemeColor(R.color.theme_red,R.color.path_white);
                 break;
             case 1:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_red);
-                mGameDrawing.setThemeColor(R.color.theme_dark,R.color.path_green);
+                mCgs.setThemeColor(R.color.theme_dark,R.color.path_green);
                 break;
             case 2:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_grey);
-                mGameDrawing.setThemeColor(R.color.theme_blue,R.color.path_white);
+                mCgs.setThemeColor(R.color.theme_blue,R.color.path_white);
                 break;
             case 3:
                 mGameFragmentContainer.setBackgroundResource(R.color.theme_blue);
-                mGameDrawing.setThemeColor(R.color.theme_grey,R.color.path_orange);
+                mCgs.setThemeColor(R.color.theme_grey,R.color.path_orange);
                 break;
             default:
                 break;
