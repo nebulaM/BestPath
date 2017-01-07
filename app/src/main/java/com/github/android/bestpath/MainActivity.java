@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(noAdd) {
+        if(noAdd||!isNetworkAvailable()) {
             setContentView(R.layout.activity_main_no_add);
-        }else if(isNetworkAvailable()){
+        }else {
             setContentView(R.layout.activity_main);
             //for AdMob
             MobileAds.initialize(getApplicationContext(),"ca-app-pub-4258429418332197~3823056861");
@@ -74,9 +74,6 @@ public class MainActivity extends AppCompatActivity {
             AdRequest adRequest = new AdRequest.Builder().build();
             mAdView.loadAd(adRequest);
 
-        }else{
-            setContentView(R.layout.activity_main_no_add);
-            MobileAds.initialize(getApplicationContext(),"ca-app-pub-4258429418332197~3823056861");
         }
 
         getMediaPlayers();
