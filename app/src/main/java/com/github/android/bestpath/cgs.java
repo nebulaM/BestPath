@@ -527,16 +527,62 @@ public class cgs extends View {
         mDrawingParametersReady=false;
     }
 
+    private float lastTouchX;
+    private float lastTouchY;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //only interested in single touch
+        //interested in single touch and slide event
         float toleranceX=mEdgeLengthX*0.4f;
         float toleranceY=mEdgeLengthY*0.4f;
+        float slideTolerance=getWidth()*0.15f;
         switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                lastTouchX=event.getX();
+                lastTouchY=event.getY();
+                break;
             case MotionEvent.ACTION_UP:
                 float x = event.getX();
                 float y = event.getY();
-                if(x<mDiameter &x>0 && y<mDiameter && y>0){
+                float dx=x-lastTouchX;
+                float dy=y-lastTouchY;
+                if(mGame.gameOver()==Game.GameState.GAME_NOT_END) {//disallow player to move once game over
+                    if(Math.abs(dx)>slideTolerance||Math.abs(dy)>slideTolerance) {
+                        if(Math.abs(dx)<slideTolerance){
+                            if(dy>0){
+                                step(mGame.getPlayerPosition()+mGame.getGameLevel());
+                            }else{
+                                step(mGame.getPlayerPosition()-mGame.getGameLevel());
+                            }
+                        }else if(Math.abs(dy)<slideTolerance){
+                            if(dx>0){
+                                step(mGame.getPlayerPosition()+1);
+                            }else{
+                                step(mGame.getPlayerPosition()-1);
+                            }
+                        }else if(dx>slideTolerance&&dy>slideTolerance){
+                            step(mGame.getPlayerPosition()+mGame.getGameLevel()+1);
+                        }else if(dx>slideTolerance&&dy<=slideTolerance){
+                            step(mGame.getPlayerPosition()-mGame.getGameLevel()+1);
+                        }else if(dx<=slideTolerance&&dy>slideTolerance){
+                            step(mGame.getPlayerPosition()+mGame.getGameLevel()-1);
+                        }else{
+                            step(mGame.getPlayerPosition()-mGame.getGameLevel()-1);
+                        }
+                    }else{
+
+                        for (int i = 0; i < mGame.getNodeNum(); ++i) {
+                            float startX = mGameRouteOffsetX + (mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
+                            float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
+                            if (x > (startX - toleranceX) && x < (startX + mNodeLength + toleranceX) && (y > startY - toleranceY) && (y < startY + mNodeLength + toleranceY)) {
+                                step(i);
+                                break;
+                            }
+                        }
+
+                    }
+                    invalidate();
+                }else if(x<mDiameter &x>0 && y<mDiameter && y>0){
                     mShowGameMode=!mShowGameMode;
                     if(mShowGameMode){
                         mToastMSG.setText(R.string.show_game_mode);
@@ -555,52 +601,41 @@ public class cgs extends View {
                     mToastMSG.show();
                     invalidate();
                 }
-
-                else if(mGame.gameOver()==Game.GameState.GAME_NOT_END) {//disallow player to move once game over
-                    for (int i = 0; i < mGame.getNodeNum(); ++i) {
-                        float startX = mGameRouteOffsetX +(mGame.getNodeXCord(i) * (mEdgeLengthX + mNodeLength));
-                        float startY = mGameRouteOffsetY + (mGame.getNodeYCord(i) * (mEdgeLengthY + mNodeLength));
-
-                        if (x > (startX - toleranceX) && x < (startX + mNodeLength + toleranceX) && (y > startY - toleranceY) && (y < startY + mNodeLength + toleranceY)) {
-                            int move=mGame.setPlayerPosition(i);
-                            switch (move){
-                                case Game.noEdge:
-                                    break;
-                                case Game.setPlayer:
-                                    Game.GameState state= mGame.gameOver();
-                                    switch (state){
-                                        case PLAYER_WIN:
-                                            //okay to increase it here async wrt GAME because mStageCleared will be overwritten next time
-                                            if(mStageCleared!=Game.NOT_SHOW_GAME_STAGE) {
-                                                mStageCleared=mGame.getStageCleared();
-                                            }
-                                            mToastMSG.setText(R.string.player_win);
-                                            mToastMSG.show();
-                                            break;
-                                        case PLAYER_LOSE:
-                                            mToastMSG.setText(R.string.player_lose);
-                                            mToastMSG.show();
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    //check if game over so we know which sound to play
-                                    mOnPlayerMovingListener.onPlayerMoving(state);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            invalidate();
-                            break;
-                        }
-
-                    }
-                }
                 break;
         }
         return true;
     }
 
+    private void step(int target){
+        int move = mGame.setPlayerPosition(target);
+        switch (move) {
+            case Game.noEdge:
+                break;
+            case Game.setPlayer:
+                Game.GameState state = mGame.gameOver();
+                switch (state) {
+                    case PLAYER_WIN:
+                        //okay to increase it here async wrt GAME because mStageCleared will be overwritten next time
+                        if (mStageCleared != Game.NOT_SHOW_GAME_STAGE) {
+                            mStageCleared = mGame.getStageCleared();
+                        }
+                        mToastMSG.setText(R.string.player_win);
+                        mToastMSG.show();
+                        break;
+                    case PLAYER_LOSE:
+                        mToastMSG.setText(R.string.player_lose);
+                        mToastMSG.show();
+                        break;
+                    default:
+                        break;
+                }
+                //check if game over so we know which sound to play
+                mOnPlayerMovingListener.onPlayerMoving(state);
+                break;
+            default:
+                break;
+        }
+    }
     public void setOnPlayerMovingListener(onPlayerMovingListener listener){
         mOnPlayerMovingListener=listener;
     }
