@@ -484,18 +484,27 @@ public class Game {
     }
 
     public int setPlayerPosition(int nodeIndex){
-        int cost=adjacentArray.get(nodeIndex).get(mPlayer.getCurrentPosition());
-        if(cost==noEdge){//no edge between currentPosition and target node
+        if(isValid(nodeIndex)) {
+            int cost = adjacentArray.get(nodeIndex).get(mPlayer.getCurrentPosition());
+            if (cost == noEdge) {//no edge between currentPosition and target node
+                return noEdge;
+            } else if (mPlayer.getEnergy() >= cost && mPlayer.getCurrentPosition() != nodeIndex) {
+                mPlayer.costEnergy(cost);
+                mPlayer.setCurrentPosition(nodeIndex);
+                nodeList.get(nodeIndex).setVisited(true);
+                return setPlayer;
+            } else {
+                mPlayer.setEnergy(0);
+                return setPlayer;
+            }
+        }else{
+            //Log.d(TAG,"no edge: player at: "+getPlayerPosition()+" target: "+nodeIndex);
             return noEdge;
-        } else if( mPlayer.getEnergy()>=cost && mPlayer.getCurrentPosition()!=nodeIndex){
-            mPlayer.costEnergy(cost);
-            mPlayer.setCurrentPosition(nodeIndex);
-            nodeList.get(nodeIndex).setVisited(true);
-            return setPlayer;
-        } else{
-            mPlayer.setEnergy(0);
-            return setPlayer;
         }
+    }
+
+    private boolean isValid(int nodeIndex){
+        return (nodeIndex>=startNodeID)&&(nodeIndex<=endNodeID);
     }
     /**
      *
