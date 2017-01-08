@@ -41,9 +41,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
 
     private boolean mCheckDisableMask=false;
 
-    private InterstitialAd mInterstitialAd;
-    private int countB4ShowAd=0;
-
     /*public static GameFragment newInstance(int theme, boolean sound, String language) {
         GameFragment myFragment = new GameFragment();
         Bundle args = new Bundle();
@@ -67,21 +64,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_game, container, false);
-
-        if(!MainActivity.noAdd){
-            if(mInterstitialAd==null){
-                mInterstitialAd = new InterstitialAd(getActivity());
-                mInterstitialAd.setAdUnitId("ca-app-pub-4258429418332197/9171586468");
-                mInterstitialAd.setAdListener(new AdListener() {
-                    @Override
-                    public void onAdClosed() {
-                     requestNewInterstitial();
-                     }
-                    });
-
-                requestNewInterstitial();
-            }
-        }
 
         mTheme = mSP.getInt(MainActivity.SP_KEY_THEME, MainActivity.SP_KEY_THEME_DEFAULT);
         mSound = mSP.getBoolean(MainActivity.SP_KEY_SOUND, MainActivity.SP_KEY_SOUND_DEFAULT);
@@ -137,7 +119,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                     MainActivity.playSound(TAG,mSound,"click");
                     mGameDrawing.resetPlayer(true);
                 }
-                checkAds();
             }
         });
 
@@ -147,7 +128,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 MainActivity.playSound(TAG,mSound,"click");
                 mGameDrawing.restart(mGameMode);
                 checkDisableButton();
-                checkAds();
             }
         });
         mNextLevelButton.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +136,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 MainActivity.playSound(TAG,mSound,"click");
                 mGameDrawing.nextLevel(mGameMode);
                 checkDisableButton();
-                checkAds();
             }
         });
 
@@ -166,7 +145,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
                 MainActivity.playSound(TAG,mSound,"click");
                 mGameDrawing.previousLevel(mGameMode);
                 checkDisableButton();
-                checkAds();
 
             }
         });
@@ -241,26 +219,6 @@ public class GameFragment extends Fragment implements GameDrawing.onPlayerMoving
             default:
                 break;
         }
-    }
-
-
-    private void checkAds(){
-        if(!MainActivity.noAdd) {
-            countB4ShowAd++;
-            if(countB4ShowAd%5==0) {
-                if(mInterstitialAd!=null){
-                    mInterstitialAd.show();
-                }
-            }
-        }
-    }
-
-    /**
-     * for AdMob
-     */
-    private void requestNewInterstitial() {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mInterstitialAd.loadAd(adRequest);
     }
 
 }
