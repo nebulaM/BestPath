@@ -1,5 +1,18 @@
-package com.github.android.bestpath;
+/*
+ * Copyright (C) 2017 by nebulaM <nebulam12@gmail.com>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+package com.github.android.bestpath;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,13 +23,10 @@ import android.net.NetworkInfo;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import com.github.android.bestpath.backend.Game;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -61,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     //protected static final String mAdId="eecdc43c4f9a4b8f843268c4bc1f6a2a";//mopub
     protected static final boolean noAdd=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -289,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
         }
         ).start();
     }
-
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
